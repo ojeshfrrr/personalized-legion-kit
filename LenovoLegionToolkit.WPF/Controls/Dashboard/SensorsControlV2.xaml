@@ -14,24 +14,24 @@
 
     <UserControl.Resources>
         <Style x:Key="SensorCardStyle" TargetType="Border">
-            <Setter Property="Margin" Value="0,0,8,8" />
-            <Setter Property="CornerRadius" Value="8" />
+            <Setter Property="Margin" Value="0,0,6,6" />
+            <Setter Property="CornerRadius" Value="3" />
             <Setter Property="BorderBrush" Value="{DynamicResource CardStrokeColorDefaultBrush}" />
             <Setter Property="BorderThickness" Value="1" />
             <Setter Property="Background" Value="{DynamicResource ControlFillColorDefaultBrush}" />
-            <Setter Property="MinWidth" Value="200" />
+            <Setter Property="MinWidth" Value="188" />
         </Style>
 
         <Style x:Key="CardTitleStyle" TargetType="TextBlock">
             <Setter Property="FontSize" Value="14" />
             <Setter Property="Foreground" Value="{DynamicResource TextFillColorPrimaryBrush}" />
             <Setter Property="FontWeight" Value="SemiBold" />
-            <Setter Property="Margin" Value="0,0,0,12" />
+            <Setter Property="Margin" Value="0,0,0,8" />
             <Setter Property="VerticalAlignment" Value="Center" />
         </Style>
 
         <Style x:Key="DataLabelStyle" TargetType="TextBlock">
-            <Setter Property="FontSize" Value="12" />
+            <Setter Property="FontSize" Value="11" />
             <Setter Property="Foreground" Value="{DynamicResource TextFillColorSecondaryBrush}" />
             <Setter Property="VerticalAlignment" Value="Center" />
             <Setter Property="TextTrimming" Value="CharacterEllipsis" />
@@ -40,14 +40,14 @@
         <Style x:Key="DataValueStyle" TargetType="TextBlock">
             <Setter Property="FontSize" Value="12" />
             <Setter Property="Foreground" Value="{DynamicResource TextFillColorPrimaryBrush}" />
-            <Setter Property="FontWeight" Value="Medium" />
+            <Setter Property="FontWeight" Value="SemiBold" />
             <Setter Property="VerticalAlignment" Value="Center" />
             <Setter Property="TextTrimming" Value="CharacterEllipsis" />
         </Style>
 
         <Style x:Key="CompactProgressBarStyle" TargetType="ProgressBar">
-            <Setter Property="Width" Value="40" />
-            <Setter Property="Height" Value="6" />
+            <Setter Property="Width" Value="36" />
+            <Setter Property="Height" Value="4" />
             <Setter Property="Margin" Value="4,0,0,0" />
             <Setter Property="VerticalAlignment" Value="Center" />
             <Setter Property="BorderThickness" Value="0" />
@@ -56,7 +56,6 @@
                     <SolidColorBrush Color="{DynamicResource SystemAccentColorSecondary}" />
                 </Setter.Value>
             </Setter>
-            <Setter Property="behaviors:ProgressBarAnimateBehavior.IsEnabled" Value="True" />
         </Style>
     </UserControl.Resources>
 
