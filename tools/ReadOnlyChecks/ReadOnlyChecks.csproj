@@ -1,0 +1,12 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <AssemblyName>ProjectLegion.ReadOnlyChecks</AssemblyName>
+    <RollForward>Major</RollForward>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\LenovoLegionToolkit.Lib\LenovoLegionToolkit.Lib.csproj" />
+    <Compile Include="..\..\LenovoLegionToolkit.WPF\Presentation\MousePageSession.cs" Link="Production\MousePageSession.cs" />
+    <Compile Include="..\..\LenovoLegionToolkit.WPF\Presentation\MouseButtonsSession.cs" Link="Production\MouseButtonsSession.cs" />
+  </ItemGroup>
+</Project>
