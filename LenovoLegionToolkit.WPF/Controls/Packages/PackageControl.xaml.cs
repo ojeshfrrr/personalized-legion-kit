@@ -64,7 +64,7 @@ public partial class PackageControl : IProgress<float>
     public void Report(float value) => Dispatcher.Invoke(() =>
     {
         _downloadProgressRing.IsIndeterminate = !(value > 0);
-        _downloadProgressRing.Progress = value * 100;
+        _downloadProgressRing.Value = value * 100;
         _downloadProgressLabel.Content = $"{value * 100:0}{Resource.Percent}";
     });
 
@@ -141,7 +141,7 @@ public partial class PackageControl : IProgress<float>
         {
             _idleStackPanel.Visibility = Visibility.Visible;
             _downloadingStackPanel.Visibility = Visibility.Collapsed;
-            _downloadProgressRing.Progress = 0;
+            _downloadProgressRing.Value = 0;
             _downloadProgressLabel.Content = null;
 
             IsDownloading = false;

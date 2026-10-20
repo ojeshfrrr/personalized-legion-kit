@@ -10,7 +10,7 @@
     Title="{x:Static resources:Resource.PackagesPage_Title}"
     FlowDirection="{x:Static utils:LocalizationHelper.Direction}">
 
-    <Grid Margin="0,0,0,0">
+    <Grid Margin="0,0,0,0" MaxWidth="900" HorizontalAlignment="Left">
         <Grid.RowDefinitions>
             <RowDefinition Height="*" />
             <RowDefinition Height="Auto" />
@@ -24,183 +24,65 @@
                 <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
 
-            <TextBlock
-                Grid.Row="0"
-                Margin="0,24,0,24"
-                Focusable="True"
-                FontSize="24"
-                FontWeight="Medium"
-                Text="{x:Static resources:Resource.PackagesPage_Title}" />
+            <StackPanel Grid.Row="0" Margin="0,0,16,0">
+                <TextBlock Focusable="True" Style="{StaticResource ProjectLegionPageTitleStyle}" Text="{x:Static resources:Resource.PackagesPage_Title}"/>
+                <TextBlock Style="{StaticResource ProjectLegionPageSubtitleStyle}" Text="Device-specific software catalogs. Choose a source, then refresh to retrieve available packages."/>
+            </StackPanel>
 
-            <custom:CardControl
-                Grid.Row="1"
-                Margin="0,0,16,8">
+            <custom:CardControl Grid.Row="1" Margin="0,0,16,12" Padding="16">
                 <custom:CardControl.Header>
                     <Grid>
+                        <Grid.ColumnDefinitions><ColumnDefinition Width="Auto"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
                         <Grid.RowDefinitions>
-                            <RowDefinition Height="Auto" />
-                            <RowDefinition Height="Auto" />
-                            <RowDefinition Height="Auto" />
-                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto"/><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/><RowDefinition Height="Auto"/>
                         </Grid.RowDefinitions>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="Auto" />
-                            <ColumnDefinition Width="3*" />
-                            <ColumnDefinition Width="*" />
-                            <ColumnDefinition Width="Auto" />
-                        </Grid.ColumnDefinitions>
-
-                        <Label
-                            Grid.Row="0"
-                            Grid.Column="0"
-                            VerticalContentAlignment="Center"
-                            Content="{x:Static resources:Resource.PackagesPage_MachineType}">
-                            <Label.Foreground>
-                                <SolidColorBrush Color="{DynamicResource TextFillColorPrimary}" />
-                            </Label.Foreground>
-                        </Label>
-                        <Label
-                            Grid.Row="1"
-                            Grid.Column="0"
-                            Margin="0,8,0,0"
-                            VerticalContentAlignment="Center"
-                            Content="{x:Static resources:Resource.PackagesPage_OperatingSystem}">
-                            <Label.Foreground>
-                                <SolidColorBrush Color="{DynamicResource TextFillColorPrimary}" />
-                            </Label.Foreground>
-                        </Label>
-                        <Label
-                            Grid.Row="2"
-                            Grid.Column="0"
-                            Margin="0,8,0,0"
-                            VerticalContentAlignment="Center"
-                            Content="{x:Static resources:Resource.PackagesPage_DownloadTo}">
-                            <Label.Foreground>
-                                <SolidColorBrush Color="{DynamicResource TextFillColorPrimary}" />
-                            </Label.Foreground>
-                        </Label>
-
-                        <wpfui:TextBox
-                            x:Name="_machineTypeTextBox"
-                            Grid.Row="0"
-                            Grid.Column="1"
-                            Margin="8,0,0,0"
-                            AutomationProperties.Name="{x:Static resources:Resource.PackagesPage_MachineType}"
-                            ClearButtonEnabled="False"
-                            PlaceholderText="(eg. 82JQ)" />
-                        <ComboBox
-                            x:Name="_osComboBox"
-                            Grid.Row="1"
-                            Grid.Column="1"
-                            Margin="8,8,0,0"
-                            AutomationProperties.Name="{x:Static resources:Resource.PackagesPage_OperatingSystem}"
-                            MaxDropDownHeight="Auto" />
-                        <Grid
-                            Grid.Row="2"
-                            Grid.Column="1"
-                            Margin="8,8,0,0">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="*" />
-                                <ColumnDefinition Width="Auto" />
-                                <ColumnDefinition Width="Auto" />
-                            </Grid.ColumnDefinitions>
-
-                            <wpfui:TextBox
-                                x:Name="_downloadToText"
-                                Grid.Column="0"
-                                AutomationProperties.Name="{x:Static resources:Resource.PackagesPage_DownloadTo}"
-                                ClearButtonEnabled="False"
-                                PlaceholderText="(eg. 82JQ)"
-                                TextChanged="DownloadToText_OnTextChanged" />
-
-                            <wpfui:Button
-                                Grid.Column="1"
-                                Margin="4,0,0,0"
-                                VerticalAlignment="Stretch"
-                                Click="DownloadToButton_Click"
-                                Icon="MoreHorizontal24"
-                                ToolTip="{x:Static resources:Resource.PackagesPage_DownloadTo}" />
-
-                            <wpfui:Button
-                                Grid.Column="2"
-                                Margin="4,0,0,-1"
-                                VerticalAlignment="Stretch"
-                                Click="OpenDownloadToButton_Click"
-                                Icon="Open24"
-                                ToolTip="{x:Static resources:Resource.PackagesPage_OpenDownloadTo}" />
-
+                        <TextBlock Grid.Row="0" Style="{StaticResource ProjectLegionMetricLabelStyle}" Margin="0,0,16,0" Text="{x:Static resources:Resource.PackagesPage_MachineType}"/>
+                        <wpfui:TextBox x:Name="_machineTypeTextBox" Grid.Column="1" MaxWidth="240" HorizontalAlignment="Left" MinWidth="130"
+                            AutomationProperties.Name="{x:Static resources:Resource.PackagesPage_MachineType}" ClearButtonEnabled="False" PlaceholderText="(eg. 82JQ)"/>
+                        <TextBlock Grid.Row="1" Style="{StaticResource ProjectLegionMetricLabelStyle}" Margin="0,8,16,0" Text="{x:Static resources:Resource.PackagesPage_OperatingSystem}"/>
+                        <ComboBox x:Name="_osComboBox" Grid.Row="1" Grid.Column="1" Margin="0,8,0,0" HorizontalAlignment="Stretch"
+                            AutomationProperties.Name="{x:Static resources:Resource.PackagesPage_OperatingSystem}" MaxDropDownHeight="Auto"/>
+                        <TextBlock Grid.Row="2" Style="{StaticResource ProjectLegionMetricLabelStyle}" Margin="0,8,16,0" Text="{x:Static resources:Resource.PackagesPage_DownloadTo}"/>
+                        <Grid Grid.Row="2" Grid.Column="1" Margin="0,8,0,0">
+                            <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
+                            <wpfui:TextBox x:Name="_downloadToText" Grid.Column="0" AutomationProperties.Name="{x:Static resources:Resource.PackagesPage_DownloadTo}"
+                                ClearButtonEnabled="False" TextChanged="DownloadToText_OnTextChanged"/>
+                            <wpfui:Button Grid.Column="1" Margin="4,0,0,0" Click="DownloadToButton_Click" Icon="MoreHorizontal24" ToolTip="{x:Static resources:Resource.PackagesPage_DownloadTo}"/>
+                            <wpfui:Button Grid.Column="2" Margin="4,0,0,0" Click="OpenDownloadToButton_Click" Icon="Open24" ToolTip="{x:Static resources:Resource.PackagesPage_OpenDownloadTo}"/>
                         </Grid>
-
-                        <StackPanel
-                            Grid.Row="0"
-                            Grid.RowSpan="3"
-                            Grid.Column="3"
-                            HorizontalAlignment="Right">
-
-                            <TextBlock
-                                Margin="0,0,0,4"
-                                AutomationProperties.Name="{Binding RelativeSource={RelativeSource Mode=Self}, Path=Text}"
-                                Focusable="True"
-                                Text="{x:Static resources:Resource.PackagesPage_Source}" />
-                            <RadioButton
-                                x:Name="_sourcePrimaryRadio"
+                        <TextBlock Grid.Row="3" Style="{StaticResource ProjectLegionMetricLabelStyle}" Margin="0,12,16,0" Text="{x:Static resources:Resource.PackagesPage_Source}"/>
+                        <WrapPanel Grid.Row="3" Grid.Column="1" Margin="0,12,0,0">
+                            <RadioButton x:Name="_sourcePrimaryRadio" Content="{x:Static resources:Resource.PackagesPage_PrimarySource}"
                                 AutomationProperties.HelpText="{x:Static resources:Resource.PackagesPage_PrimarySource_Message}"
-                                AutomationProperties.Name="{x:Static resources:Resource.PackagesPage_PrimarySource}"
-                                Focusable="True"
-                                GroupName="source"
-                                IsChecked="True">
-                                <StackPanel>
-                                    <TextBlock Text="{x:Static resources:Resource.PackagesPage_PrimarySource}" />
-                                    <TextBlock
-                                        FontSize="12"
-                                        Foreground="{DynamicResource TextFillColorSecondaryBrush}"
-                                        TextWrapping="WrapWithOverflow"
-                                        Text="{x:Static resources:Resource.PackagesPage_PrimarySource_Message}" />
-                                </StackPanel>
-                            </RadioButton>
-                            <RadioButton
-                                x:Name="_sourceSecondaryRadio"
+                                ToolTip="{x:Static resources:Resource.PackagesPage_PrimarySource_Message}" Margin="0,0,16,8" GroupName="source" IsChecked="True"/>
+                            <RadioButton x:Name="_sourceSecondaryRadio" Content="{x:Static resources:Resource.PackagesPage_SecondarySource}"
                                 AutomationProperties.HelpText="{x:Static resources:Resource.PackagesPage_SecondarySource_Message}"
-                                AutomationProperties.Name="{x:Static resources:Resource.PackagesPage_SecondarySource}"
-                                GroupName="source">
-                                <StackPanel>
-                                    <TextBlock Text="{x:Static resources:Resource.PackagesPage_SecondarySource}" />
-                                    <TextBlock
-                                        FontSize="12"
-                                        Foreground="{DynamicResource TextFillColorSecondaryBrush}"
-                                        TextWrapping="WrapWithOverflow"
-                                        Text="{x:Static resources:Resource.PackagesPage_SecondarySource_Message}" />
-                                </StackPanel>
-                            </RadioButton>
-
-                        </StackPanel>
-
-                        <wpfui:Button
-                            x:Name="_downloadPackagesButton"
-                            Grid.Row="3"
-                            Grid.Column="3"
-                            HorizontalAlignment="Stretch"
-                            VerticalAlignment="Bottom"
-                            Appearance="Primary"
-                            Click="DownloadPackagesButton_Click"
-                            Content="{x:Static resources:Resource.Refresh}"
-                            IsEnabled="false" />
-
-                        <wpfui:Button
-                            x:Name="_cancelDownloadPackagesButton"
-                            Grid.Row="3"
-                            Grid.Column="3"
-                            HorizontalAlignment="Stretch"
-                            VerticalAlignment="Bottom"
-                            Appearance="Secondary"
-                            Click="CancelDownloadPackagesButton_Click"
-                            Content="{x:Static resources:Resource.Cancel}"
-                            IsEnabled="false"
-                            Visibility="Collapsed" />
+                                ToolTip="{x:Static resources:Resource.PackagesPage_SecondarySource_Message}" Margin="0,0,0,8" GroupName="source"/>
+                        </WrapPanel>
+                        <Grid Grid.Row="4" Grid.Column="1" Margin="0,8,0,0" HorizontalAlignment="Right">
+                            <wpfui:Button x:Name="_downloadPackagesButton" MinWidth="120" Appearance="Primary" Click="DownloadPackagesButton_Click"
+                                Content="{x:Static resources:Resource.Refresh}" IsEnabled="False"/>
+                            <wpfui:Button x:Name="_cancelDownloadPackagesButton" MinWidth="120" Click="CancelDownloadPackagesButton_Click"
+                                Content="{x:Static resources:Resource.Cancel}" IsEnabled="False" Visibility="Collapsed"/>
+                        </Grid>
                     </Grid>
                 </custom:CardControl.Header>
             </custom:CardControl>
 
+            <Border Grid.Row="2" Margin="0,8,16,0" VerticalAlignment="Top" Padding="14,0,0,0"
+                BorderBrush="{DynamicResource ProjectLegionBorderBrush}" BorderThickness="2,0,0,0">
+                <Border.Style>
+                    <Style TargetType="Border">
+                        <Setter Property="Visibility" Value="Visible"/>
+                        <Style.Triggers><DataTrigger Binding="{Binding Visibility, ElementName=_loader}" Value="Visible"><Setter Property="Visibility" Value="Collapsed"/></DataTrigger></Style.Triggers>
+                    </Style>
+                </Border.Style>
+                <StackPanel>
+                    <TextBlock Style="{StaticResource ProjectLegionSectionTitleStyle}" Text="No catalog loaded"/>
+                    <TextBlock Style="{StaticResource ProjectLegionNoticeStyle}" Text="Refresh loads the selected catalog; it does not install packages. Downloads and readme links appear with each result. If a request fails, review its error message before retrying."/>
+                </StackPanel>
+            </Border>
             <controls:LoadableControl
                 x:Name="_loader"
                 Grid.Row="2"
@@ -218,17 +100,12 @@
                             IsOpen="True"
                             Severity="Informational" />
 
-                        <Grid Margin="0,0,16,8">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="250" />
-                                <ColumnDefinition Width="Auto" />
-                                <ColumnDefinition Width="*" />
-                                <ColumnDefinition Width="Auto" />
-                            </Grid.ColumnDefinitions>
+                        <WrapPanel Margin="0,0,16,8">
+
 
                             <wpfui:TextBox
                                 x:Name="_filterTextBox"
-                                Grid.Column="0"
+                                Width="180" Margin="0,0,8,8"
                                 AutomationProperties.Name="{x:Static resources:Resource.Filter}"
                                 Icon="Search24"
                                 PlaceholderEnabled="True"
@@ -238,14 +115,14 @@
                             <CheckBox
                                 x:Name="_onlyShowUpdatesCheckBox"
                                 Grid.Column="1"
-                                Margin="16,0,0,0"
+                                Margin="0,0,12,8"
                                 Checked="OnlyShowUpdatesCheckBox_OnChecked"
                                 Content="{x:Static resources:Resource.PackagesPage_OnlyShowUpdates}"
                                 Unchecked="OnlyShowUpdatesCheckBox_OnChecked" />
 
                             <ComboBox
                                 x:Name="_sortingComboBox"
-                                Grid.Column="3"
+                                Margin="0,0,0,8"
                                 MaxDropDownHeight="Auto"
                                 SelectedIndex="2"
                                 SelectionChanged="SortingComboBox_SelectionChanged">
@@ -254,7 +131,7 @@
                                 <ComboBoxItem Content="{x:Static resources:Resource.PackagesPage_Sort_Date}" />
                             </ComboBox>
 
-                        </Grid>
+                        </WrapPanel>
 
                         <StackPanel x:Name="_packagesStackPanel" Margin="0,0,16,12" />
 

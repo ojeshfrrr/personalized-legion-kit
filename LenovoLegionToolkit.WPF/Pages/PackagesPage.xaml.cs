@@ -349,8 +349,20 @@ public partial class PackagesPage : IProgress<float>
 
         _packagesStackPanel.Children.Clear();
 
-        if (_packages is null || _packages.Count == 0)
+        if (_packages is null)
             return;
+
+        if (_packages.Count == 0)
+        {
+            var emptyState = new TextBlock
+            {
+                Text = Resource.PackagesPage_NoMatchingDownloads,
+                Focusable = true
+            };
+            emptyState.SetResourceReference(StyleProperty, "ProjectLegionEmptyStateStyle");
+            _packagesStackPanel.Children.Add(emptyState);
+            return;
+        }
 
         var packages = SortAndFilter(_packages);
 
