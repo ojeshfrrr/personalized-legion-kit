@@ -3,9 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Controls;
+using System.Windows.Threading;
 using LenovoLegionToolkit.Lib;
 using LenovoLegionToolkit.Lib.Automation;
 using LenovoLegionToolkit.Lib.Automation.Pipeline;
+using LenovoLegionToolkit.Lib.Utils;
 using LenovoLegionToolkit.WPF.Assets;
 using LenovoLegionToolkit.WPF.Resources;
 using LenovoLegionToolkit.WPF.Windows.Utils;
@@ -53,7 +55,7 @@ public class TrayHelper : IDisposable
         notifyIcon.OnClick += (_, _) => _bringToForeground();
         _notifyIcon = notifyIcon;
 
-        _themeManager.ThemeApplied += (_, _) => _contextMenu.Resources = App.Current.Resources;
+        _themeManager.ThemeApplied += ThemeManager_ThemeApplied;
     }
 
     public async Task InitializeAsync()
@@ -62,7 +64,20 @@ public class TrayHelper : IDisposable
         pipelines = pipelines.Where(p => p.Trigger is null).ToList();
         SetAutomationItems(pipelines);
 
-        _automationProcessor.PipelinesChanged += (_, p) => SetAutomationItems(p);
+        _automationProcessor.PipelinesChanged += AutomationProcessor_PipelinesChanged;
+    }
+
+    private void ThemeManager_ThemeApplied(object? sender, EventArgs e) => _contextMenu.Resources = App.Current.Resources;
+
+    private void AutomationProcessor_PipelinesChanged(object? sender, List<AutomationPipeline> pipelines)
+    {
+        if (App.Current.Dispatcher.CheckAccess())
+        {
+            SetAutomationItems(pipelines);
+            return;
+        }
+
+        App.Current.Dispatcher.BeginInvoke(new Action(() => SetAutomationItems(pipelines)), DispatcherPriority.DataBind);
     }
 
     private void InitializeStaticItems(INavigation navigation)
@@ -80,8 +95,7 @@ public class TrayHelper : IDisposable
                 _contextMenu.IsOpen = false;
                 _bringToForeground();
 
-                await Task.Delay(TimeSpan.FromMilliseconds(500));
-                navigation.Navigate(navigationItem.PageTag);
+                await App.Current.Dispatcher.InvokeAsync(() => navigation.Navigate(navigationItem.PageTag), DispatcherPriority.ContextIdle);
             };
             _contextMenu.Items.Add(navigationMenuItem);
         }
@@ -125,7 +139,8 @@ public class TrayHelper : IDisposable
             {
                 SymbolIcon = icon,
                 Header = pipeline.Name ?? Resource.Unnamed,
-                Tag = AUTOMATION_TAG
+                Tag = AUTOMATION_TAG,
+                IsEnabled = HardwareRuntime.ControlsEnabled
             };
             item.Click += async (_, _) =>
             {
@@ -133,7 +148,11 @@ public class TrayHelper : IDisposable
                 {
                     await _automationProcessor.RunNowAsync(pipeline);
                 }
-                catch {  /* Ignore */ }
+                catch (Exception ex)
+                {
+                    Log.Instance.Trace($"Failed to run an automation from the system tray.", ex);
+                    SnackbarHelper.Show(Resource.Warning, ex.Message, SnackbarType.Error);
+                }
             };
 
             _contextMenu.Items.Insert(0, item);
@@ -148,9 +167,18 @@ public class TrayHelper : IDisposable
         _notifyIcon.Visible = true;
     }
 
+    public void UpdateControlAccess()
+    {
+        foreach (var item in _contextMenu.Items.OfType<MenuItem>().Where(item => AUTOMATION_TAG.Equals(item.Tag)))
+            item.IsEnabled = HardwareRuntime.ControlsEnabled;
+    }
+
     public void Dispose()
     {
         GC.SuppressFinalize(this);
+
+        _themeManager.ThemeApplied -= ThemeManager_ThemeApplied;
+        _automationProcessor.PipelinesChanged -= AutomationProcessor_PipelinesChanged;
 
         if (_notifyIcon is not null)
             _notifyIcon.Visible = false;

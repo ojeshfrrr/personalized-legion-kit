@@ -143,6 +143,8 @@ public class NotifyIcon : NativeWindow, IDisposable
         {
             await Task.Delay(TimeSpan.FromMilliseconds(500), token);
 
+            if (GamingActivityMonitor.Instance.GameRunning) return;
+
             if (ContextMenu is not null && ContextMenu.IsOpen)
                 return;
 
@@ -150,6 +152,15 @@ public class NotifyIcon : NativeWindow, IDisposable
             _currentToolTipWindow = await _toolTipWindow();
 
             token.ThrowIfCancellationRequested();
+
+            // Creation can await device queries. Recheck after that await so a
+            // game starting in the meantime cannot activate popup monitoring.
+            if (GamingActivityMonitor.Instance.GameRunning)
+            {
+                _currentToolTipWindow?.Close();
+                _currentToolTipWindow = null;
+                return;
+            }
 
             _currentToolTipWindow?.Show();
         }
