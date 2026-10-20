@@ -124,6 +124,8 @@ public partial class StatusWindow
     public StatusWindow()
     {
         InitializeComponent();
+        GamingActivityMonitor.Instance.Changed += GamingActivityChanged;
+        Closed += (_, _) => GamingActivityMonitor.Instance.Changed -= GamingActivityChanged;
         Loaded += StatusWindow_Loaded;
         SizeChanged += StatusWindow_SizeChanged;
         IsVisibleChanged += StatusWindow_IsVisibleChanged;
@@ -234,6 +236,7 @@ public partial class StatusWindow
 
     private async void OnSensorsUpdated(HardwareSensorSnapshot snapshot)
     {
+        if (GamingActivityMonitor.Instance.GameRunning) return;
         var token = _cancellationTokenSource.Token;
         try
         {
@@ -250,6 +253,12 @@ public partial class StatusWindow
         {
             Log.Instance.Trace($"StatusWindow update failed: {ex}");
         }
+    }
+
+    private void GamingActivityChanged(object? sender, EventArgs e)
+    {
+        if (GamingActivityMonitor.Instance.GameRunning && !Dispatcher.HasShutdownStarted)
+            Dispatcher.BeginInvoke(new Action(Close), DispatcherPriority.Background);
     }
 
     private async Task<StatusWindowData> GetStatusWindowDataAsync(CancellationToken token, bool skipRetry = false, HardwareSensorSnapshot? snapshot = null)

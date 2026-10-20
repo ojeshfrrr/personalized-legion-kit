@@ -43,7 +43,7 @@ public partial class BootLogoWindow
         {
             var image = new BitmapImage();
             image.BeginInit();
-            image.UriSource = new Uri("pack://application:,,,/Assets/Lenovo_logo.png", UriKind.Absolute);
+            image.UriSource = new Uri("pack://application:,,,/Assets/ProjectLegion.png", UriKind.Absolute);
             image.CacheOption = BitmapCacheOption.OnLoad;
             image.EndInit();
             image.Freeze();
