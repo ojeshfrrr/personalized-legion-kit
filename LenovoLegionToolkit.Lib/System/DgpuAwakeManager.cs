@@ -34,7 +34,6 @@ public sealed class DgpuAwakeManager : IAsyncDisposable, IDisposable
 
         _powerStateListener.Changed += PowerStateListener_Changed;
 
-        _ = UpdateStateAsync();
     }
 
     private async void PowerStateListener_Changed(object? sender, PowerStateListener.ChangedEventArgs e)
@@ -59,6 +58,7 @@ public sealed class DgpuAwakeManager : IAsyncDisposable, IDisposable
     public async Task UpdateStateAsync()
     {
         if (_isDisposed) return;
+        if (!HardwareRuntime.ControlsEnabled) return;
 
         var keepAwake = _settings.Store.KeepDgpuAwake;
 
