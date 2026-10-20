@@ -47,7 +47,7 @@ namespace LenovoLegionToolkit.Lib.Controllers.Sensors
                 "winlogon", "smss", "spoolsv", "SearchIndexer", "SearchUI",
                 "RuntimeBroker", "dwm", "ctfmon", "audiodg", "fontdrvhost",
                 "taskhost", "conhost", "sihost", "StartMenuExperienceHost",
-                "ShellExperienceHost", "Lenovo Legion Toolkit"
+                "ShellExperienceHost", "Project Legion"
             };
 
             foreach (var process in systemProcesses)

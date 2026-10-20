@@ -38,7 +38,7 @@ public class UserInactivityAutoListener(IMainThreadDispatcher mainThreadDispatch
         {
             CreateHandle(new CreateParams
             {
-                Caption = "LenovoLegionToolkit_UserInactivityListenerWindow",
+                Caption = "ProjectLegion_UserInactivityListenerWindow",
                 Parent = new IntPtr(-3)
             });
 
