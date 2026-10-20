@@ -8,9 +8,10 @@
     xmlns:wpfui="http://schemas.lepo.co/wpfui/2022/xaml">
     <ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
         <StackPanel Margin="0,0,16,12">
-            <custom:CardControl
+            <TextBlock Style="{StaticResource ProjectLegionSectionTitleStyle}" Text="Updates" />
+            <custom:CardControl Style="{StaticResource ProjectLegionPreferenceRowStyle}"
                 x:Name="_checkUpdatesCard"
-                Margin="0,0,0,8"
+                Margin="0"
                 Icon="ArrowSync24">
                 <custom:CardControl.Header>
                     <controls:CardHeaderControl Title="{x:Static resources:Resource.SettingsPage_CheckUpdates_Title}" Subtitle="{x:Static resources:Resource.SettingsPage_CheckUpdates_Message}" />
@@ -18,15 +19,15 @@
                 <wpfui:Button
                     x:Name="_checkUpdatesButton"
                     MinWidth="160"
-                    Margin="0,0,0,8"
+                    Margin="0"
                     AutomationProperties.Name="{x:Static resources:Resource.SettingsPage_CheckUpdates_Title}"
                     Click="CheckUpdates_Click"
                     Content="{x:Static resources:Resource.SettingsPage_CheckUpdatesButton_Content}"
                     Visibility="Hidden" />
             </custom:CardControl>
-            <custom:CardControl
+            <custom:CardControl Style="{StaticResource ProjectLegionPreferenceRowStyle}"
                 x:Name="_updateChannelCard"
-                Margin="0,0,0,8"
+                Margin="0"
                 Icon="ArrowSort24">
                 <custom:CardControl.Header>
                     <controls:CardHeaderControl Title="{x:Static resources:Resource.SettingsPage_UpdateChannel_Title}" Subtitle="{x:Static resources:Resource.SettingsPage_UpdateChannel_Message}" />
@@ -34,15 +35,15 @@
                 <ComboBox
                     x:Name="_updateChannelComboBox"
                     MinWidth="160"
-                    Margin="0,0,0,8"
+                    Margin="0"
                     AutomationProperties.Name="{x:Static resources:Resource.SettingsPage_UpdateChannel_Title}"
                     MaxDropDownHeight="Auto"
                     SelectionChanged="UpdateChannelComboBox_SelectionChanged"
                     Visibility="Hidden" />
             </custom:CardControl>
-            <custom:CardControl
+            <custom:CardControl Style="{StaticResource ProjectLegionPreferenceRowStyle}"
                 x:Name="_updateMethodCard"
-                Margin="0,0,0,8"
+                Margin="0"
                 Icon="ArrowSort24">
                 <custom:CardControl.Header>
                     <controls:CardHeaderControl Title="{x:Static resources:Resource.SettingsPage_UpdateMethod_Title}" Subtitle="{x:Static resources:Resource.SettingsPage_UpdateMethod_Message}" />
@@ -50,15 +51,15 @@
                 <ComboBox
                     x:Name="_updateMethodComboBox"
                     MinWidth="160"
-                    Margin="0,0,0,8"
+                    Margin="0"
                     AutomationProperties.Name="{x:Static resources:Resource.SettingsPage_UpdateMethod_Title}"
                     MaxDropDownHeight="Auto"
                     SelectionChanged="UpdateMethodComboBox_SelectionChanged"
                     Visibility="Hidden" />
             </custom:CardControl>
-            <custom:CardControl
+            <custom:CardControl Style="{StaticResource ProjectLegionPreferenceRowStyle}"
                 x:Name="_updateCheckFrequencyCard"
-                Margin="0,0,0,8"
+                Margin="0"
                 Icon="Clock24">
                 <custom:CardControl.Header>
                     <controls:CardHeaderControl Title="{x:Static resources:Resource.SettingsPage_UpdateCheckFrequency_Title}" Subtitle="{x:Static resources:Resource.SettingsPage_UpdateCheckFrequency_Message}" />
@@ -66,7 +67,7 @@
                 <ComboBox
                     x:Name="_updateCheckFrequencyComboBox"
                     MinWidth="160"
-                    Margin="0,0,0,8"
+                    Margin="0"
                     AutomationProperties.Name="{x:Static resources:Resource.SettingsPage_UpdateCheckFrequency_Title}"
                     MaxDropDownHeight="Auto"
                     SelectionChanged="UpdateCheckFrequencyComboBox_SelectionChanged"

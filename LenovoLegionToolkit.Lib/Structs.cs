@@ -1264,7 +1264,7 @@ public readonly struct Update(Release release)
     public DateTimeOffset Date { get; } = release.PublishedAt ?? release.CreatedAt;
 
     public string? Url { get; } = release.Assets
-        .Where(ra => ra.Name.StartsWith("LenovoLegionToolkitSetup", StringComparison.InvariantCultureIgnoreCase) &&
+        .Where(ra => ra.Name.StartsWith("ProjectLegionSetup", StringComparison.InvariantCultureIgnoreCase) &&
                      ra.Name.EndsWith(".exe", StringComparison.InvariantCultureIgnoreCase))
         .Select(ra => ra.BrowserDownloadUrl)
         .FirstOrDefault();
@@ -1373,7 +1373,7 @@ public struct ProjectInfo
 public struct UpdateFromServer(ProjectInfo projectInfo, string patchNote)
 {
     public Version Version { get; set; } = Version.Parse(projectInfo.ProjectNewVersion);
-    public string Title { get; set; } = "LenovoLegionToolkit Updates available.";
+    public string Title { get; set; } = "Project Legion update available.";
     public string Description { get; set; } = patchNote;
     public DateTimeOffset Date { get; set; } = DateTimeOffset.Now;
     public string? Url = projectInfo.ProjectNewExePath;

@@ -43,8 +43,7 @@ public partial class SettingsUpdateControl
             _checkUpdatesButton.Visibility = Visibility.Visible;
             _updateCheckFrequencyComboBox.Visibility = Visibility.Visible;
             _updateCheckFrequencyComboBox.SetItems(Enum.GetValues<UpdateCheckFrequency>(), _updateSettings.Store.UpdateCheckFrequency, t => t.GetDisplayName());
-            _updateMethodComboBox.Visibility = Visibility.Visible;
-            _updateMethodComboBox.SetItems(Enum.GetValues<UpdateMethod>(), _updateSettings.Store.UpdateMethod, t => t.GetDisplayName());
+            _updateMethodCard.Visibility = Visibility.Collapsed;
             _updateChannelComboBox.Visibility = Visibility.Visible;
             var channels = Enum.GetValues<UpdateChannel>()
                 .Where(c => c != UpdateChannel.Test);
