@@ -4,9 +4,12 @@ using System.Threading.Tasks;
 using System.Windows;
 using LenovoLegionToolkit.Lib;
 using LenovoLegionToolkit.Lib.Controllers;
+using LenovoLegionToolkit.Lib.Features;
+using LenovoLegionToolkit.Lib.Features.WhiteKeyboardBacklight;
 using LenovoLegionToolkit.Lib.Settings;
 using LenovoLegionToolkit.Lib.Utils;
 using LenovoLegionToolkit.WPF.Controls.KeyboardBacklight.RGB;
+using LenovoLegionToolkit.WPF.Controls.Dashboard;
 using LenovoLegionToolkit.WPF.Controls.KeyboardBacklight.Spectrum;
 using LenovoLegionToolkit.WPF.Resources;
 using LenovoLegionToolkit.WPF.Utils;
@@ -25,13 +28,12 @@ public partial class KeyboardBacklightPage
 
     private async void KeyboardBacklightPage_Initialized(object? sender, EventArgs e)
     {
-        _titleTextBlock.Visibility = Visibility.Collapsed;
-        await Task.Delay(TimeSpan.FromSeconds(1));
         _titleTextBlock.Visibility = Visibility.Visible;
 
         try
         {
-            await CheckDynamicLightingWarningAsync();
+            if (HardwareRuntime.ControlsEnabled)
+                await CheckDynamicLightingWarningAsync();
             await LoadKeyboardBacklightControlAsync();
         }
         catch (Exception ex)
@@ -161,6 +163,12 @@ public partial class KeyboardBacklightPage
 
             if (await rgbController.IsSupportedAsync())
             {
+                _content.Children.Add(new System.Windows.Controls.TextBlock
+                {
+                    Text = "The RGB preset below is saved configuration; firmware readback is unavailable through this device API.",
+                    TextWrapping = TextWrapping.Wrap,
+                    Margin = new Thickness(0, 0, 0, 12)
+                });
                 var control = new RGBKeyboardBacklightControl();
                 _content.Children.Add(control);
                 anyAdded = true;
@@ -169,6 +177,16 @@ public partial class KeyboardBacklightPage
                 return;
             }
 
+            if (await IoCContainer.Resolve<WhiteKeyboardBacklightFeature>().IsSupportedAsync())
+            {
+                _content.Children.Add(new WhiteKeyboardBacklightControl());
+                anyAdded = true;
+            }
+            if (await IoCContainer.Resolve<OneLevelWhiteKeyboardBacklightFeature>().IsSupportedAsync())
+            {
+                _content.Children.Add(new OneLevelWhiteKeyboardBacklightControl());
+                anyAdded = true;
+            }
             if (!anyAdded)
             {
                 ShowNoKeyboardsMessage();
@@ -188,6 +206,7 @@ public partial class KeyboardBacklightPage
 
     private void ShowErrorMessage()
     {
+        _noKeyboardsText.Text = "Keyboard lighting information could not be read. Check device support and driver availability.";
         _noKeyboardsText.Visibility = Visibility.Visible;
     }
 

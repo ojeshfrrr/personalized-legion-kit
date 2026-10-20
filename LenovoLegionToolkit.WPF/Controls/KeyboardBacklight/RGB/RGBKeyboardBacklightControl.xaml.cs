@@ -11,6 +11,7 @@ using LenovoLegionToolkit.Lib.Messaging;
 using LenovoLegionToolkit.Lib.Messaging.Messages;
 using LenovoLegionToolkit.Lib.SoftwareDisabler;
 using LenovoLegionToolkit.WPF.Extensions;
+using LenovoLegionToolkit.WPF.Utils;
 using Wpf.Ui.Common;
 using Wpf.Ui.Controls;
 using Button = Wpf.Ui.Controls.Button;
@@ -111,7 +112,11 @@ public partial class RGBKeyboardBacklightControl
 
         var selectedPreset = (RGBKeyboardBacklightPreset)presetButton.Tag;
         var state = await _controller.GetStateAsync();
-        await _controller.SetStateAsync(new(selectedPreset, state.Presets));
+        await HardwareCommandRunner.RunAsync(async () =>
+        {
+            await _controller.SetLightControlOwnerAsync(true);
+            await _controller.SetStateAsync(new(selectedPreset, state.Presets));
+        });
 
         await RefreshAsync();
     }
@@ -309,7 +314,11 @@ public partial class RGBKeyboardBacklightControl
             _zone3ColorPicker.SelectedColor.ToRGBColor(),
             _zone4ColorPicker.SelectedColor.ToRGBColor());
 
-        await _controller.SetStateAsync(new(selectedPreset, presets));
+        await HardwareCommandRunner.RunAsync(async () =>
+        {
+            await _controller.SetLightControlOwnerAsync(true);
+            await _controller.SetStateAsync(new(selectedPreset, presets));
+        });
     }
 
     private void Expand()
