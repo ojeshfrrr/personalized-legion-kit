@@ -34,37 +34,52 @@ public class AutomationProcessor(
 
     private List<AutomationPipeline> _pipelines = [];
     private CancellationTokenSource? _cts;
+    private bool _listenersInitialized;
+    private volatile bool _activeThisSession;
 
-    public bool IsEnabled => settings.Store.IsEnabled;
+    public bool IsEnabled => _activeThisSession && settings.Store.IsEnabled;
 
     public event EventHandler<List<AutomationPipeline>>? PipelinesChanged;
 
     #region Initialization / pipeline reloading
 
-    public async Task InitializeAsync()
+    public async Task InitializeAsync(bool startListeners = true)
     {
         using (await _ioLock.LockAsync().ConfigureAwait(false))
         {
+            _pipelines = [.. settings.Store.Pipelines];
+            RaisePipelinesChanged();
+            if (!startListeners)
+                return;
+
+            HardwareRuntime.RequireControls();
+            InitializeListeners();
+            _activeThisSession = true;
+            await UpdateListenersAsync().ConfigureAwait(false);
+            await nativeWindowsMessageListener.EnsureInitializedAsync().ConfigureAwait(false);
+        }
+    }
+
+    private void InitializeListeners()
+    {
+        if (_listenersInitialized)
+            return;
             displayConfigurationListener.Changed += DisplayConfigurationListener_Changed;
             nativeWindowsMessageListener.Changed += NativeWindowsMessageListener_Changed;
             powerStateListener.Changed += PowerStateListener_Changed;
             powerModeListener.Changed += PowerModeListener_Changed;
             godModeController.PresetChanged += GodModeController_PresetChanged;
             sessionLockUnlockListener.Changed += SessionLockUnlockListener_Changed;
-
-            _pipelines = [.. settings.Store.Pipelines];
-
-            RaisePipelinesChanged();
-
-            await UpdateListenersAsync().ConfigureAwait(false);
-            await nativeWindowsMessageListener.EnsureInitializedAsync().ConfigureAwait(false);
-        }
+        _listenersInitialized = true;
     }
 
     public async Task SetEnabledAsync(bool enabled)
     {
+        HardwareRuntime.RequireControls();
         using (await _ioLock.LockAsync().ConfigureAwait(false))
         {
+            InitializeListeners();
+            _activeThisSession = enabled;
             settings.Store.IsEnabled = enabled;
             settings.SynchronizeStore();
 
@@ -127,6 +142,7 @@ public class AutomationProcessor(
 
     public async Task RunNowAsync(AutomationPipeline pipeline)
     {
+        HardwareRuntime.RequireControls();
         await Task.Run(() => RunNowCoreAsync(pipeline)).ConfigureAwait(false);
     }
 
@@ -344,6 +360,26 @@ public class AutomationProcessor(
     #endregion
 
     #region Helper methods
+
+    public async Task StopAsync()
+    {
+        using (await _ioLock.LockAsync().ConfigureAwait(false))
+        {
+            _activeThisSession = false;
+            if (_cts is not null)
+                await _cts.CancelAsync().ConfigureAwait(false);
+            await UpdateListenersAsync().ConfigureAwait(false);
+            if (!_listenersInitialized)
+                return;
+            displayConfigurationListener.Changed -= DisplayConfigurationListener_Changed;
+            nativeWindowsMessageListener.Changed -= NativeWindowsMessageListener_Changed;
+            powerStateListener.Changed -= PowerStateListener_Changed;
+            powerModeListener.Changed -= PowerModeListener_Changed;
+            godModeController.PresetChanged -= GodModeController_PresetChanged;
+            sessionLockUnlockListener.Changed -= SessionLockUnlockListener_Changed;
+            _listenersInitialized = false;
+        }
+    }
 
     private async Task UpdateListenersAsync()
     {
