@@ -9,9 +9,9 @@ public class ApplicationSettings : AbstractSettings<ApplicationSettingsStore>
 {
     public class ApplicationSettingsStore
     {
-        public Theme Theme { get; set; }
+        public Theme Theme { get; set; } = Theme.Light;
         public RGBColor? AccentColor { get; set; }
-        public AccentColorSource AccentColorSource { get; set; }
+        public AccentColorSource AccentColorSource { get; set; } = AccentColorSource.Custom;
         public PowerModeMappingMode PowerModeMappingMode { get; set; } = PowerModeMappingMode.Disabled;
         public Dictionary<PowerModeState, Guid> PowerPlans { get; set; } = [];
         public Dictionary<PowerModeState, WindowsPowerMode> PowerModes { get; set; } = [];
@@ -51,7 +51,7 @@ public class ApplicationSettings : AbstractSettings<ApplicationSettingsStore>
         public int GPUMonitoringInterval { get; set; } = 5000;
         public int GPUMonitoringStartupDelay { get; set; } = 1000;
         public int GPUKillProcessDelay { get; set; } = 500;
-        public WindowBackdropType BackdropType { get; set; } = WindowBackdropType.Mica;
+        public WindowBackdropType BackdropType { get; set; } = WindowBackdropType.None;
         public bool KeepDgpuAwake { get; set; }
         public int LockedPStateId { get; set; } = -1;
 

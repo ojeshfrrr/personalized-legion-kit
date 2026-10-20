@@ -13,8 +13,8 @@ public class CardHeaderControl : UserControl
 {
     private readonly TextBlock _titleTextBlock = new()
     {
-        FontSize = 14,
-        FontWeight = FontWeights.Medium,
+        FontSize = 13,
+        FontWeight = FontWeights.SemiBold,
         VerticalAlignment = VerticalAlignment.Center,
         TextWrapping = TextWrapping.Wrap,
         TextTrimming = TextTrimming.CharacterEllipsis,
@@ -22,8 +22,8 @@ public class CardHeaderControl : UserControl
 
     private readonly TextBlock _subtitleTextBlock = new()
     {
-        FontSize = 12,
-        Margin = new(0, 4, 0, 0),
+        FontSize = 11,
+        Margin = new(0, 3, 0, 0),
         TextWrapping = TextWrapping.Wrap,
         TextTrimming = TextTrimming.CharacterEllipsis,
     };

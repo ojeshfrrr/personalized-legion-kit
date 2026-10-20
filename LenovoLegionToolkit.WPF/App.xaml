@@ -3,7 +3,6 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:wpfui="http://schemas.lepo.co/wpfui/2022/xaml"
-    xmlns:behaviors="clr-namespace:LenovoLegionToolkit.WPF.Behaviors"
     Exit="Application_Exit"
     ShutdownMode="OnExplicitShutdown"
     Startup="Application_Startup">
@@ -12,6 +11,7 @@
             <ResourceDictionary.MergedDictionaries>
                 <wpfui:ControlsDictionary />
                 <wpfui:ThemesDictionary Theme="Dark" />
+                <ResourceDictionary Source="Branding.xaml" />
                 <ResourceDictionary Source="pack://application:,,,/ColorPicker;component/Styles/DefaultColorPickerStyle.xaml" />
                 <ResourceDictionary Source="pack://application:,,,/Styles/Badge.xaml" />
                 <ResourceDictionary Source="pack://application:,,,/Styles/CardAction.xaml" />
@@ -30,83 +30,61 @@
                 <Setter Property="Control.Template">
                     <Setter.Value>
                         <ControlTemplate>
-                            <Grid />
+                            <Rectangle
+                                Margin="2"
+                                SnapsToDevicePixels="True"
+                                Stroke="{DynamicResource ProjectLegionAccentBrush}"
+                                StrokeDashArray="1 2"
+                                StrokeThickness="2" />
                         </ControlTemplate>
                     </Setter.Value>
                 </Setter>
             </Style>
 
-            <Style TargetType="{x:Type ScrollViewer}" BasedOn="{StaticResource UiScrollViewer}">
-                <Setter Property="behaviors:SmoothScrollBehavior.IsEnabled" Value="True" />
-            </Style>
-
-            <Style TargetType="{x:Type wpfui:DynamicScrollViewer}" BasedOn="{StaticResource UiDynamicScrollViewer}">
-                <Setter Property="behaviors:SmoothScrollBehavior.IsEnabled" Value="True" />
-            </Style>
-
             <Style TargetType="{x:Type ListBox}" BasedOn="{StaticResource DefaultListBoxStyle}">
-                <Setter Property="FocusVisualStyle" Value="{x:Null}" />
                 <Setter Property="VirtualizingPanel.ScrollUnit" Value="Pixel" />
             </Style>
 
             <Style TargetType="{x:Type ListView}" BasedOn="{StaticResource DefaultListViewStyle}">
-                <Setter Property="FocusVisualStyle" Value="{x:Null}" />
                 <Setter Property="VirtualizingPanel.ScrollUnit" Value="Pixel" />
             </Style>
 
             <Style TargetType="{x:Type Button}" BasedOn="{StaticResource DefaultButtonStyle}">
-                <Setter Property="FocusVisualStyle" Value="{x:Null}" />
             </Style>
             <Style TargetType="{x:Type TextBox}" BasedOn="{StaticResource DefaultTextBoxStyle}">
-                <Setter Property="FocusVisualStyle" Value="{x:Null}" />
             </Style>
             <Style TargetType="{x:Type ComboBox}" BasedOn="{StaticResource DefaultComboBoxStyle}">
-                <Setter Property="FocusVisualStyle" Value="{x:Null}" />
                 <Setter Property="MaxDropDownHeight" Value="320" />
                 <Setter Property="ScrollViewer.VerticalScrollBarVisibility" Value="Auto" />
             </Style>
             <Style TargetType="{x:Type ComboBoxItem}" BasedOn="{StaticResource DefaultComboBoxItemStyle}">
-                <Setter Property="FocusVisualStyle" Value="{x:Null}" />
             </Style>
             <Style TargetType="{x:Type RadioButton}" BasedOn="{StaticResource DefaultRadioButtonStyle}">
-                <Setter Property="FocusVisualStyle" Value="{x:Null}" />
             </Style>
             <Style TargetType="{x:Type CheckBox}" BasedOn="{StaticResource DefaultCheckBoxStyle}">
-                <Setter Property="FocusVisualStyle" Value="{x:Null}" />
             </Style>
             <Style TargetType="{x:Type TabControl}" BasedOn="{StaticResource {x:Type TabControl}}">
-                <Setter Property="FocusVisualStyle" Value="{x:Null}" />
             </Style>
             <Style TargetType="{x:Type TabItem}" BasedOn="{StaticResource {x:Type TabItem}}">
-                <Setter Property="FocusVisualStyle" Value="{x:Null}" />
             </Style>
 
             <Style TargetType="{x:Type wpfui:NavigationItem}" BasedOn="{StaticResource NavigationStoreItem}">
-                <Setter Property="FocusVisualStyle" Value="{x:Null}" />
             </Style>
             <Style TargetType="{x:Type wpfui:NavigationHeader}" BasedOn="{StaticResource NavigationStoreHeader}">
-                <Setter Property="FocusVisualStyle" Value="{x:Null}" />
             </Style>
             <Style TargetType="{x:Type wpfui:CardControl}" BasedOn="{StaticResource DefaultUiCardControlStyle}">
-                <Setter Property="FocusVisualStyle" Value="{x:Null}" />
             </Style>
             <Style TargetType="{x:Type wpfui:CardAction}" BasedOn="{StaticResource DefaultUiCardActionStyle}">
-                <Setter Property="FocusVisualStyle" Value="{x:Null}" />
             </Style>
             <Style TargetType="{x:Type wpfui:CardExpander}" BasedOn="{StaticResource DefaultUiCardExpanderStyle}">
-                <Setter Property="FocusVisualStyle" Value="{x:Null}" />
             </Style>
             <Style TargetType="{x:Type wpfui:Button}" BasedOn="{StaticResource DefaultUiButtonStyle}">
-                <Setter Property="FocusVisualStyle" Value="{x:Null}" />
             </Style>
             <Style TargetType="{x:Type wpfui:TextBox}" BasedOn="{StaticResource DefaultUiTextBoxStyle}">
-                <Setter Property="FocusVisualStyle" Value="{x:Null}" />
             </Style>
             <Style TargetType="{x:Type wpfui:ToggleSwitch}" BasedOn="{StaticResource DefaultUiToggleSwitchStyle}">
-                <Setter Property="FocusVisualStyle" Value="{x:Null}" />
             </Style>
             <Style TargetType="{x:Type wpfui:NumberBox}" BasedOn="{StaticResource DefaultUiNumberBoxStyle}">
-                <Setter Property="FocusVisualStyle" Value="{x:Null}" />
             </Style>
 
         </ResourceDictionary>

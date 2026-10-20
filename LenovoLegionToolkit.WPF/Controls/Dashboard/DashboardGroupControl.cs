@@ -30,9 +30,9 @@ public class DashboardGroupControl : UserControl
         {
             Text = _dashboardGroup.GetName(),
             Focusable = true,
-            FontSize = 24,
+            FontSize = 18,
             FontWeight = FontWeights.Medium,
-            Margin = new(0, 16, 0, 24)
+            Margin = new(0, 12, 0, 8)
         };
         AutomationProperties.SetName(textBlock, textBlock.Text);
         stackPanel.Children.Add(textBlock);

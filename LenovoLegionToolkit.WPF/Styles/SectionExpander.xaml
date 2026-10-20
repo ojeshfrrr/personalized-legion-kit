@@ -4,7 +4,6 @@
     xmlns:wpfui="http://schemas.lepo.co/wpfui/2022/xaml">
 
     <Style x:Key="SectionExpanderStyle" TargetType="{x:Type Expander}">
-        <Setter Property="FocusVisualStyle" Value="{x:Null}" />
         <Setter Property="Foreground" Value="{DynamicResource TextFillColorPrimaryBrush}" />
         <Setter Property="Background" Value="Transparent" />
         <Setter Property="BorderThickness" Value="0" />

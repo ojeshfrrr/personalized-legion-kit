@@ -1,0 +1,227 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:custom="clr-namespace:LenovoLegionToolkit.WPF.Controls.Custom"
+                    xmlns:controls="clr-namespace:LenovoLegionToolkit.WPF.Controls"
+                    xmlns:lib="clr-namespace:LenovoLegionToolkit.Lib;assembly=LenovoLegionToolkit.Lib">
+    <!-- Project Legion design tokens. Keep the palette here so it can be replaced as one set. -->
+    <Color x:Key="ProjectLegionBackgroundColor">#000000</Color>
+    <Color x:Key="ProjectLegionContentColor">#07080A</Color>
+    <Color x:Key="ProjectLegionSurfaceColor">#0D0F12</Color>
+    <Color x:Key="ProjectLegionHoverColor">#15181D</Color>
+    <Color x:Key="ProjectLegionSelectedColor">#210B10</Color>
+    <Color x:Key="ProjectLegionTextColor">#F4F4F5</Color>
+    <Color x:Key="ProjectLegionSecondaryTextColor">#969CA6</Color>
+    <Color x:Key="ProjectLegionMutedTextColor">#656D79</Color>
+    <Color x:Key="ProjectLegionBorderColor">#252932</Color>
+    <Color x:Key="ProjectLegionAccentColor">#FF334F</Color>
+    <Color x:Key="ProjectLegionAccentHoverColor">#FF536A</Color>
+    <Color x:Key="ProjectLegionAccentSurfaceColor">#210B10</Color>
+
+    <SolidColorBrush x:Key="ProjectLegionBackgroundBrush" Color="{StaticResource ProjectLegionBackgroundColor}" />
+    <SolidColorBrush x:Key="ProjectLegionContentBrush" Color="{StaticResource ProjectLegionContentColor}" />
+    <SolidColorBrush x:Key="ProjectLegionSurfaceBrush" Color="{StaticResource ProjectLegionSurfaceColor}" />
+    <SolidColorBrush x:Key="ProjectLegionHoverBrush" Color="{StaticResource ProjectLegionHoverColor}" />
+    <SolidColorBrush x:Key="ProjectLegionSelectedBrush" Color="{StaticResource ProjectLegionSelectedColor}" />
+    <SolidColorBrush x:Key="ProjectLegionTextBrush" Color="{StaticResource ProjectLegionTextColor}" />
+    <SolidColorBrush x:Key="ProjectLegionSecondaryTextBrush" Color="{StaticResource ProjectLegionSecondaryTextColor}" />
+    <SolidColorBrush x:Key="ProjectLegionMutedTextBrush" Color="{StaticResource ProjectLegionMutedTextColor}" />
+    <SolidColorBrush x:Key="ProjectLegionBorderBrush" Color="{StaticResource ProjectLegionBorderColor}" />
+    <SolidColorBrush x:Key="ProjectLegionAccentBrush" Color="{StaticResource ProjectLegionAccentColor}" />
+    <SolidColorBrush x:Key="ProjectLegionAccentHoverBrush" Color="{StaticResource ProjectLegionAccentHoverColor}" />
+    <SolidColorBrush x:Key="ProjectLegionAccentSurfaceBrush" Color="{StaticResource ProjectLegionAccentSurfaceColor}" />
+
+    <FontFamily x:Key="ProjectLegionFontFamily">Segoe UI</FontFamily>
+
+    <Style x:Key="ProjectLegionInstrumentPanelStyle" TargetType="Border">
+        <Setter Property="Padding" Value="16" />
+        <Setter Property="Background" Value="{DynamicResource ProjectLegionSurfaceBrush}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource ProjectLegionBorderBrush}" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="CornerRadius" Value="4" />
+        <Setter Property="SnapsToDevicePixels" Value="True" />
+    </Style>
+
+    <Style x:Key="ProjectLegionDialStyle" TargetType="ProgressBar">
+        <Setter Property="Width" Value="132" />
+        <Setter Property="Height" Value="132" />
+        <Setter Property="Foreground" Value="{DynamicResource ProjectLegionAccentBrush}" />
+        <Setter Property="IsHitTestVisible" Value="False" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="ProgressBar">
+                    <controls:InstrumentDial Minimum="{TemplateBinding Minimum}" Maximum="{TemplateBinding Maximum}"
+                        Value="{TemplateBinding Value}" Stroke="{TemplateBinding Foreground}"
+                        Track="{DynamicResource ProjectLegionBorderBrush}" />
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style x:Key="ProjectLegionModeListStyle" TargetType="ListBox">
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="BorderThickness" Value="0" />
+        <Setter Property="Padding" Value="0" />
+        <!-- Own the outer container as well as the items: the platform ListBox
+             template otherwise substitutes a light disabled surface in read-only mode. -->
+        <Setter Property="FocusVisualStyle" Value="{x:Null}" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="ListBox">
+                    <Border x:Name="SelectorBorder" Background="{TemplateBinding Background}"
+                        BorderBrush="Transparent" BorderThickness="1" Padding="2" CornerRadius="4">
+                        <ScrollViewer Focusable="False" CanContentScroll="True"
+                            HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Disabled">
+                            <ItemsPresenter />
+                        </ScrollViewer>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsKeyboardFocusWithin" Value="True">
+                            <Setter TargetName="SelectorBorder" Property="BorderBrush" Value="{DynamicResource ProjectLegionAccentBrush}" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+        <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Disabled" />
+        <Setter Property="ScrollViewer.VerticalScrollBarVisibility" Value="Disabled" />
+        <Setter Property="ItemsPanel">
+            <Setter.Value>
+                <ItemsPanelTemplate>
+                    <UniformGrid Columns="{Binding Tag, RelativeSource={RelativeSource AncestorType=ListBox}}" />
+                </ItemsPanelTemplate>
+            </Setter.Value>
+        </Setter>
+        <Setter Property="ItemContainerStyle">
+            <Setter.Value>
+                <Style TargetType="ListBoxItem">
+                    <Setter Property="Margin" Value="0,0,8,8" />
+                    <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                    <Setter Property="Foreground" Value="{DynamicResource ProjectLegionTextBrush}" />
+                    <Setter Property="Template">
+                        <Setter.Value>
+                            <ControlTemplate TargetType="ListBoxItem">
+                                <Border x:Name="Tile" Padding="14,14" CornerRadius="4"
+                                    Background="{DynamicResource ProjectLegionSurfaceBrush}"
+                                    BorderBrush="{DynamicResource ProjectLegionBorderBrush}" BorderThickness="1">
+                                    <ContentPresenter />
+                                </Border>
+                                <ControlTemplate.Triggers>
+                                    <Trigger Property="IsMouseOver" Value="True">
+                                        <Setter TargetName="Tile" Property="Background" Value="{DynamicResource ProjectLegionHoverBrush}" />
+                                    </Trigger>
+                                    <Trigger Property="IsSelected" Value="True">
+                                        <Setter TargetName="Tile" Property="BorderBrush" Value="{DynamicResource ProjectLegionAccentBrush}" />
+                                        <Setter TargetName="Tile" Property="Background" Value="{DynamicResource ProjectLegionAccentSurfaceBrush}" />
+                                        <Setter Property="Foreground" Value="{DynamicResource ProjectLegionAccentBrush}" />
+                                    </Trigger>
+                                    <Trigger Property="IsKeyboardFocusWithin" Value="True">
+                                        <Setter TargetName="Tile" Property="BorderThickness" Value="2" />
+                                        <Setter TargetName="Tile" Property="BorderBrush" Value="{DynamicResource ProjectLegionAccentBrush}" />
+                                    </Trigger>
+                                </ControlTemplate.Triggers>
+                            </ControlTemplate>
+                        </Setter.Value>
+                    </Setter>
+                </Style>
+            </Setter.Value>
+        </Setter>
+        <Setter Property="ItemTemplate">
+            <Setter.Value>
+                <DataTemplate>
+                    <StackPanel>
+                        <Path x:Name="ModeIcon" Width="22" Height="22" Margin="0,0,0,8" Stretch="Uniform"
+                            HorizontalAlignment="Left" StrokeThickness="1.5" Stroke="{Binding Foreground, RelativeSource={RelativeSource AncestorType=ListBoxItem}}"
+                            Data="M 3,18 A 10,10 0 1 1 21,18 M 12,12 L 18,6 M 7,19 L 17,19" />
+                        <TextBlock Text="{Binding}" FontSize="16" FontWeight="SemiBold" TextWrapping="Wrap"
+                            Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=ListBoxItem}}" />
+                        <TextBlock x:Name="ModeDescription" Margin="0,6,0,0" FontSize="12" TextWrapping="Wrap"
+                            Foreground="{DynamicResource ProjectLegionSecondaryTextBrush}" Text="Device-supported power mode." />
+                    </StackPanel>
+                    <DataTemplate.Triggers>
+                        <DataTrigger Binding="{Binding Value}" Value="{x:Static lib:PowerModeState.Quiet}">
+                            <Setter TargetName="ModeIcon" Property="Data" Value="M 5,20 C 2,12 7,4 21,3 C 20,16 13,21 5,20 M 5,20 L 16,9" />
+                            <Setter TargetName="ModeDescription" Property="Text" Value="Lower power and quieter cooling." />
+                        </DataTrigger>
+                        <DataTrigger Binding="{Binding Value}" Value="{x:Static lib:PowerModeState.Balance}">
+                            <Setter TargetName="ModeIcon" Property="Data" Value="M 12,3 L 12,21 M 5,21 L 19,21 M 3,7 L 21,7 M 6,7 L 2,15 L 10,15 Z M 18,7 L 14,15 L 22,15 Z" />
+                            <Setter TargetName="ModeDescription" Property="Text" Value="A balance of performance and acoustics." />
+                        </DataTrigger>
+                        <DataTrigger Binding="{Binding Value}" Value="{x:Static lib:PowerModeState.Performance}">
+                            <Setter TargetName="ModeDescription" Property="Text" Value="Prioritize sustained performance." />
+                        </DataTrigger>
+                        <DataTrigger Binding="{Binding Value}" Value="{x:Static lib:PowerModeState.Extreme}">
+                            <Setter TargetName="ModeDescription" Property="Text" Value="The device's highest performance mode." />
+                        </DataTrigger>
+                        <DataTrigger Binding="{Binding Value}" Value="{x:Static lib:PowerModeState.GodMode}">
+                            <Setter TargetName="ModeIcon" Property="Data" Value="M 5,3 L 5,21 M 12,3 L 12,21 M 19,3 L 19,21 M 2,8 L 8,8 M 9,16 L 15,16 M 16,10 L 22,10" />
+                            <Setter TargetName="ModeDescription" Property="Text" Value="Custom cooling and power settings." />
+                        </DataTrigger>
+                    </DataTemplate.Triggers>
+                </DataTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style x:Key="ProjectLegionPageTitleStyle" TargetType="TextBlock">
+        <Setter Property="Margin" Value="0,4,0,0" />
+        <Setter Property="FontSize" Value="26" />
+        <Setter Property="FontWeight" Value="SemiBold" />
+        <Setter Property="Foreground" Value="{DynamicResource ProjectLegionTextBrush}" />
+        <Setter Property="TextWrapping" Value="Wrap" />
+    </Style>
+
+    <Style x:Key="ProjectLegionPageSubtitleStyle" TargetType="TextBlock">
+        <Setter Property="Margin" Value="0,4,0,18" />
+        <Setter Property="FontSize" Value="13" />
+        <Setter Property="Foreground" Value="{DynamicResource ProjectLegionSecondaryTextBrush}" />
+        <Setter Property="TextWrapping" Value="Wrap" />
+    </Style>
+
+    <Style x:Key="ProjectLegionSectionTitleStyle" TargetType="TextBlock">
+        <Setter Property="Margin" Value="0,6,0,8" />
+        <Setter Property="FontSize" Value="15" />
+        <Setter Property="FontWeight" Value="SemiBold" />
+        <Setter Property="Foreground" Value="{DynamicResource ProjectLegionTextBrush}" />
+        <Setter Property="TextWrapping" Value="Wrap" />
+    </Style>
+
+    <Style x:Key="ProjectLegionMetricLabelStyle" TargetType="TextBlock">
+        <Setter Property="FontSize" Value="11" />
+        <Setter Property="Foreground" Value="{DynamicResource ProjectLegionSecondaryTextBrush}" />
+        <Setter Property="TextTrimming" Value="CharacterEllipsis" />
+        <Setter Property="VerticalAlignment" Value="Center" />
+    </Style>
+
+    <Style x:Key="ProjectLegionMetricValueStyle" TargetType="TextBlock">
+        <Setter Property="FontSize" Value="30" />
+        <Setter Property="FontWeight" Value="SemiBold" />
+        <Setter Property="Foreground" Value="{DynamicResource ProjectLegionTextBrush}" />
+        <Setter Property="VerticalAlignment" Value="Center" />
+        <Setter Property="TextTrimming" Value="CharacterEllipsis" />
+    </Style>
+
+    <Style x:Key="ProjectLegionPreferenceRowStyle" TargetType="custom:CardControl" BasedOn="{StaticResource DefaultUiCardControlStyle}">
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="BorderBrush" Value="{DynamicResource ProjectLegionBorderBrush}" />
+        <Setter Property="BorderThickness" Value="0,0,0,1" />
+        <Setter Property="Padding" Value="8,12" />
+        <Setter Property="Margin" Value="0" />
+    </Style>
+    <Style x:Key="ProjectLegionNoticeStyle" TargetType="TextBlock">
+        <Setter Property="FontSize" Value="12" />
+        <Setter Property="TextWrapping" Value="Wrap" />
+        <Setter Property="Foreground" Value="{DynamicResource ProjectLegionSecondaryTextBrush}" />
+        <Setter Property="Margin" Value="0,8,0,12" />
+        <Setter Property="LineHeight" Value="18" />
+    </Style>
+    <Style x:Key="ProjectLegionEmptyStateStyle" TargetType="TextBlock" BasedOn="{StaticResource ProjectLegionNoticeStyle}">
+        <Setter Property="Padding" Value="16,24" />
+        <Setter Property="Background" Value="{DynamicResource ProjectLegionSurfaceBrush}" />
+        <Setter Property="HorizontalAlignment" Value="Stretch" />
+    </Style>
+    <Style x:Key="ProjectLegionTechnicalTextStyle" TargetType="TextBlock" BasedOn="{StaticResource ProjectLegionNoticeStyle}">
+        <Setter Property="FontSize" Value="12" />
+        <Setter Property="Typography.NumeralAlignment" Value="Tabular" />
+        <Setter Property="Margin" Value="0,4,0,0" />
+    </Style>
+</ResourceDictionary>
