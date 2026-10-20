@@ -50,6 +50,8 @@ public partial class LampArrayRGBKeyboardPage : UiPage
     private CancellationTokenSource? _probeCts;
     private bool _isUpdatingUi = false;
     private bool _isProbing = false;
+    private bool _previewReady;
+    private readonly OptionalUiActivity _previewActivity;
     private bool _isDragging = false;
     private Point _startPoint;
 
@@ -62,6 +64,12 @@ public partial class LampArrayRGBKeyboardPage : UiPage
 
         Loaded += OnLoaded;
         Unloaded += OnUnloaded;
+        _previewActivity = new OptionalUiActivity(this, active =>
+        {
+            CompositionTarget.Rendering -= OnEffectTick;
+            if (active && _previewReady) CompositionTarget.Rendering += OnEffectTick;
+            return Task.CompletedTask;
+        });
 
         if (_colorPicker != null)
         {
@@ -173,11 +181,14 @@ public partial class LampArrayRGBKeyboardPage : UiPage
 
         }, DispatcherPriority.Loaded);
 
-        CompositionTarget.Rendering += OnEffectTick;
+        _previewReady = true;
+        if (_previewActivity.IsActive && !GamingActivityMonitor.Instance.OptionalWorkPaused)
+            CompositionTarget.Rendering += OnEffectTick;
     }
 
     private void OnUnloaded(object sender, RoutedEventArgs e)
     {
+        _previewReady = false;
         CompositionTarget.Rendering -= OnEffectTick;
 
         _controller.SaveSettings(_settings);
