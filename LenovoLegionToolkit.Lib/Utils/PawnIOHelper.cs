@@ -34,6 +34,8 @@ public static class PawnIOHelper
 
     public static async Task TryShowPawnIODialogAsync(PawnIOState state, bool disableHardwareSensors = true)
     {
+        if (!HardwareRuntime.ControlsEnabled)
+            return;
         if (RequestShowDialogAsync == null)
         {
             return;

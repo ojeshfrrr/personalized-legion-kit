@@ -13,7 +13,7 @@ public class HWiNFOIntegration(SensorsController sensorController, IntegrationsS
 {
     private const string CUSTOM_SENSOR_HIVE = "HKEY_CURRENT_USER";
     private const string CUSTOM_SENSOR_PATH = @"Software\HWiNFO64\Sensors\Custom";
-    private const string CUSTOM_SENSOR_GROUP_NAME = "Lenovo Legion Toolkit";
+    private const string CUSTOM_SENSOR_GROUP_NAME = "Project Legion";
     private const string SENSOR_TYPE_FAN = "Fan";
     private const string SENSOR_TYPE_TEMP = "Temp";
     private const string CPU_FAN_SENSOR_NAME = "CPU Fan";
@@ -29,6 +29,8 @@ public class HWiNFOIntegration(SensorsController sensorController, IntegrationsS
 
     public async Task StartStopIfNeededAsync()
     {
+        if (AppFlags.Instance.ReadOnly || AppFlags.Instance.UiPreview)
+            return;
         await StopAsync().ConfigureAwait(false);
 
         if (!settings.Store.HWiNFO)
@@ -44,6 +46,8 @@ public class HWiNFOIntegration(SensorsController sensorController, IntegrationsS
 
     public async Task StopAsync()
     {
+        if (AppFlags.Instance.ReadOnly || AppFlags.Instance.UiPreview)
+            return;
         Log.Instance.Trace($"Stopping...");
 
         if (_cts is not null)
