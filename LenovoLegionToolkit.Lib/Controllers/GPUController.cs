@@ -23,10 +23,62 @@ public class GPUController
 {
     private readonly AsyncLock _stateLock = new();
     private readonly SemaphoreSlim _refreshGate = new(1, 1);
+    private readonly SemaphoreSlim _lifecycleGate = new(1, 1);
 
     public int Interval { get; set; } = 5000;
 
     private CancellationTokenSource? _refreshCancellationTokenSource;
+    private Task? _refreshTask;
+    private readonly GamingActivityMonitor _gamingActivity;
+    private readonly OptionalWorkGate _backgroundWork = new();
+    private readonly object _pollingPolicyLock = new();
+    private int _requiredMonitoringOwners;
+    private int _optionalMonitoringOwners;
+
+    public GPUController() : this(GamingActivityMonitor.Instance) { }
+    protected GPUController(GamingActivityMonitor gamingActivity) => _gamingActivity = gamingActivity;
+
+    public IDisposable AcquireOptionalMonitoring()
+    {
+        Interlocked.Increment(ref _optionalMonitoringOwners);
+        UpdatePollingPolicy();
+        var released = 0;
+        return new LambdaDisposable(() =>
+        {
+            if (Interlocked.Exchange(ref released, 1) != 0) return;
+            Interlocked.Decrement(ref _optionalMonitoringOwners);
+            UpdatePollingPolicy();
+        });
+    }
+
+    // Automation owns this lease only while it actually consumes GPU events.
+    // UI visibility must never stop that consumer or locked-P-state enforcement.
+    public IDisposable AcquireRequiredMonitoring()
+    {
+        Interlocked.Increment(ref _requiredMonitoringOwners);
+        UpdatePollingPolicy();
+        var released = 0;
+        return new LambdaDisposable(() =>
+        {
+            if (Interlocked.Exchange(ref released, 1) != 0) return;
+            Interlocked.Decrement(ref _requiredMonitoringOwners);
+            UpdatePollingPolicy();
+        });
+    }
+
+    private void GamingActivityChanged(object? sender, EventArgs e) => UpdatePollingPolicy();
+
+    private void UpdatePollingPolicy()
+    {
+        lock (_pollingPolicyLock)
+        {
+            var required = Volatile.Read(ref _requiredMonitoringOwners) > 0 ||
+                (HardwareRuntime.ControlsEnabled && IoCContainer.Resolve<ApplicationSettings>().Store.LockedPStateId >= 0);
+            _backgroundWork.SetPaused(!required && (_gamingActivity.OptionalWorkPaused || Volatile.Read(ref _optionalMonitoringOwners) == 0));
+        }
+    }
+
+    protected Task WaitForBackgroundRefreshAsync(CancellationToken token) => _backgroundWork.WaitAsync(token);
 
     private GPUState _state = GPUState.Unknown;
     private List<Process> _processes = [];
@@ -38,7 +90,7 @@ public class GPUController
     public PerformanceStateId? CurrentPerformanceState { get; private set; }
 
     public event EventHandler<GPUStatus>? Refreshed;
-    public bool IsStarted => _refreshCancellationTokenSource is not null;
+    public bool IsStarted => _refreshTask is { IsCompleted: false };
 
     public bool IsSupported() => NVAPI.IsAvailable();
 
@@ -68,37 +120,54 @@ public class GPUController
         }
     }
 
-    public Task StartAsync(int delay = -1, int interval = 5_000)
+    public async Task StartAsync(int delay = -1, int interval = 5_000)
     {
-        if (IsStarted)
+        await _lifecycleGate.WaitAsync().ConfigureAwait(false);
+        try
         {
-            return Task.CompletedTask;
+            if (IsStarted) return;
+            _gamingActivity.Changed -= GamingActivityChanged;
+            _gamingActivity.Changed += GamingActivityChanged;
+            UpdatePollingPolicy();
+            _refreshCancellationTokenSource?.Dispose();
+            Interval = interval;
+            var startupDelay = delay >= 0 ? delay : IoCContainer.Resolve<ApplicationSettings>().Store.GPUMonitoringStartupDelay;
+            _refreshCancellationTokenSource = new CancellationTokenSource();
+            var token = _refreshCancellationTokenSource.Token;
+            // All callers, including non-WPF listeners, avoid synchronous NVAPI
+            // initialization on their calling thread. Retain and observe the worker.
+            _refreshTask = Task.Run(async () =>
+            {
+                try { await RefreshLoopAsync(startupDelay, token).ConfigureAwait(false); }
+                catch (OperationCanceledException) when (token.IsCancellationRequested) { }
+                catch (Exception ex) { Log.Instance.Trace($"GPU monitoring stopped after a refresh failure.", ex); }
+            });
         }
-
-        Interval = interval;
-
-        var startupDelay = delay >= 0 ? delay : IoCContainer.Resolve<ApplicationSettings>().Store.GPUMonitoringStartupDelay;
-
-        _refreshCancellationTokenSource = new CancellationTokenSource();
-        var token = _refreshCancellationTokenSource.Token;
-        _ = RefreshLoopAsync(startupDelay, token);
-
-        return Task.CompletedTask;
+        finally { _lifecycleGate.Release(); }
     }
 
     public async Task StopAsync(bool waitForFinish = false)
     {
-        if (_refreshCancellationTokenSource is null)
+        await _lifecycleGate.WaitAsync().ConfigureAwait(false);
+        try
         {
-            return;
+            if (_refreshCancellationTokenSource is null) return;
+            try
+            {
+                await _refreshCancellationTokenSource.CancelAsync().ConfigureAwait(false);
+                if (_refreshTask is not null) await _refreshTask.ConfigureAwait(false);
+                await _refreshGate.WaitAsync().ConfigureAwait(false);
+                _refreshGate.Release();
+            }
+            finally
+            {
+                _gamingActivity.Changed -= GamingActivityChanged;
+                _refreshCancellationTokenSource.Dispose();
+                _refreshCancellationTokenSource = null;
+                _refreshTask = null;
+            }
         }
-
-        await _refreshCancellationTokenSource.CancelAsync().ConfigureAwait(false);
-
-        await _refreshGate.WaitAsync().ConfigureAwait(false);
-        _refreshGate.Release();
-
-        _refreshCancellationTokenSource = null;
+        finally { _lifecycleGate.Release(); }
     }
 
     public async Task RestartGPUAsync()
@@ -162,10 +231,12 @@ public class GPUController
         }
     }
 
-    private async Task RefreshLoopAsync(int delay, CancellationToken token)
+    protected virtual async Task RefreshLoopAsync(int delay, CancellationToken token)
     {
         try
         {
+            token.ThrowIfCancellationRequested();
+            await WaitForBackgroundRefreshAsync(token).ConfigureAwait(false);
             Log.Instance.Trace($"Initializing NVAPI...");
 
             NVAPI.Initialize();
@@ -173,7 +244,7 @@ public class GPUController
             Log.Instance.Trace($"Initialized NVAPI");
 
             var settings = IoCContainer.Resolve<ApplicationSettings>();
-            if (settings.Store.LockedPStateId >= 0)
+            if (HardwareRuntime.ControlsEnabled && settings.Store.LockedPStateId >= 0)
             {
                 await ApplyPStateAsync(settings.Store.LockedPStateId).ConfigureAwait(false);
             }
@@ -183,15 +254,18 @@ public class GPUController
             while (true)
             {
                 token.ThrowIfCancellationRequested();
+                await WaitForBackgroundRefreshAsync(token).ConfigureAwait(false);
 
+                GPUStatus status;
                 await _refreshGate.WaitAsync(token).ConfigureAwait(false);
                 try
                 {
+                    if (_backgroundWork.IsPaused) continue;
                     await DoRefreshAsync(token).ConfigureAwait(false);
 
                     using (await _stateLock.LockAsync(token).ConfigureAwait(false))
                     {
-                        Refreshed?.Invoke(this, new GPUStatus(_state, _performanceState, _processes, _sleepBlockerReason));
+                        status = new GPUStatus(_state, _performanceState, _processes, _sleepBlockerReason);
                     }
                 }
                 finally
@@ -199,18 +273,16 @@ public class GPUController
                     _refreshGate.Release();
                 }
 
-                if (Interval > 0)
-                {
-                    await Task.Delay(Interval, token).ConfigureAwait(false);
-                }
+                // Subscribers may query the controller or dispatch to the UI.
+                // Never hold either query/state lock while invoking external code.
+                token.ThrowIfCancellationRequested();
+                Refreshed?.Invoke(this, status);
+
+                // Invalid saved intervals must not turn monitoring into a busy loop.
+                await Task.Delay(Interval > 0 ? Interval : 5000, token).ConfigureAwait(false);
             }
         }
         catch (OperationCanceledException) { }
-        catch (Exception ex)
-        {
-            Log.Instance.Trace($"Exception occurred", ex);
-            throw;
-        }
     }
 
     private async Task DoRefreshAsync(CancellationToken token)
@@ -383,7 +455,7 @@ public class GPUController
             _sleepBlockerReason = newSleepBlockerReason;
         }
 
-        if ((oldState is GPUState.PoweredOff or GPUState.Unknown or GPUState.NvidiaGpuNotFound) &&
+        if (HardwareRuntime.ControlsEnabled && (oldState is GPUState.PoweredOff or GPUState.Unknown or GPUState.NvidiaGpuNotFound) &&
             (newState is GPUState.Active or GPUState.Inactive or GPUState.MonitorConnected))
         {
             var lockedPState = IoCContainer.Resolve<ApplicationSettings>().Store.LockedPStateId;
@@ -500,8 +572,10 @@ public class GPUController
 
     public async Task<bool> SetPStateAsync(int pStateId)
     {
+        HardwareRuntime.RequireControls();
         var settings = IoCContainer.Resolve<ApplicationSettings>();
         settings.Store.LockedPStateId = pStateId;
+        UpdatePollingPolicy();
         settings.SynchronizeStore();
 
         return await ApplyPStateAsync(pStateId).ConfigureAwait(false);
@@ -509,6 +583,7 @@ public class GPUController
 
     public Task<bool> ApplyPStateAsync(int pStateId)
     {
+        HardwareRuntime.RequireControls();
         try
         {
             var gpu = NVAPI.GetGPU();

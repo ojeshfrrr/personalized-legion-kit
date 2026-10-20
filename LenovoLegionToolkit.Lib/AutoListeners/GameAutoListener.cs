@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using LenovoLegionToolkit.Lib;
 using LenovoLegionToolkit.Lib.Controllers;
 using LenovoLegionToolkit.Lib.Extensions;
 using LenovoLegionToolkit.Lib.GameDetection;
@@ -34,6 +35,7 @@ public class GameAutoListener : AbstractAutoListener<GameAutoListener.ChangedEve
 
     private bool _lastState;
     private bool _preserveStateOnNextStart;
+    private IDisposable? _gpuMonitoringLease;
 
     public GameAutoListener(InstanceStartedEventAutoAutoListener instanceStartedEventAutoAutoListener,
         GPUController gpuController, ApplicationSettings settings)
@@ -179,6 +181,7 @@ public class GameAutoListener : AbstractAutoListener<GameAutoListener.ChangedEve
 
         if (_settings.Store.GameDetection.UseDiscreteGPU)
         {
+            _gpuMonitoringLease ??= _gpuController.AcquireRequiredMonitoring();
             await _gpuController.StartAsync().ConfigureAwait(false);
             _gpuController.Refreshed += GpuController_Refreshed;
 
@@ -252,6 +255,8 @@ public class GameAutoListener : AbstractAutoListener<GameAutoListener.ChangedEve
         await _effectiveGameModeDetector.StopAsync().ConfigureAwait(false);
 
         _gpuController.Refreshed -= GpuController_Refreshed;
+        _gpuMonitoringLease?.Dispose();
+        _gpuMonitoringLease = null;
 
         lock (Lock)
         {
@@ -512,7 +517,7 @@ public class GameAutoListener : AbstractAutoListener<GameAutoListener.ChangedEve
             return true;
 
         return processName.Equals("explorer", StringComparison.OrdinalIgnoreCase)
-               || processName.Equals("Lenovo Legion Toolkit", StringComparison.OrdinalIgnoreCase)
+               || processName.Equals(ProjectBranding.ProductName, StringComparison.OrdinalIgnoreCase)
                || processName.Equals("SearchUI", StringComparison.OrdinalIgnoreCase)
                || processName.Equals("LockApp", StringComparison.OrdinalIgnoreCase)
                || processName.Equals("TextInputHost", StringComparison.OrdinalIgnoreCase)
