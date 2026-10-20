@@ -14,7 +14,7 @@
                 Storyboard.TargetName="_contentControl"
                 Storyboard.TargetProperty="Opacity"
                 From="0" To="1"
-                Duration="0:0:0.2" />
+                Duration="0:0:0" />
         </Storyboard>
         <DataTemplate x:Key="CompactNavTemplate">
             <StackPanel
@@ -31,7 +31,7 @@
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition x:Name="_navColumn" Width="220" />
+            <ColumnDefinition x:Name="_navColumn" Width="184" />
             <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
 
@@ -39,19 +39,18 @@
             Grid.Row="0"
             Grid.Column="0"
             Grid.ColumnSpan="2"
-            Margin="0,16,0,24"
             AutomationProperties.Name="{Binding RelativeSource={RelativeSource Mode=Self}, Path=Text}"
             Focusable="True"
-            FontSize="24"
-            FontWeight="Medium"
+            Margin="0,4,0,20"
+            Style="{StaticResource ProjectLegionPageTitleStyle}"
             Text="{x:Static resources:Resource.SettingsPage_Title}" />
 
         <Border
             Grid.Row="1"
             Grid.Column="0"
             Background="Transparent"
-            BorderBrush="Transparent"
-            BorderThickness="0">
+            BorderBrush="{DynamicResource ProjectLegionBorderBrush}"
+            BorderThickness="0,0,1,0">
             <ListBox
                 x:Name="_navigationListBox"
                 Margin="0,0,8,0"
@@ -68,7 +67,7 @@
                                             x:Name="BackgroundBorder"
                                             Background="Transparent"
                                             CornerRadius="4"
-                                            Padding="4,8">
+                                            Padding="8,5">
                                             <ContentPresenter />
                                         </Border>
                                         <Rectangle
@@ -90,7 +89,7 @@
                                             <Setter TargetName="BackgroundBorder" Property="Background" Value="{DynamicResource SubtleFillColorSecondaryBrush}" />
                                         </Trigger>
                                         <Trigger Property="IsSelected" Value="True">
-                                            <Setter TargetName="BackgroundBorder" Property="Background" Value="{DynamicResource SubtleFillColorSecondaryBrush}" />
+                                            <Setter TargetName="BackgroundBorder" Property="Background" Value="{DynamicResource ProjectLegionAccentSurfaceBrush}" />
                                             <Setter TargetName="ActiveIndicator" Property="Visibility" Value="Visible" />
                                         </Trigger>
                                     </ControlTemplate.Triggers>
@@ -101,7 +100,7 @@
                 </ListBox.ItemContainerStyle>
                 <ListBox.ItemTemplate>
                     <DataTemplate>
-                        <StackPanel Orientation="Horizontal" Margin="4,6">
+                        <StackPanel Orientation="Horizontal" Margin="4,5">
                             <wpfui:SymbolIcon Symbol="{Binding Icon}" FontSize="16" Margin="0,0,10,0" />
                             <TextBlock Text="{Binding Title}" VerticalAlignment="Center" FontSize="13" />
                         </StackPanel>
@@ -114,6 +113,6 @@
             x:Name="_contentControl"
             Grid.Row="1"
             Grid.Column="1"
-            Margin="16,0,0,0" />
+            Margin="20,0,0,0" />
     </Grid>
 </wpfui:UiPage>

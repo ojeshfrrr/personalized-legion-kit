@@ -8,7 +8,8 @@
     xmlns:wpfui="http://schemas.lepo.co/wpfui/2022/xaml">
     <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
         <StackPanel Margin="0,0,16,12">
-            <custom:CardControl Margin="0,0,0,8" Icon="PlugConnected24">
+            <TextBlock Style="{StaticResource ProjectLegionSectionTitleStyle}" Text="Integrations" />
+            <custom:CardControl Style="{StaticResource ProjectLegionPreferenceRowStyle}" Margin="0" Icon="PlugConnected24">
                 <custom:CardControl.Header>
                     <controls:CardHeaderControl
                         Title="{x:Static resources:Resource.SettingsPage_HWiNFO_Title}"
@@ -17,29 +18,29 @@
                 </custom:CardControl.Header>
                     <wpfui:ToggleSwitch
                     x:Name="_hwinfoIntegrationToggle"
-                    Margin="0,0,0,8"
+                    Margin="0"
                     AutomationProperties.Name="{x:Static resources:Resource.SettingsPage_HWiNFO_Title}"
                     Click="HWiNFOIntegrationToggle_Click"
                     Visibility="Hidden" />
             </custom:CardControl>
-            <custom:CardControl Margin="0,0,0,8" Icon="WindowConsole20">
+            <custom:CardControl Style="{StaticResource ProjectLegionPreferenceRowStyle}" Margin="0" Icon="WindowConsole20">
                 <custom:CardControl.Header>
                     <controls:CardHeaderControl Title="{x:Static resources:Resource.SettingsPage_CLI_Title}" Subtitle="{x:Static resources:Resource.SettingsPage_CLI_Message}" />
                 </custom:CardControl.Header>
                     <wpfui:ToggleSwitch
                     x:Name="_cliInterfaceToggle"
-                    Margin="0,0,0,8"
+                    Margin="0"
                     AutomationProperties.Name="{x:Static resources:Resource.SettingsPage_CLI_Title}"
                     Click="CLIInterfaceToggle_Click"
                     Visibility="Hidden" />
             </custom:CardControl>
-            <custom:CardControl Margin="0,0,0,8" Icon="Folder24">
+            <custom:CardControl Style="{StaticResource ProjectLegionPreferenceRowStyle}" Margin="0" Icon="Folder24">
                 <custom:CardControl.Header>
                     <controls:CardHeaderControl Title="{x:Static resources:Resource.SettingsPage_CLIAddToPath_Title}" Subtitle="{x:Static resources:Resource.SettingsPage_CLIAddToPath_Message}" />
                 </custom:CardControl.Header>
                     <wpfui:ToggleSwitch
                     x:Name="_cliPathToggle"
-                    Margin="0,0,0,8"
+                    Margin="0"
                     AutomationProperties.Name="{x:Static resources:Resource.SettingsPage_CLIAddToPath_Title}"
                     Click="CLIPathToggle_Click"
                     Visibility="Hidden" />

@@ -8,20 +8,21 @@
     xmlns:wpfui="http://schemas.lepo.co/wpfui/2022/xaml">
     <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
         <StackPanel Margin="0,0,16,12">
-            <custom:CardControl Margin="0,0,0,8" Icon="BrightnessHigh24">
+            <TextBlock Style="{StaticResource ProjectLegionSectionTitleStyle}" Text="Display" />
+            <custom:CardControl Style="{StaticResource ProjectLegionPreferenceRowStyle}" Margin="0" Icon="BrightnessHigh24">
                 <custom:CardControl.Header>
                     <controls:CardHeaderControl Title="{x:Static resources:Resource.SettingsPage_SynchronizeBrightnessToAllPowerPlans_Title}" Subtitle="{x:Static resources:Resource.SettingsPage_SynchronizeBrightnessToAllPowerPlans_Message}" />
                 </custom:CardControl.Header>
                 <wpfui:ToggleSwitch
                     x:Name="_synchronizeBrightnessToAllPowerPlansToggle"
-                    Margin="0,0,0,8"
+                    Margin="0"
                     AutomationProperties.Name="{x:Static resources:Resource.SettingsPage_SynchronizeBrightnessToAllPowerPlans_Title}"
                     Click="SynchronizeBrightnessToAllPowerPlansToggle_Click"
                     Visibility="Hidden" />
             </custom:CardControl>
             <custom:CardAction
                 x:Name="_bootLogoCard"
-                Margin="0,0,0,8"
+                Margin="0"
                 Click="BootLogo_Click"
                 Icon="Image24"
                 Visibility="Collapsed">

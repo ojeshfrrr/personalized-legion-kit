@@ -30,7 +30,7 @@ public partial class SettingsPage
 
     private const double CompactNavThreshold = 560;
     private const double CompactNavWidth = 48;
-    private const double NormalNavWidth = 220;
+    private const double NormalNavWidth = 184;
 
     private bool _isInitialized;
     private bool _isInitializing;

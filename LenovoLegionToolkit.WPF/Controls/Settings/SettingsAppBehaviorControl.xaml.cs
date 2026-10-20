@@ -541,6 +541,13 @@ public partial class SettingsAppBehaviorControl
 
     private async void ResetSettings_Click(object sender, RoutedEventArgs e)
     {
+        if (Folders.IsReadOnlySession)
+        {
+            await SnackbarHelper.ShowAsync(Resource.SettingsPage_ResetSettings_Title,
+                "Settings reset is disabled in read-only or preview mode.", SnackbarType.Warning);
+            return;
+        }
+
         if (_isRefreshing || !IsLoaded)
             return;
 

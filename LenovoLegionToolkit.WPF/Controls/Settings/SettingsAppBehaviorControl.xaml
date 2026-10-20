@@ -8,7 +8,8 @@
     xmlns:wpfui="http://schemas.lepo.co/wpfui/2022/xaml">
     <ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
         <StackPanel Margin="0,0,16,12">
-            <custom:CardControl Margin="0,0,0,8" Icon="Games24">
+            <TextBlock Style="{StaticResource ProjectLegionSectionTitleStyle}" Text="Application behavior" />
+            <custom:CardControl Style="{StaticResource ProjectLegionPreferenceRowStyle}" Margin="0" Icon="Games24">
                 <custom:CardControl.Header>
                     <controls:CardHeaderControl Title="{x:Static resources:Resource.AutomationPage_Game_Detection_Title}" Subtitle="{x:Static resources:Resource.AutomationPage_Game_Detection_Sub_Title}" />
                 </custom:CardControl.Header>
@@ -39,120 +40,120 @@
                         ToolTip="{x:Static resources:Resource.SettingsPage_ExcludeProcesses_Title}" />
                 </Grid>
             </custom:CardControl>
-            <custom:CardControl Margin="0,0,0,8" Icon="Play24">
+            <custom:CardControl Style="{StaticResource ProjectLegionPreferenceRowStyle}" Margin="0" Icon="Play24">
                 <custom:CardControl.Header>
                     <controls:CardHeaderControl Title="{x:Static resources:Resource.SettingsPage_Autorun_Title}" Subtitle="{x:Static resources:Resource.SettingsPage_Autorun_Message}" />
                 </custom:CardControl.Header>
                 <ComboBox
                     x:Name="_autorunComboBox"
                     MinWidth="160"
-                    Margin="0,0,0,8"
+                    Margin="0"
                     AutomationProperties.Name="{x:Static resources:Resource.SettingsPage_Autorun_Title}"
                     MaxDropDownHeight="Auto"
                     SelectionChanged="AutorunComboBox_SelectionChanged"
                     Visibility="Hidden" />
             </custom:CardControl>
-            <custom:CardControl Margin="0,0,0,8" Icon="ArrowMinimize24">
+            <custom:CardControl Style="{StaticResource ProjectLegionPreferenceRowStyle}" Margin="0" Icon="ArrowMinimize24">
                 <custom:CardControl.Header>
                     <controls:CardHeaderControl Title="{x:Static resources:Resource.SettingsPage_MinimizeToTray_Title}" Subtitle="{x:Static resources:Resource.SettingsPage_MinimizeToTray_Message}" />
                 </custom:CardControl.Header>
                 <wpfui:ToggleSwitch
                     x:Name="_minimizeToTrayToggle"
-                    Margin="0,0,0,8"
+                    Margin="0"
                     AutomationProperties.Name="{x:Static resources:Resource.SettingsPage_MinimizeToTray_Title}"
                     Click="MinimizeToTrayToggle_Click"
                     Visibility="Hidden" />
             </custom:CardControl>
-            <custom:CardControl Margin="0,0,0,8" Icon="DismissSquare24">
+            <custom:CardControl Style="{StaticResource ProjectLegionPreferenceRowStyle}" Margin="0" Icon="DismissSquare24">
                 <custom:CardControl.Header>
                     <controls:CardHeaderControl Title="{x:Static resources:Resource.SettingsPage_MinimizeOnClose_Title}" Subtitle="{x:Static resources:Resource.SettingsPage_MinimizeOnClose_Message}" />
                 </custom:CardControl.Header>
                 <wpfui:ToggleSwitch
                     x:Name="_minimizeOnCloseToggle"
-                    Margin="0,0,0,8"
+                    Margin="0"
                     AutomationProperties.Name="{x:Static resources:Resource.SettingsPage_MinimizeOnClose_Title}"
                     Click="MinimizeOnCloseToggle_Click"
                     Visibility="Hidden" />
             </custom:CardControl>
-            <custom:CardControl Margin="0,0,0,8" Icon="LockClosed24">
+            <custom:CardControl Style="{StaticResource ProjectLegionPreferenceRowStyle}" Margin="0" Icon="LockClosed24">
                 <custom:CardControl.Header>
                     <controls:CardHeaderControl Title="{x:Static resources:Resource.SettingsPage_LockWindowSize_Title}" Subtitle="{x:Static resources:Resource.SettingsPage_LockWindowSize_Message}" />
                 </custom:CardControl.Header>
                 <wpfui:ToggleSwitch
                     x:Name="_lockWindowSizeToggle"
-                    Margin="0,0,0,8"
+                    Margin="0"
                     AutomationProperties.Name="{x:Static resources:Resource.SettingsPage_LockWindowSize_Title}"
                     Click="LockWindowSizeToggle_Click"
                     Visibility="Hidden" />
             </custom:CardControl>
-            <custom:CardControl Margin="0,0,0,8" Icon="WindowApps24">
+            <custom:CardControl Style="{StaticResource ProjectLegionPreferenceRowStyle}" Margin="0" Icon="WindowApps24">
                 <custom:CardControl.Header>
                     <controls:CardHeaderControl Title="{x:Static resources:Resource.SettingsPage_RememberWindowPosition_Title}" Subtitle="{x:Static resources:Resource.SettingsPage_RememberWindowPosition_Message}" />
                 </custom:CardControl.Header>
                 <wpfui:ToggleSwitch
                     x:Name="_rememberWindowPositionToggle"
-                    Margin="0,0,0,8"
+                    Margin="0"
                     AutomationProperties.Name="{x:Static resources:Resource.SettingsPage_RememberWindowPosition_Title}"
                     Click="RememberWindowPositionToggle_Click"
                     Visibility="Hidden" />
             </custom:CardControl>
-            <custom:CardControl Margin="0,0,0,8" Icon="Pin24">
+            <custom:CardControl Style="{StaticResource ProjectLegionPreferenceRowStyle}" Margin="0" Icon="Pin24">
                 <custom:CardControl.Header>
                     <controls:CardHeaderControl Title="{x:Static resources:Resource.SettingsPage_AlwaysOnTop_Title}" Subtitle="{x:Static resources:Resource.SettingsPage_AlwaysOnTop_Message}" />
                 </custom:CardControl.Header>
                 <wpfui:ToggleSwitch
                     x:Name="_alwaysOnTopToggle"
-                    Margin="0,0,0,8"
+                    Margin="0"
                     AutomationProperties.Name="{x:Static resources:Resource.SettingsPage_AlwaysOnTop_Title}"
                     Click="AlwaysOnTopToggle_Click"
                     Visibility="Hidden" />
             </custom:CardControl>
-            <custom:CardControl Margin="0,0,0,8" Icon="Resize24">
+            <custom:CardControl Style="{StaticResource ProjectLegionPreferenceRowStyle}" Margin="0" Icon="Resize24">
                 <custom:CardControl.Header>
                     <controls:CardHeaderControl Title="{x:Static resources:Resource.SettingsPage_CompactMode_Title}" Subtitle="{x:Static resources:Resource.SettingsPage_CompactMode_Message}" />
                 </custom:CardControl.Header>
                 <wpfui:ToggleSwitch
                     x:Name="_compactModeToggle"
-                    Margin="0,0,0,8"
+                    Margin="0"
                     AutomationProperties.Name="{x:Static resources:Resource.SettingsPage_CompactMode_Title}"
                     Click="CompactModeToggle_Click"
                     Visibility="Hidden" />
             </custom:CardControl>
             <custom:CardAction
                 x:Name="_notificationsCard"
-                Margin="0,0,0,8"
+                Margin="0"
                 Click="NotificationsCard_Click"
                 Icon="Alert24">
                 <controls:CardHeaderControl Title="{x:Static resources:Resource.SettingsPage_Notifications_Title}" Subtitle="{x:Static resources:Resource.SettingsPage_Notifications_Message}" />
             </custom:CardAction>
             <custom:CardAction
                 x:Name="_backupSettingsCard"
-                Margin="0,0,0,8"
+                Margin="0"
                 Click="BackupSettings_Click"
                 Icon="Save24">
                 <controls:CardHeaderControl Title="{x:Static resources:Resource.SettingsPage_BackupSettings_Title}" Subtitle="{x:Static resources:Resource.SettingsPage_BackupSettings_Message}" />
             </custom:CardAction>
             <custom:CardAction
                 x:Name="_resetSettingsCard"
-                Margin="0,0,0,8"
+                Margin="0"
                 Click="ResetSettings_Click"
                 Icon="ArrowCounterclockwise24">
                 <controls:CardHeaderControl Title="{x:Static resources:Resource.SettingsPage_ResetSettings_Title}" Subtitle="{x:Static resources:Resource.SettingsPage_ResetSettings_Message}" />
             </custom:CardAction>
-            <custom:CardControl Margin="0,0,0,8" Icon="Bug24">
+            <custom:CardControl Style="{StaticResource ProjectLegionPreferenceRowStyle}" Margin="0" Icon="Bug24">
                 <custom:CardControl.Header>
                     <controls:CardHeaderControl Title="{x:Static resources:Resource.SettingsPage_EnableLogging_Title}" Subtitle="{x:Static resources:Resource.SettingsPage_EnableLogging_Message}" />
                 </custom:CardControl.Header>
                 <wpfui:ToggleSwitch
                     x:Name="_enableLoggingToggle"
-                    Margin="0,0,0,8"
+                    Margin="0"
                     AutomationProperties.Name="{x:Static resources:Resource.SettingsPage_EnableLogging_Title}"
                     Click="EnableLoggingToggle_Click"
                     Visibility="Hidden" />
             </custom:CardControl>
             <custom:CardAction
                 x:Name="_sensorSettingsCardControl"
-                Margin="0,0,0,8"
+                Margin="0"
                 Click="SensorSettingsButton_Click"
                 Icon="DataUsage24">
                 <Grid>
@@ -233,14 +234,14 @@
             </custom:CardAction>
             <custom:CardAction
                 x:Name="_argumentWindow"
-                Margin="0,0,0,8"
+                Margin="0"
                 Click="ArgumentWindowButton_Click"
                 Icon="Window24">
                 <controls:CardHeaderControl Title="{x:Static resources:Resource.SettingsPage_ArgumentWindow_Title}" Subtitle="{x:Static resources:Resource.SettingsPage_ArgumentWindow_Message}" />
             </custom:CardAction>
             <custom:CardAction
                 x:Name="_scriptConsoleCard"
-                Margin="0,0,0,8"
+                Margin="0"
                 Click="ScriptConsoleButton_Click"
                 Icon="WindowConsole20">
                 <controls:CardHeaderControl
