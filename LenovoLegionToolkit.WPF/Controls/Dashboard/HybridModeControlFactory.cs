@@ -23,17 +23,17 @@ namespace LenovoLegionToolkit.WPF.Controls.Dashboard;
 
 public static class HybridModeControlFactory
 {
-    public static async Task<AbstractRefreshingControl> GetControlAsync()
+    public static async Task<AbstractRefreshingControl> GetControlAsync(bool emphasizeSelection = false)
     {
         BiosHybridModeFeature biosHybridMode = IoCContainer.Resolve<BiosHybridModeFeature>();
         if (await biosHybridMode.IsSupportedAsync())
         {
-            return new ComboBoxHybridModeControl();
+            return new ComboBoxHybridModeControl(emphasizeSelection);
         }
 
         var mi = await Compatibility.GetMachineInformationAsync();
         return mi.Properties.SupportsIGPUMode
-            ? new ComboBoxHybridModeControl()
+            ? new ComboBoxHybridModeControl(emphasizeSelection)
             : new ToggleHybridModeControl();
     }
 
@@ -48,16 +48,34 @@ public static class HybridModeControlFactory
             Margin = new(8, 0, 0, 0),
         };
 
-        public ComboBoxHybridModeControl()
+        public ComboBoxHybridModeControl(bool emphasizeSelection)
         {
             Icon = SymbolRegular.LeafOne24;
             Title = Resource.ComboBoxHybridModeControl_Title;
             Subtitle = Resource.ComboBoxHybridModeControl_Message;
 
+            if (emphasizeSelection)
+            {
+                _comboBox.FontWeight = FontWeights.SemiBold;
+                _comboBox.FontSize = 16;
+                _comboBox.SetResourceReference(Control.ForegroundProperty, "ProjectLegionAccentBrush");
+            }
+
             AutomationProperties.SetName(_infoButton, Resource.ComboBoxHybridModeControl_Title);
             AutomationProperties.SetHelpText(_infoButton, Resource.Information);
 
+        }
+
+        protected override void OnFinishedLoading()
+        {
+            base.OnFinishedLoading();
             _dgpuNotify.Notified += DGPUNotify_Notified;
+        }
+
+        protected override void OnFinishedUnloading()
+        {
+            _dgpuNotify.Notified -= DGPUNotify_Notified;
+            base.OnFinishedUnloading();
         }
 
         protected override FrameworkElement GetAccessory(ComboBox comboBox)
