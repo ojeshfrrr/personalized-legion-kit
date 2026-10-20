@@ -1,5 +1,6 @@
+> **Upstream reference:** This archived translation documents the original Lenovo Legion Toolkit project. Its release, support, and compatibility information applies to that project, not Project Legion. See [README.md](README.md) for this fork.
 <div align="center">
-  <img height="128" src="assets/logo.png" alt="Lenovo Legion Toolkit Logo">
+  <img height="128" src="assets/logo.png" alt="Project Legion fork icon">
   
   # Lenovo Legion Toolkit
 
