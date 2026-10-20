@@ -1,70 +1,19 @@
-name: Build
-
-env:
-  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+name: Build Project Legion
 
 on:
-  workflow_dispatch:
   push:
-    branches: [ master ]
-    paths-ignore:
-      - '**.md'
-      - 'crowdin.yml'
-      - '.github/workflows/stale.yml'
-      - '.github/workflows/review.yml*'
   pull_request:
-    branches: [ master, dev ]
-    paths-ignore:
-      - '**.md'
-      - 'crowdin.yml'
-      - '.github/workflows/stale.yml'
-      - '.github/workflows/review.yml*'
-
-concurrency:
-  group: build-${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: true
+  workflow_dispatch:
 
 jobs:
-  build:
-
+  build-wpf:
     runs-on: windows-2022
-
     steps:
-    - name: Checkout
-      uses: actions/checkout@v5
-    - name: Setup .NET
-      uses: actions/setup-dotnet@v5
-      with:
-        dotnet-version: 9.0.x
-        cache: true
-        cache-dependency-path: '**/*.csproj'
-    - name: Restore
-      run: dotnet restore
-    - name: Restore identity package signing key
-      env:
-        LLT_CERT_PFX: ${{ secrets.LLT_CERT_PFX }}
-      run: |
-        if (-not $env:LLT_CERT_PFX) {
-          Write-Error "Missing LLT_CERT_PFX secret. The identity MSIX package cannot be signed."
-          exit 1
-        }
-
-        [IO.File]::WriteAllBytes("LenovoLegionToolkit.pfx", [Convert]::FromBase64String($env:LLT_CERT_PFX))
-      shell: powershell
-    - name: Build
-      env:
-        LLT_CERT_PASSWORD: ${{ secrets.LLT_CERT_PASSWORD }}
-      run: .\make_action.bat
-    - name: Verify installer
-      run: |
-        $installerPath = "build_installer\LenovoLegionToolkitSetup.exe"
-        if (-not (Test-Path $installerPath)) {
-          Write-Error "Installer file not found at $installerPath"
-          exit 1
-        }
-      shell: powershell
-    - name: Upload artifact
-      uses: actions/upload-artifact@v4
-      with:
-        name: installer
-        path: build_installer\LenovoLegionToolkitSetup.exe
+      - uses: actions/checkout@v5
+      - uses: actions/setup-dotnet@v5
+        with:
+          dotnet-version: 9.0.x
+      - name: Restore application project
+        run: dotnet restore ProjectLegion.slnf -p:Platform=x64 --disable-parallel -m:1 -nr:false
+      - name: Build application
+        run: dotnet build ProjectLegion.slnf -c Release -p:Platform=x64 -p:UseSharedCompilation=false --no-restore -m:1 -nr:false
