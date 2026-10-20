@@ -37,6 +37,9 @@ public abstract class AbstractSettings<T> where T : class, new()
 
     public void Save()
     {
+        if (Folders.IsReadOnlySession)
+            return;
+
         try
         {
             var settingsSerialized = JsonConvert.SerializeObject(Store, JsonSerializerSettings);
@@ -51,6 +54,9 @@ public abstract class AbstractSettings<T> where T : class, new()
 
     public void EnsureFileExists()
     {
+        if (Folders.IsReadOnlySession)
+            return;
+
         if (!File.Exists(_settingsStorePath))
         {
             Save();
@@ -85,6 +91,9 @@ public abstract class AbstractSettings<T> where T : class, new()
 
     public void SynchronizeStore()
     {
+        if (Folders.IsReadOnlySession)
+            return;
+
         try
         {
             var settingsSerialized = JsonConvert.SerializeObject(Store, JsonSerializerSettings);
@@ -99,6 +108,9 @@ public abstract class AbstractSettings<T> where T : class, new()
 
     private void TryBackup()
     {
+        if (Folders.IsReadOnlySession)
+            return;
+
         try
         {
             if (!File.Exists(_settingsStorePath))
