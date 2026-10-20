@@ -1,0 +1,15 @@
+{
+  "solution": {
+    "path": "LenovoLegionToolkit.sln",
+    "projects": [
+      "LenovoLegionToolkit.WPF\\LenovoLegionToolkit.WPF.csproj",
+      "LenovoLegionToolkit.Lib\\LenovoLegionToolkit.Lib.csproj",
+      "LenovoLegionToolkit.Lib.Automation\\LenovoLegionToolkit.Lib.Automation.csproj",
+      "LenovoLegionToolkit.Lib.Macro\\LenovoLegionToolkit.Lib.Macro.csproj",
+      "LenovoLegionToolkit.CLI\\LenovoLegionToolkit.CLI.csproj",
+      "LenovoLegionToolkit.CLI.Lib\\LenovoLegionToolkit.CLI.Lib.csproj",
+      "LenovoLegionToolkit.Probe\\LenovoLegionToolkit.Probe.csproj",
+      "LenovoLegionToolkit.SpectrumTester\\LenovoLegionToolkit.SpectrumTester.csproj"
+    ]
+  }
+}
