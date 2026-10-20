@@ -18,7 +18,28 @@
         Margin="0,0,0,12"
         IndicatorMargin="0,64,0,0">
         <StackPanel x:Name="_panel">
-            <!-- <dashboard:SensorsControl x:Name="_sensors" Margin="0,16,16,0" /> !-->
+            <Grid Margin="0,8,16,4">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <StackPanel>
+                <TextBlock
+                    Focusable="True"
+                    Style="{StaticResource ProjectLegionPageTitleStyle}"
+                    Text="System overview" />
+                <TextBlock
+                    Style="{StaticResource ProjectLegionPageSubtitleStyle}"
+                    Text="Your hardware, at a glance." />
+                </StackPanel>
+                <StackPanel Grid.Column="1" Margin="16,4,0,12" VerticalAlignment="Center">
+                    <TextBlock x:Name="_deviceIdentity" FontSize="14" FontWeight="SemiBold"
+                        TextAlignment="Right" TextTrimming="CharacterEllipsis" />
+                    <TextBlock x:Name="_deviceType" Margin="0,4,0,0" FontSize="11"
+                        Foreground="{DynamicResource ProjectLegionSecondaryTextBrush}"
+                        TextAlignment="Right" TextTrimming="CharacterEllipsis" />
+                </StackPanel>
+            </Grid>
             <Grid x:Name="_content" />
         </StackPanel>
     </controls:LoadableControl>

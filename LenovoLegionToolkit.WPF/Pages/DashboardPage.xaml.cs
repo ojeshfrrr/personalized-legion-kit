@@ -34,13 +34,15 @@ public partial class DashboardPage
         InitializeComponent();
 
         RefreshSensorControl();
-        EnsureConfigFilesExist();
+        if (!AppFlags.Instance.UiPreview)
+            EnsureConfigFilesExist();
 
         MessagingCenter.Subscribe<SensorDashboardSwappedMessage>(this, _ =>
         {
             Dispatcher.Invoke(() =>
             {
-                EnsureConfigFilesExist();
+                if (!AppFlags.Instance.UiPreview)
+                    EnsureConfigFilesExist();
                 RefreshSensorControl();
             });
         });
@@ -53,8 +55,11 @@ public partial class DashboardPage
             _panel.Children.Remove(sensorControl);
         }
 
-        if (!_settings.Store.EnableHardwareSensors || !_settings.Store.UseNewSensorDashboard)
+        // The advanced provider opens low-level drivers. Locked sessions use the existing
+        // Windows/NVAPI/Lenovo query path without opening that provider or changing preferences.
+        if (!HardwareRuntime.ControlsEnabled || !_settings.Store.EnableHardwareSensors || !_settings.Store.UseNewSensorDashboard)
         {
+            Log.Instance.Trace($"Dashboard sensor backend: Windows/NVAPI/Lenovo queries (advanced provider not opened while controls are locked).");
             sensorControl = new SensorsControl();
         }
         else if (PawnIOHelper.GetPawnIOState() == PawnIOState.Installed)
@@ -63,14 +68,15 @@ public partial class DashboardPage
         }
         else
         {
-            PawnIOHelper.ShowPawnIONotify();
+            if (HardwareRuntime.ControlsEnabled)
+                PawnIOHelper.ShowPawnIONotify();
             sensorControl = new SensorsControl();
         }
 
         int contentIndex = _panel.Children.IndexOf(_content);
         if (contentIndex == -1) contentIndex = 0;
         
-        sensorControl.Margin = new Thickness(0, 16, 16, 0);
+        sensorControl.Margin = new Thickness(0, 8, 16, 0);
         _panel.Children.Insert(contentIndex, sensorControl);
 
         if (_dashboardSettings != null && _loader != null && !_loader.IsLoading)
@@ -103,6 +109,21 @@ public partial class DashboardPage
         {
             ScrollHost?.ScrollToTop();
 
+            try
+            {
+                // Reuse the existing cached compatibility data; no new polling service.
+                var machine = await Compatibility.GetMachineInformationAsync();
+                _deviceIdentity.Text = machine.Model;
+                _deviceIdentity.ToolTip = machine.Model;
+                _deviceType.Text = machine.MachineType;
+            }
+            catch (Exception ex)
+            {
+                _deviceIdentity.Text = "Device information unavailable";
+                _deviceType.Text = string.Empty;
+                Log.Instance.Trace($"Dashboard device identity unavailable.", ex);
+            }
+
             if (sensorControl != null)
             {
                 sensorControl.Visibility = _dashboardSettings.Store.ShowSensors
@@ -123,11 +144,10 @@ public partial class DashboardPage
                 Log.Instance.Trace($" - {group}");
             }
 
-            _content.ColumnDefinitions.Add(new ColumnDefinition { Width = new(1, GridUnitType.Star) });
+            _content.ColumnDefinitions.Add(new ColumnDefinition { Width = new(1.15, GridUnitType.Star) });
             _content.ColumnDefinitions.Add(new ColumnDefinition { Width = new(1, GridUnitType.Star) });
 
-            var initializationTasks = new List<Task> { Task.Delay(TimeSpan.FromSeconds(1)) };
-            var controls = new List<DashboardGroupControl>();
+            var initializationTasks = new List<Task>(groups.Length);
 
             foreach (var group in groups)
             {
@@ -135,12 +155,7 @@ public partial class DashboardPage
 
                 var control = new DashboardGroupControl(group);
                 _content.Children.Add(control);
-                controls.Add(control);
                 _dashboardGroupControls.Add(control);
-            }
-
-            foreach (var control in controls)
-            {
                 initializationTasks.Add(control.InitializedTask);
             }
 
@@ -169,6 +184,8 @@ public partial class DashboardPage
             LayoutGroups(ActualWidth);
 
             await Task.WhenAll(initializationTasks);
+            Log.Instance.Trace($"Dashboard device controls ready.");
+            ReadOnlyQaSession.Mark("DeviceControlsReady");
 
             App.MainWindowInstance!.SetVisual();
         }
