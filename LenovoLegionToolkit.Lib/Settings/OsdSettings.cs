@@ -14,8 +14,8 @@ public class OsdSettings() : AbstractSettings<OsdSettings.OsdSettingsStore>("osd
         public int SelectedStyleIndex { get; set; } = 0;
         public List<OsdItem> Items { get; set; } = Enum.GetValues<OsdItem>().ToList();
 
-        public double BackgroundOpacity { get; set; } = 0.6;
-        public string BackgroundColor { get; set; } = "#1E1E1E";
+        public double BackgroundOpacity { get; set; } = 0.92;
+        public string BackgroundColor { get; set; } = "#FFFFFF";
         public int FontSize { get; set; } = 12;
         public int CornerRadiusTop { get; set; } = 6;
         public int CornerRadiusBottom { get; set; } = 6;
@@ -32,11 +32,11 @@ public class OsdSettings() : AbstractSettings<OsdSettings.OsdSettingsStore>("osd
         public int FpsThresholdCritical { get; set; } = 30;
         public int LowFpsDeltaThreshold { get; set; } = 30;
 
-        public string CategoryColor { get; set; } = "#2196F3";
-        public string LabelColor { get; set; } = "#ADFF2F";
-        public string ValueColor { get; set; } = "#FFFFFF";
-        public string WarningColor { get; set; } = "#FFFF00";
-        public string CriticalColor { get; set; } = "#FF0000";
+        public string CategoryColor { get; set; } = "#2C6B8A";
+        public string LabelColor { get; set; } = "#737B87";
+        public string ValueColor { get; set; } = "#20242B";
+        public string WarningColor { get; set; } = "#9A6700";
+        public string CriticalColor { get; set; } = "#B42318";
         public int SnapThreshold { get; set; } = 20;
     }
 }

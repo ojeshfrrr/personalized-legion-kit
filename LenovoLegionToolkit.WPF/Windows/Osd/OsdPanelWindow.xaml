@@ -24,45 +24,29 @@
     <Border
         x:Name="_rootBorder"
         Padding="15"
-        Background="Transparent"
+        Background="{DynamicResource ProjectLegionSurfaceBrush}"
+        BorderBrush="{DynamicResource ProjectLegionBorderBrush}"
+        BorderThickness="1"
         ClipToBounds="True"
-        CornerRadius="12">
+        CornerRadius="6">
         <StackPanel>
             <StackPanel x:Name="_sensorsPanel">
 
                 <StackPanel.Resources>
                     <Style x:Key="SensorLabelStyle" TargetType="TextBlock">
-                        <Setter Property="Foreground" Value="GreenYellow" />
+                        <Setter Property="Foreground" Value="{DynamicResource ProjectLegionSecondaryTextBrush}" />
                         <Setter Property="FontSize" Value="13" />
-                        <Setter Property="FontWeight" Value="Black" />
+                        <Setter Property="FontWeight" Value="SemiBold" />
                         <Setter Property="FontFamily" Value="Segoe UI" />
-                        <Setter Property="Effect">
-                            <Setter.Value>
-                                <DropShadowEffect
-                                    BlurRadius="4"
-                                    Opacity="1"
-                                    ShadowDepth="0"
-                                    Color="Black" />
-                            </Setter.Value>
-                        </Setter>
                         <Setter Property="Margin" Value="0,3" />
                     </Style>
                     <Style x:Key="SensorValueStyle" TargetType="TextBlock">
-                        <Setter Property="Foreground" Value="White" />
+                        <Setter Property="Foreground" Value="{DynamicResource ProjectLegionTextBrush}" />
                         <Setter Property="FontSize" Value="15" />
-                        <Setter Property="FontWeight" Value="Black" />
+                        <Setter Property="FontWeight" Value="SemiBold" />
                         <Setter Property="FontFamily" Value="Segoe UI" />
                         <Setter Property="HorizontalAlignment" Value="Right" />
                         <Setter Property="Margin" Value="0,1" />
-                        <Setter Property="Effect">
-                            <Setter.Value>
-                                <DropShadowEffect
-                                    BlurRadius="4"
-                                    Opacity="1"
-                                    ShadowDepth="0"
-                                    Color="Black" />
-                            </Setter.Value>
-                        </Setter>
                     </Style>
                 </StackPanel.Resources>
 
@@ -267,7 +251,7 @@
                     </Grid>
                 </StackPanel>
 
-                <Separator Margin="0,8" Background="#3A3A3A" />
+                <Separator Margin="0,8" Background="{DynamicResource ProjectLegionBorderBrush}" />
 
                 <StackPanel x:Name="_gpuGroup">
                     <TextBlock
@@ -391,7 +375,7 @@
                     </Grid>
                 </StackPanel>
 
-                <Separator Margin="0,8" Background="#3A3A3A" />
+                <Separator Margin="0,8" Background="{DynamicResource ProjectLegionBorderBrush}" />
 
                 <StackPanel x:Name="_memoryGroup">
                     <TextBlock
@@ -435,7 +419,7 @@
                     </Grid>
                 </StackPanel>
 
-                <Separator Margin="0,8" Background="#3A3A3A" />
+                <Separator Margin="0,8" Background="{DynamicResource ProjectLegionBorderBrush}" />
 
                 <StackPanel x:Name="_pchGroup">
                     <TextBlock

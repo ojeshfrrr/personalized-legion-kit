@@ -110,7 +110,7 @@ public partial class OsdPanelWindow : OsdWindowBase
         }
         catch
         {
-            _rootBorder.Background = new SolidColorBrush(Color.FromArgb(153, 30, 30, 30));
+            _rootBorder.Background = new SolidColorBrush(Color.FromArgb(0xF0, 0xFF, 0xFF, 0xFF));
         }
 
         double fontSize = _OsdSettings.Store.FontSize;

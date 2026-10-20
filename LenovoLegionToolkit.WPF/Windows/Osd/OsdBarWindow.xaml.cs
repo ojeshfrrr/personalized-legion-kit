@@ -109,7 +109,7 @@ public partial class OsdBarWindow : OsdWindowBase
         }
         catch
         {
-            _backgroundBorder.Background = new SolidColorBrush(Color.FromArgb(0xCC, 0x20, 0x20, 0x20));
+            _backgroundBorder.Background = new SolidColorBrush(Color.FromArgb(0xF0, 0xFF, 0xFF, 0xFF));
         }
 
         double fontSize = _OsdSettings.Store.FontSize;

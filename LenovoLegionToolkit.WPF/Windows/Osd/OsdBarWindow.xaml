@@ -34,7 +34,9 @@
         <Border
             x:Name="_backgroundBorder"
             Padding="10,4"
-            Background="#CC202020"
+            Background="{DynamicResource ProjectLegionSurfaceBrush}"
+            BorderBrush="{DynamicResource ProjectLegionBorderBrush}"
+            BorderThickness="1"
             CornerRadius="6" />
         <Border
             Padding="10,4"
@@ -84,7 +86,7 @@
                     Height="12"
                     Margin="10,0"
                     VerticalAlignment="Center"
-                    Fill="#555555" />
+                    Fill="{DynamicResource ProjectLegionBorderBrush}" />
 
                 <StackPanel
                     x:Name="_cpuGroup"
@@ -143,7 +145,7 @@
                     Height="12"
                     Margin="10,0"
                     VerticalAlignment="Center"
-                    Fill="#555555" />
+                    Fill="{DynamicResource ProjectLegionBorderBrush}" />
 
                 <StackPanel
                     x:Name="_gpuGroup"
@@ -194,7 +196,7 @@
                     Height="12"
                     Margin="10,0"
                     VerticalAlignment="Center"
-                    Fill="#555555" />
+                    Fill="{DynamicResource ProjectLegionBorderBrush}" />
 
                 <StackPanel
                     x:Name="_memoryGroup"
@@ -223,7 +225,7 @@
                     Height="12"
                     Margin="10,0"
                     VerticalAlignment="Center"
-                    Fill="#555555" />
+                    Fill="{DynamicResource ProjectLegionBorderBrush}" />
 
                 <StackPanel
                     x:Name="_pchGroup"

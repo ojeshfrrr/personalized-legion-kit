@@ -60,7 +60,7 @@ public partial class OsdSettingsWindow
         }
         catch
         {
-            _osdBackgroundColorPicker.SelectedColor = Color.FromRgb(0x1E, 0x1E, 0x1E);
+            _osdBackgroundColorPicker.SelectedColor = Color.FromRgb(0xFF, 0xFF, 0xFF);
         }
 
         _tempWarning.Value = _OsdSettings.Store.TempThresholdWarning;
