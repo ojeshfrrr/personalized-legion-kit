@@ -4,6 +4,7 @@ using System.Windows;
 using LenovoLegionToolkit.Lib;
 using LenovoLegionToolkit.Lib.Extensions;
 using LenovoLegionToolkit.Lib.Macro;
+using LenovoLegionToolkit.Lib.Utils;
 using Wpf.Ui.Common;
 using Wpf.Ui.Controls;
 
@@ -22,9 +23,9 @@ public partial class MacroPage
 
     private void MacroPage_Initialized(object? sender, EventArgs e)
     {
-        _controller.StateChanged += (_, _) => Dispatcher.Invoke(() => _enableMacroToggle.IsChecked = _controller.IsEnabled);
+        _controller.StateChanged += (_, _) => Dispatcher.Invoke(() => _enableMacroToggle.IsChecked = _controller.IsEnabled && _controller.IsListening);
 
-        _enableMacroToggle.IsChecked = _controller.IsEnabled;
+        _enableMacroToggle.IsChecked = _controller.IsEnabled && _controller.IsListening;
 
         var zeroNumberButton = _numberPad.Children.OfType<Button>().Last();
         Reload(zeroNumberButton);
@@ -32,6 +33,11 @@ public partial class MacroPage
 
     private void EnableMacroToggle_Click(object sender, RoutedEventArgs e)
     {
+        HardwareRuntime.RequireControls();
+        if (_enableMacroToggle.IsChecked == true)
+            _controller.Start();
+        else
+            _controller.Stop();
         _controller.SetEnabled(_enableMacroToggle.IsChecked ?? false);
     }
 

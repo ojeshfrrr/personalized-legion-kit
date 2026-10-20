@@ -14,19 +14,17 @@
 
     <StackPanel Margin="0,0,16,12">
         <TextBlock
-            Margin="0,16,0,8"
             Focusable="True"
-            FontSize="24"
-            FontWeight="Medium"
+            Style="{StaticResource ProjectLegionPageTitleStyle}"
             Text="{x:Static resources:Resource.MacroPage_Title}" />
 
         <TextBlock
-            Margin="0,0,0,24"
+            Style="{StaticResource ProjectLegionPageSubtitleStyle}"
             Focusable="True"
             TextWrapping="WrapWithOverflow"
             Text="{x:Static resources:Resource.MacroPage_Subtitle}" />
 
-        <custom:CardControl Margin="0,0,0,32">
+        <custom:CardControl Margin="0,0,0,16">
             <custom:CardControl.Header>
                 <controls:CardHeaderControl Title="{x:Static resources:Resource.MacroPage_Enable_Title}" Subtitle="{x:Static resources:Resource.MacroPage_Enable_Subtitle}" />
             </custom:CardControl.Header>
@@ -46,7 +44,7 @@
                 <RowDefinition Height="*" />
             </Grid.RowDefinitions>
 
-            <Grid x:Name="_numberPad" Grid.Column="0">
+            <Grid x:Name="_numberPad" Grid.Column="0" VerticalAlignment="Top" Background="{DynamicResource ProjectLegionSurfaceBrush}" ToolTip="Select a key to edit its assigned macro.">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="56" />
                     <ColumnDefinition Width="56" />
@@ -179,7 +177,7 @@
             <macro:MacroSequenceControl
                 x:Name="_sequenceControl"
                 Grid.Column="1"
-                Margin="32,0,0,0" />
+                Margin="16,0,0,0" />
 
         </Grid>
     </StackPanel>
