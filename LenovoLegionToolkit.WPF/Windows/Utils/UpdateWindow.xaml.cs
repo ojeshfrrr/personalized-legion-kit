@@ -103,15 +103,7 @@ public partial class UpdateWindow : IProgress<float>
         {
             SetDownloading(false);
 
-            if (_updateChecker.UpdateFromServer != null)
-            {
-                await SnackbarHelper.ShowAsync(Resource.UpdateWindow_DownloadError_Title, ex.Message, SnackbarType.Error);
-            }
-            else
-            {
-                Constants.LatestReleaseUri.Open();
-                Close();
-            }
+            await SnackbarHelper.ShowAsync(Resource.UpdateWindow_DownloadError_Title, ex.Message, SnackbarType.Error);
         }
     }
 
