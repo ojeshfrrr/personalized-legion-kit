@@ -11,7 +11,7 @@ using LenovoLegionToolkit.Lib.Macro.Utils;
 
 namespace LenovoLegionToolkit.Lib.Macro;
 
-public class MacroController
+public class MacroController : IDisposable
 {
     public class RecorderReceivedEventArgs : EventArgs
     {
@@ -39,6 +39,7 @@ public class MacroController
     public event EventHandler<EventArgs>? StateChanged;
 
     public bool IsEnabled => _settings.Store.IsEnabled;
+    public bool IsListening => _kbHook != default;
 
     public MacroController(MacroSettings settings)
     {
@@ -83,6 +84,20 @@ public class MacroController
     }
 
     public void StartRecording(MacroRecorderSettings settings = MacroRecorderSettings.Keyboard) => _recorder.StartRecording(settings);
+
+    public void Stop()
+    {
+        if (_kbHook != default)
+            PInvoke.UnhookWindowsHookEx(_kbHook);
+        _kbHook = default;
+    }
+
+    public void Dispose()
+    {
+        Stop();
+        _recorder.StopRecording();
+        GC.SuppressFinalize(this);
+    }
 
     public void StopRecording() => _recorder.StopRecording();
 
