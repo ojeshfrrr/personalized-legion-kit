@@ -15,7 +15,11 @@
     MinHeight="600"
     FlowDirection="{x:Static utils:LocalizationHelper.Direction}">
 
-    <Grid>
+    <Grid
+        Background="{DynamicResource ProjectLegionBackgroundBrush}"
+        TextElement.FontFamily="{DynamicResource ProjectLegionFontFamily}"
+        TextElement.FontSize="13"
+        TextElement.Foreground="{DynamicResource ProjectLegionTextBrush}">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
@@ -49,8 +53,6 @@
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="Auto" />
-                <ColumnDefinition Width="Auto" />
-                <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
 
             <TextBlock
@@ -79,34 +81,6 @@
                 MouseRightButtonDown="OpenLogIndicator_Click"
                 Visibility="Collapsed" />
 
-            <custom:Badge
-                x:Name="_deviceInfoIndicator"
-                Grid.Column="2"
-                Height="26"
-                Margin="0,0,2,0"
-                Padding="8,0,8,0"
-                VerticalAlignment="Top"
-                Appearance="Transparent"
-                Cursor="Hand"
-                Focusable="True"
-                KeyDown="DeviceInfoIndicator_KeyDown"
-                MouseLeftButtonDown="DeviceInfoIndicator_Click"
-                MouseRightButtonDown="DeviceInfoIndicator_Click"
-                Visibility="Collapsed" />
-
-            <custom:Badge
-                x:Name="_themeToggle"
-                Grid.Column="3"
-                Width="32"
-                Height="26"
-                Padding="0"
-                VerticalAlignment="Top"
-                Appearance="Transparent"
-                Cursor="Hand"
-                MouseLeftButtonDown="ThemeToggle_Click">
-                <wpfui:SymbolIcon x:Name="_themeToggleIcon" Symbol="CircleHalfFill24" />
-            </custom:Badge>
-
         </Grid>
 
         <Grid
@@ -118,91 +92,196 @@
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
 
-            <wpfui:NavigationStore
-                x:Name="_navigationStore"
+            <Border
                 Grid.Column="0"
                 Margin="0,0,12,12"
-                Cursor=""
-                Frame="{Binding ElementName=_rootFrame}"
-                Navigated="NavigationStore_Navigated"
-                SelectedPageIndex="0"
-                TransitionDuration="100"
-                TransitionType="FadeIn">
+                Background="{DynamicResource ProjectLegionBackgroundBrush}"
+                BorderBrush="{DynamicResource ProjectLegionBorderBrush}"
+                BorderThickness="0,0,1,0">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="48" />
+                        <RowDefinition Height="*" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
 
-                <wpfui:NavigationStore.Items>
-                    <custom:NavigationItem
-                        Content="{x:Static resources:Resource.MainWindow_NavigationItem_Dashboard}"
-                        Icon="Home24"
-                        PageTag="dashboard"
-                        PageType="{x:Type pages:DashboardPage}" />
-                    <custom:NavigationItem
-                        x:Name="_keyboardItem"
-                        Content="{x:Static resources:Resource.MainWindow_NavigationItem_Keyboard}"
-                        Icon="Keyboard24"
-                        PageTag="keyboardBacklight"
-                        PageType="{x:Type pages:KeyboardBacklightPage}" />
-                    <custom:NavigationItem
-                        x:Name="_lampArrayKeyboardItem"
-                        Content="{x:Static resources:Resource.MainWindow_NavigationItem_Keyboard}"
-                        Icon="Keyboard24"
-                        PageTag="lampArrayKeyboardBacklight"
-                        PageType="{x:Type pages:LampArrayRGBKeyboardPage}" />
-                    <custom:NavigationItem
-                        Content="{x:Static resources:Resource.MainWindow_NavigationItem_Battery}"
-                        Icon="BatteryCheckmark24"
-                        PageTag="battery"
-                        PageType="{x:Type pages:BatteryPage}" />
-                    <custom:NavigationItem
-                        Content="{x:Static resources:Resource.MainWindow_NavigationItem_Actions}"
-                        Icon="Flash24"
-                        PageTag="automation"
-                        PageType="{x:Type pages:AutomationPage}" />
-                    <custom:NavigationItem
-                        Content="{x:Static resources:Resource.MainWindow_NavigationItem_Macro}"
-                        Icon="ReceiptPlay24"
-                        PageTag="macro"
-                        PageType="{x:Type pages:MacroPage}" />
-                    <custom:NavigationItem
-                        Content="{x:Static resources:Resource.MainWindow_NavigationItem_Packages}"
-                        Icon="Box24"
-                        PageTag="packages"
-                        PageType="{x:Type pages:PackagesPage}" />
-                </wpfui:NavigationStore.Items>
+                    <StackPanel Grid.Row="0" Margin="8,0,8,4" Orientation="Horizontal" VerticalAlignment="Center">
+                        <Image
+                            Width="26"
+                            Height="26"
+                            Margin="0,0,8,0"
+                            RenderOptions.BitmapScalingMode="HighQuality"
+                            Source="/Assets/ProjectLegion.png" />
+                        <TextBlock
+                            x:Name="_brandName"
+                            VerticalAlignment="Center"
+                            FontSize="13"
+                            FontWeight="SemiBold"
+                            Text="{x:Static resources:Resource.AppName}" />
+                    </StackPanel>
 
-                <wpfui:NavigationStore.Footer>
-                    <custom:NavigationItem
-                        Content="{x:Static resources:Resource.MainWindow_NavigationItem_Settings}"
-                        Icon="Settings24"
-                        PageTag="settings"
-                        PageType="{x:Type pages:SettingsPage}" />
-                    <custom:NavigationItem
-                        Content="{x:Static resources:Resource.MainWindow_NavigationItem_Donate}"
-                        Icon="Heart24"
-                        PageTag="donate"
-                        PageType="{x:Type pages:DonatePage}">
-                        <custom:NavigationItem.Foreground>
-                            <SolidColorBrush Color="{DynamicResource SystemAccentColorSecondary}" />
-                        </custom:NavigationItem.Foreground>
-                        <custom:NavigationItem.IconForeground>
-                            <SolidColorBrush Color="{DynamicResource SystemAccentColorSecondary}" />
-                        </custom:NavigationItem.IconForeground>
-                    </custom:NavigationItem>
-                    <custom:NavigationItem
-                        Content="{x:Static resources:Resource.MainWindow_NavigationItem_About}"
-                        Icon="Info24"
-                        PageTag="about"
-                        PageType="{x:Type pages:AboutPage}" />
-                </wpfui:NavigationStore.Footer>
+                    <wpfui:NavigationStore
+                        x:Name="_navigationStore"
+                        Grid.Row="1"
+                        Margin="0"
+                        Cursor=""
+                        Frame="{Binding ElementName=_rootFrame}"
+                        Navigated="NavigationStore_Navigated"
+                        IsEnabled="False"
+                        SelectedPageIndex="-1"
+                        TransitionDuration="0"
+                        TransitionType="None">
 
-            </wpfui:NavigationStore>
+                        <wpfui:NavigationStore.Items>
+                            <custom:NavigationItem
+                                Content="{x:Static resources:Resource.MainWindow_NavigationItem_Home}"
+                                Icon="Home24"
+                                PageTag="dashboard"
+                                PageType="{x:Type pages:DashboardPage}" />
+                            <custom:NavigationItem
+                                Content="{x:Static resources:Resource.MainWindow_NavigationItem_Performance}"
+                                Icon="Gauge24"
+                                PageTag="performance"
+                                PageType="{x:Type pages:PerformancePage}" />
+                            <custom:NavigationItem
+                                Content="{x:Static resources:Resource.MainWindow_NavigationItem_Thermals}"
+                                Icon="Temperature24"
+                                PageTag="thermals"
+                                PageType="{x:Type pages:ThermalsPage}" />
+                            <custom:NavigationItem
+                                Content="{x:Static resources:Resource.MainWindow_NavigationItem_Battery}"
+                                Icon="BatteryCheckmark24"
+                                PageTag="battery"
+                                PageType="{x:Type pages:BatteryPage}" />
+                            <custom:NavigationItem
+                                Content="{x:Static resources:Resource.MainWindow_NavigationItem_Graphics}"
+                                Icon="DeveloperBoard24"
+                                PageTag="graphics"
+                                PageType="{x:Type pages:GraphicsPage}" />
+                            <custom:NavigationItem
+                                x:Name="_keyboardItem"
+                                Content="{x:Static resources:Resource.MainWindow_NavigationItem_Keyboard}"
+                                Icon="Keyboard24"
+                                PageTag="keyboardBacklight"
+                                PageType="{x:Type pages:KeyboardBacklightPage}" />
+                            <custom:NavigationItem
+                                x:Name="_lampArrayKeyboardItem"
+                                Content="{x:Static resources:Resource.MainWindow_NavigationItem_KeyboardRgb}"
+                                Icon="Keyboard24"
+                                PageTag="lampArrayKeyboardBacklight"
+                                PageType="{x:Type pages:LampArrayRGBKeyboardPage}" />
+                            <custom:NavigationItem
+                                Content="Mouse"
+                                Icon="Cursor24"
+                                PageTag="mouse"
+                                PageType="{x:Type pages:MousePage}" />
+                            <custom:NavigationItem
+                                Content="{x:Static resources:Resource.MainWindow_NavigationItem_Automation}"
+                                Icon="Flash24"
+                                PageTag="automation"
+                                PageType="{x:Type pages:AutomationPage}" />
+                            <custom:NavigationItem
+                                Content="{x:Static resources:Resource.MainWindow_NavigationItem_Macro}"
+                                Icon="ReceiptPlay24"
+                                PageTag="macro"
+                                PageType="{x:Type pages:MacroPage}" />
+                            <custom:NavigationItem
+                                Content="{x:Static resources:Resource.MainWindow_NavigationItem_Packages}"
+                                Icon="Box24"
+                                PageTag="packages"
+                                PageType="{x:Type pages:PackagesPage}" />
+                        </wpfui:NavigationStore.Items>
+
+                        <wpfui:NavigationStore.Footer>
+                            <custom:NavigationItem
+                                Content="{x:Static resources:Resource.MainWindow_NavigationItem_Settings}"
+                                Icon="Settings24"
+                                PageTag="settings"
+                                PageType="{x:Type pages:SettingsPage}" />
+                            <custom:NavigationItem
+                                Content="{x:Static resources:Resource.MainWindow_NavigationItem_Donate}"
+                                Icon="DocumentText24"
+                                PageTag="donate"
+                                PageType="{x:Type pages:DonatePage}" />
+                            <custom:NavigationItem
+                                Content="{x:Static resources:Resource.MainWindow_NavigationItem_About}"
+                                Icon="Info24"
+                                PageTag="about"
+                                PageType="{x:Type pages:AboutPage}" />
+                        </wpfui:NavigationStore.Footer>
+
+                    </wpfui:NavigationStore>
+
+                    <custom:Badge
+                        x:Name="_deviceInfoIndicator"
+                        Grid.Row="2"
+                        Height="30"
+                        Margin="8,8,8,8"
+                        Padding="8,0,8,0"
+                        HorizontalAlignment="Stretch"
+                        VerticalAlignment="Center"
+                        Appearance="Transparent"
+                        Cursor="Hand"
+                        Focusable="True"
+                        KeyDown="DeviceInfoIndicator_KeyDown"
+                        MouseLeftButtonDown="DeviceInfoIndicator_Click"
+                        MouseRightButtonDown="DeviceInfoIndicator_Click"
+                        Visibility="Collapsed" />
+                </Grid>
+            </Border>
 
             <Border
                 Grid.Column="1"
                 Margin="0,0,12,12"
-                Background="{DynamicResource ControlFillColorDefaultBrush}"
+                Background="{DynamicResource ProjectLegionContentBrush}"
+                BorderBrush="{DynamicResource ProjectLegionBorderBrush}"
+                BorderThickness="1"
                 ClipToBounds="True"
-                CornerRadius="4">
-                <Frame Name="_rootFrame" Margin="24,0,0,0" />
+                CornerRadius="5">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="*" />
+                    </Grid.RowDefinitions>
+                    <Border Margin="12,8,12,0" Padding="10,8" CornerRadius="3"
+                            Background="{DynamicResource ProjectLegionAccentSurfaceBrush}"
+                            BorderBrush="{DynamicResource ProjectLegionBorderBrush}"
+                            BorderThickness="1">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="3" />
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+                            <Rectangle Grid.Column="0" Margin="0,0,10,0" Fill="{DynamicResource ProjectLegionAccentBrush}" />
+                            <TextBlock x:Name="_controlAccessStatus" Grid.Column="1" VerticalAlignment="Center" Margin="0,0,12,0"
+                                       Text="Read-only. Hardware changes have not been verified on this device."
+                                       TextWrapping="Wrap" FontSize="12" Foreground="{DynamicResource ProjectLegionTextBrush}" />
+                            <Button x:Name="_enableControlsButton" Grid.Column="2" Content="Enable controls"
+                                    Click="EnableControls_Click" />
+                        </Grid>
+                    </Border>
+                    <Frame Name="_rootFrame" Grid.Row="1" Margin="14,10,14,10" />
+                    <StackPanel
+                        x:Name="_startupPanel"
+                        Grid.Row="1"
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center"
+                        IsHitTestVisible="False">
+                        <wpfui:ProgressRing
+                            Width="22"
+                            Height="22"
+                            Margin="0,0,0,14"
+                            HorizontalAlignment="Center"
+                            Foreground="{DynamicResource ProjectLegionAccentBrush}"
+                            IsIndeterminate="True" />
+                        <TextBlock
+                            x:Name="_startupStatusText"
+                            Foreground="{DynamicResource ProjectLegionSecondaryTextBrush}"
+                            FontSize="13"
+                            TextAlignment="Center" />
+                    </StackPanel>
+                </Grid>
             </Border>
 
             <wpfui:Snackbar
@@ -292,24 +371,16 @@
             </StackPanel>
         </Border>
 
-        <Border
-            x:Name="_fnKeysIndicator"
-            Grid.Row="5"
-            Padding="8,4,8,6"
-            Background="{DynamicResource SystemFillColorCautionBackgroundBrush}"
-            Cursor="Hand"
-            MouseLeftButtonDown="SoftwareIndicator_MouseLeftButtonDown"
-            Visibility="Collapsed">
-            <StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
-                <wpfui:SymbolIcon
-                    Margin="0,0,4,0"
-                    Foreground="{DynamicResource SystemFillColorCautionBrush}"
-                    Symbol="Warning24" />
-                <TextBlock
-                    Focusable="True"
-                    Foreground="{DynamicResource TextFillColorPrimaryBrush}"
-                    Text="{x:Static resources:Resource.MainWindow_FnKeysRunning}" />
-            </StackPanel>
+        <Border x:Name="_fnKeysIndicator" Grid.Row="5" Margin="14,0" Padding="0,5"
+            Background="Transparent" BorderBrush="{DynamicResource ProjectLegionBorderBrush}" BorderThickness="0,1,0,0"
+            Cursor="Hand" MouseLeftButtonDown="SoftwareIndicator_MouseLeftButtonDown" Visibility="Collapsed"
+            ToolTip="{x:Static resources:Resource.MainWindow_FnKeysRunning}">
+            <DockPanel LastChildFill="True">
+                <wpfui:SymbolIcon DockPanel.Dock="Left" Symbol="Warning24" FontSize="12" Margin="0,0,6,0"
+                    Foreground="{DynamicResource SystemFillColorCautionBrush}"/>
+                <TextBlock FontSize="11" Foreground="{DynamicResource ProjectLegionSecondaryTextBrush}"
+                    Text="{x:Static resources:Resource.MainWindow_FnKeysRunning}" TextWrapping="Wrap" Focusable="True"/>
+            </DockPanel>
         </Border>
 
         <Border

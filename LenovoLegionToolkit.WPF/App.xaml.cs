@@ -11,6 +11,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Interop;
 using System.Windows.Media;
+using System.Windows.Threading;
 using LenovoLegionToolkit.Lib;
 using LenovoLegionToolkit.Lib.Automation;
 using LenovoLegionToolkit.Lib.Controllers;
@@ -69,8 +70,8 @@ public partial class App
 
     #region Constants & Fields
 
-    private const string MUTEX_NAME = "LenovoLegionToolkit_Mutex_6efcc882-924c-4cbc-8fec-f45c25696f98";
-    private const string EVENT_NAME = "LenovoLegionToolkit_Event_6efcc882-924c-4cbc-8fec-f45c25696f98";
+    private const string MUTEX_NAME = "ProjectLegion_Mutex_70ade129-b5d8-4d78-8c5f-63dbbfbb1942";
+    private const string EVENT_NAME = "ProjectLegion_Event_70ade129-b5d8-4d78-8c5f-63dbbfbb1942";
 
     public Window? OsdWindow;
 
@@ -79,6 +80,7 @@ public partial class App
     private Mutex? _singleInstanceMutex;
     private EventWaitHandle? _singleInstanceWaitHandle;
     private bool _showPawnIONotify;
+    private Task? _shutdownTask;
 
     public new static App Current => (App)Application.Current;
     public static MainWindow? MainWindowInstance;
@@ -91,6 +93,8 @@ public partial class App
 
     private async void Application_Startup(object sender, StartupEventArgs e)
     {
+        var startupStopwatch = Stopwatch.StartNew();
+
         try
         {
             if (!await InitializeCoreEnvironmentAsync(e))
@@ -98,18 +102,50 @@ public partial class App
                 return;
             }
 
+            ReadOnlyQaSession.Start(startupStopwatch);
+
             await InitializeSettingsAndCompatibilityAsync();
-            await InitializeHardwareAndFeaturesAsync();
-            IoCContainer.Resolve<ExtensionManager>().Load();
-            var deferredInitTask = StartBackgroundServicesAsync();
+            if (!AppFlags.Instance.UiPreview)
+                await GamingActivityMonitor.Instance.StartAsync();
             await InitializeUIAsync();
+            ReadOnlyQaSession.Mark("UiInitialized");
+
+            if (AppFlags.Instance.UiPreview)
+            {
+                MainWindowInstance!.ShowUiPreview();
+                await Dispatcher.InvokeAsync(static () => { }, DispatcherPriority.ApplicationIdle);
+                return;
+            }
+
+            if (!AppFlags.Instance.Minimized)
+            {
+                await Dispatcher.InvokeAsync(static () => { }, DispatcherPriority.ApplicationIdle);
+                Log.Instance.Trace($"Startup shell rendered. [elapsed={startupStopwatch.ElapsedMilliseconds}ms]");
+            }
+
+            if (!await CheckCompatibilityAsyncWrapper(AppFlags.Instance))
+            {
+                return;
+            }
+            await Task.Run(InitializeHardwareAndFeaturesAsync);
+            Log.Instance.Trace($"Hardware feature initialization stage finished. [elapsed={startupStopwatch.ElapsedMilliseconds}ms]");
+            // Extension entry points may issue hardware commands. Load only on explicit opt-in.
+            await MainWindowInstance!.InitializeAfterFeaturesAsync();
+            Log.Instance.Trace($"Main window controls enabled. [elapsed={startupStopwatch.ElapsedMilliseconds}ms]");
+
+            if (!AppFlags.Instance.Minimized && _showPawnIONotify && HardwareRuntime.ControlsEnabled)
+            {
+                PawnIOHelper.ShowPawnIONotify();
+            }
+
+            var deferredInitTask = StartBackgroundServicesAsync();
             await deferredInitTask;
 
             await Dispatcher.InvokeAsync(() =>
             {
                 if (Log.Instance.IsTraceEnabled)
                 {
-                    Log.Instance.Trace($"Lenovo Legion Toolkit Version {Assembly.GetEntryAssembly()?.GetName().Version}");
+                    Log.Instance.Trace($"{ProjectBranding.ProductName} Version {Assembly.GetEntryAssembly()?.GetName().Version}");
                 }
 
                 InitOsd();
@@ -120,7 +156,14 @@ public partial class App
                 {
                     Console.WriteLine(@"[Startup] Startup Complete.");
                 }
+
+                Log.Instance.Trace($"Startup completed. [elapsed={startupStopwatch.ElapsedMilliseconds}ms]");
+                ReadOnlyQaSession.Mark("StartupCompleted");
             });
+            if (AppFlags.Instance.QaExitAfterSeconds > 0)
+                _ = EndReadOnlyQaSessionAsync();
+
+            _ = Task.Run(LogMachineInformationAsync);
         }
         catch (Exception ex)
         {
@@ -151,7 +194,11 @@ public partial class App
         }
 #endif
 
+#if PROJECT_LEGION_PREVIEW
+        AppFlags.Initialize(e.Args.Concat(["--ui-preview"]));
+#else
         AppFlags.Initialize(e.Args);
+#endif
         Log.Instance.IsTraceEnabled = AppFlags.Instance.IsTraceEnabled;
 
         if (AppFlags.Instance.Debug)
@@ -164,8 +211,6 @@ public partial class App
         {
             return false;
         }
-
-        await Compatibility.PrintMachineInfoAsync().ConfigureAwait(false);
 
         SetupExceptionHandling();
 
@@ -189,13 +234,10 @@ public partial class App
     {
         if (AppFlags.Instance.Debug)
         {
-            Console.WriteLine(@"[Startup] Setting Language and Checking Compatibility...");
+            Console.WriteLine(@"[Startup] Setting Language and Preparing Settings...");
         }
 
-        await Task.WhenAll(
-            LocalizationHelper.SetLanguageAsync(true),
-            CheckCompatibilityAsyncWrapper(AppFlags.Instance)
-        );
+        await LocalizationHelper.SetLanguageAsync(true);
 
         if (AppFlags.Instance.Debug)
         {
@@ -229,18 +271,9 @@ public partial class App
 
         var initTasks = new List<Task>
         {
-            SafeInitAsync(LogSoftwareStatusAsync, "Software Status"),
-            SafeInitAsync(InitPowerModeFeatureAsync, "Power Mode"),
-            SafeInitAsync(InitITSModeFeatureAsync, "ITS Mode"),
-            SafeInitAsync(InitBatteryFeatureAsync, "Battery Feature"),
-            SafeInitAsync(InitRgbKeyboardControllerAsync, "RGB Keyboard"),
-            SafeInitAsync(InitSpectrumKeyboardControllerAsync, "Spectrum Keyboard"),
-            SafeInitAsync(InitGpuOverclockControllerAsync, "GPU Overclock"),
-            SafeInitAsync(InitSensorsGroupControllerFeatureAsync, "Sensors Group"),
-            SafeInitAsync(InitHybridModeAsync, "Hybrid Mode"),
+            // MainWindow.UpdateIndicators already queries and traces the same four
+            // software states. Do not repeat those service/process scans here.
             SafeInitAsync(InitAutomationProcessorAsync, "Automation Processor"),
-            SafeInitAsync(InitLampArrayControllerAsync, "LampArray"),
-            SafeInitAsync(InitAMDOverclocking, "AMD Overclocking"),
         };
 
         foreach (var task in initTasks)
@@ -251,7 +284,6 @@ public partial class App
         var postTasks = new List<Task>
         {
             SafeInitAsync(InitAutomationLocalization, "Automation Localization"),
-            SafeInitAsync(PostApplyAmdOverclockingProfileAsync, "AMD Overclocking Profile"),
         };
 
         await Task.WhenAll(postTasks);
@@ -266,8 +298,6 @@ public partial class App
             Console.WriteLine(@"[Startup] Starting background services...");
         }
 
-        IoCContainer.Resolve<MacroController>().Start();
-
         await Task.Run(async () =>
         {
             if (AppFlags.Instance.Debug)
@@ -275,17 +305,13 @@ public partial class App
                 Console.WriteLine(@"[AsyncWorker] Starting background services...");
             }
 
-            await SafeInitAsync(InitAIControllerAsync, "AI Controller");
             await SafeInitAsync(InitHWiNFOAsync, "HWiNFO Integration");
-            await SafeInitAsync(InitIpcServerAsync, "IPC Server");
+            // Autorun changes, macro hooks, AI, extensions and command IPC require session opt-in.
         });
     }
 
-    private async Task InitializeUIAsync()
+    private Task InitializeUIAsync()
     {
-#if !DEBUG
-        Autorun.Validate();
-#endif
         if (AppFlags.Instance.Debug)
         {
             Console.WriteLine(@"[Startup] Creating MainWindow...");
@@ -293,6 +319,7 @@ public partial class App
 
         var mainWindow = new MainWindow
         {
+            ShowActivated = !Folders.IsIsolatedProfile,
             WindowStartupLocation = WindowStartupLocation.CenterScreen,
             TrayTooltipEnabled = !AppFlags.Instance.DisableTrayTooltip,
             DisableConflictingSoftwareWarning = AppFlags.Instance.DisableConflictingSoftwareWarning
@@ -311,7 +338,7 @@ public partial class App
             _ => MessageBoxHelper.ShowAsync(Current.MainWindow!, Resource.Warning, Resource.Notify_PawnIO_Warning_Message, Resource.Yes, Resource.No),
         };
 
-        if (AppFlags.Instance.Minimized)
+        if (AppFlags.Instance.Minimized && !AppFlags.Instance.UiPreview)
         {
             var minimizeToTray = IoCContainer.Resolve<ApplicationSettings>().Store.MinimizeToTray;
 
@@ -324,14 +351,10 @@ public partial class App
         else
         {
             mainWindow.Show();
-            if (_showPawnIONotify)
-            {
-                PawnIOHelper.ShowPawnIONotify();
-            }
         }
 
         DebugUIManager.Start();
-        await Task.CompletedTask;
+        return Task.CompletedTask;
     }
 
     private void InitializeDebugConsole()
@@ -353,7 +376,7 @@ public partial class App
         IoCContainer.Resolve<PortsBacklightFeature>().ForceDisable = AppFlags.Instance.ForceDisableLenovoLighting;
         IoCContainer.Resolve<IGPUModeFeature>().ExperimentalGPUWorkingMode = AppFlags.Instance.ExperimentalGPUWorkingMode;
         IoCContainer.Resolve<DGPUNotify>().ExperimentalGPUWorkingMode = AppFlags.Instance.ExperimentalGPUWorkingMode;
-        IoCContainer.Resolve<UpdateChecker>().Disable = AppFlags.Instance.DisableUpdateChecker;
+        IoCContainer.Resolve<UpdateChecker>().Disable = AppFlags.Instance.DisableUpdateChecker || !ProjectBranding.HasUpdateFeed;
     }
 
     private void HandleCriticalStartupError(Exception ex)
@@ -376,7 +399,7 @@ public partial class App
         {
             try
             {
-                MessageBox.Show(errorMsg, "Lenovo Legion Toolkit - Startup Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show(errorMsg, $"{ProjectBranding.ProductName} - Startup Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
             catch { /* Ignore */ }
         }
@@ -386,21 +409,29 @@ public partial class App
 
     private void Application_Exit(object sender, ExitEventArgs e)
     {
-        _singleInstanceMutex?.Close();
+        try { IoCContainer.Dispose(); }
+        catch (Exception ex) { Log.Instance.Trace($"Resource disposal failed.", ex); }
+        finally { ReadOnlyQaSession.Mark("ApplicationExit"); _singleInstanceMutex?.Close(); }
     }
 
-    public async Task ShutdownAsync()
+    public Task ShutdownAsync() => _shutdownTask ??= ShutdownCoreAsync();
+
+    private async Task ShutdownCoreAsync()
     {
-        await SafeExecuteAsync<AIController>(c => c.StopAsync());
+        // Publish the shutdown task before window-close callbacks can re-enter it.
+        await Task.Yield();
+        await GamingActivityMonitor.Instance.StopAsync();
+        if (HardwareRuntime.ControlsEnabled)
+            await SafeExecuteAsync<AIController>(c => c.StopAsync());
 
         await SafeExecuteAsync<RGBKeyboardBacklightController>(async c =>
         {
-            if (await c.IsSupportedAsync()) await c.SetLightControlOwnerAsync(false);
+            if (HardwareRuntime.ControlsEnabled && c.HasLightControlOwnership) await c.SetLightControlOwnerAsync(false);
         });
 
         await SafeExecuteAsync<SpectrumKeyboardBacklightController>(async c =>
         {
-            if (await c.IsSupportedAsync()) await c.StopAuroraIfNeededAsync();
+            if (HardwareRuntime.ControlsEnabled && await c.IsSupportedAsync()) await c.StopAuroraIfNeededAsync();
         });
 
         await SafeExecuteAsync<NativeWindowsMessageListener>(c => c.StopAsync());
@@ -409,7 +440,8 @@ public partial class App
         await SafeExecuteAsync<IpcServer>(c => c.StopAsync());
         await SafeExecuteAsync<BatteryDischargeRateMonitorService>(c => c.StopAsync());
         await SafeExecuteAsync<ExtensionManager>(c => c.StopAsync());
-        await SafeExecuteAsync<GodModeController>(c => c.RestoreDefaultsInOtherPowerModeAsync(PowerModeState.Balance));
+        await SafeExecuteAsync<GPUController>(c => c.StopAsync(waitForFinish: true));
+        await SafeExecuteAsync<AutomationProcessor>(c => c.StopAsync());
 
         var feature = IoCContainer.Resolve<AmdOverclockingController>();
 
@@ -421,6 +453,7 @@ public partial class App
 
         feature.SaveShutdownInfo(cleanInfo);
 
+        ReadOnlyQaSession.Mark("ShutdownServicesStopped");
         Dispatcher.Invoke(Shutdown);
     }
 
@@ -472,27 +505,33 @@ public partial class App
 
     #region Compatibility Check
 
-    private async Task CheckCompatibilityAsyncWrapper(AppFlags flags)
+    private static async Task LogMachineInformationAsync()
+    {
+        try
+        {
+            await Compatibility.PrintMachineInfoAsync().ConfigureAwait(false);
+        }
+        catch (Exception ex)
+        {
+            Log.Instance.Trace($"Failed to log machine information.", ex);
+        }
+    }
+
+    private async Task<bool> CheckCompatibilityAsyncWrapper(AppFlags flags)
     {
         if (flags.SkipCompatibilityCheck)
         {
-            return;
+            return true;
         }
 
         try
         {
-            var basicTask = Compatibility.CheckBasicCompatibilityAsync();
-            var fullTask = Compatibility.IsCompatibleAsync();
+            var (isCompatible, mi) = await Task.Run(Compatibility.IsCompatibleAsync);
 
-            await Task.WhenAll(basicTask, fullTask);
-
-            bool isBasicCompatible = basicTask.Result;
-            var (isFullCompatible, mi) = fullTask.Result;
-
-            if (isBasicCompatible || isFullCompatible)
+            if (isCompatible)
             {
-                Log.Instance.Trace($"Compatibility check passed. (Basic={isBasicCompatible}, Full={isFullCompatible}) [Vendor={mi.Vendor}, Model={mi.Model}, MachineType={mi.MachineType}, BIOS={mi.BiosVersion}]");
-                return;
+                Log.Instance.Trace($"Compatibility check passed. [Vendor={mi.Vendor}, Model={mi.Model}, MachineType={mi.MachineType}, BIOS={mi.BiosVersion}]");
+                return true;
             }
 
             Log.Instance.Trace($"Incompatible system detected. [Vendor={mi.Vendor}, Model={mi.Model}, MachineType={mi.MachineType}, BIOS={mi.BiosVersion}]");
@@ -504,10 +543,11 @@ public partial class App
             {
                 Log.Instance.IsTraceEnabled = true;
                 Log.Instance.Trace($"Compatibility check OVERRIDE. [Vendor={mi.Vendor}, Model={mi.Model}, MachineType={mi.MachineType}]");
-                return;
+                return true;
             }
 
             Shutdown(202);
+            return false;
         }
         catch (Exception ex)
         {
@@ -519,6 +559,7 @@ public partial class App
             Log.Instance.Trace($"Failed to check device compatibility", ex);
             MessageBox.Show(Resource.CompatibilityCheckError_Message, Resource.AppName, MessageBoxButton.OK, MessageBoxImage.Error);
             Shutdown(200);
+            return false;
         }
     }
 
@@ -526,7 +567,7 @@ public partial class App
 
     #region Instance Management
 
-    public void RestartMainWindow()
+    public async void RestartMainWindow()
     {
         if (MainWindow is MainWindow mw)
         {
@@ -540,6 +581,19 @@ public partial class App
         };
 
         MainWindow.Show();
+
+        try
+        {
+            if (AppFlags.Instance.UiPreview)
+                MainWindowInstance.ShowUiPreview();
+            else
+                await MainWindowInstance.InitializeAfterFeaturesAsync();
+        }
+        catch (Exception ex)
+        {
+            Log.Instance.Trace($"Main window reinitialization failed.", ex);
+            SnackbarHelper.Show("Window could not be refreshed", ex.Message, SnackbarType.Error);
+        }
 
         if (OsdWindow != null)
         {
@@ -566,8 +620,14 @@ public partial class App
 
     private bool EnsureSingleInstance()
     {
-        _singleInstanceMutex = new Mutex(true, MUTEX_NAME, out var isOwned);
-        _singleInstanceWaitHandle = new EventWaitHandle(false, EventResetMode.AutoReset, EVENT_NAME);
+        // Disposable QA profiles must not signal/activate the user's existing session.
+        var profileSuffix = Folders.IsIsolatedProfile
+            ? "_QA_" + Convert.ToHexString(System.Security.Cryptography.SHA256.HashData(System.Text.Encoding.UTF8.GetBytes(Folders.AppData.ToUpperInvariant())))[..16]
+            : string.Empty;
+        var mutexName = (AppFlags.Instance.UiPreview ? $"{MUTEX_NAME}_Preview" : MUTEX_NAME) + profileSuffix;
+        var eventName = (AppFlags.Instance.UiPreview ? $"{EVENT_NAME}_Preview" : EVENT_NAME) + profileSuffix;
+        _singleInstanceMutex = new Mutex(true, mutexName, out var isOwned);
+        _singleInstanceWaitHandle = new EventWaitHandle(false, EventResetMode.AutoReset, eventName);
 
         if (!isOwned)
         {
@@ -595,6 +655,17 @@ public partial class App
         }, TaskCreationOptions.LongRunning);
 
         return true;
+    }
+
+    private async Task EndReadOnlyQaSessionAsync()
+    {
+        try
+        {
+            await Task.Delay(TimeSpan.FromSeconds(AppFlags.Instance.QaExitAfterSeconds));
+            ReadOnlyQaSession.Mark("ShutdownRequested");
+            await Dispatcher.InvokeAsync(ShutdownAsync).Task.Unwrap();
+        }
+        catch (Exception ex) { Log.Instance.Trace($"Timed read-only QA shutdown failed.", ex); }
     }
 
 
@@ -755,20 +826,6 @@ public partial class App
         }
     }
 
-    private static async Task<bool> LogSoftwareStatusAsync()
-    {
-        if (!Log.Instance.IsTraceEnabled)
-        {
-            return false;
-        }
-
-        Log.Instance.Trace($"Vantage status: {await IoCContainer.Resolve<VantageDisabler>().GetStatusAsync()}");
-        Log.Instance.Trace($"LegionSpace status: {await IoCContainer.Resolve<LegionSpaceDisabler>().GetStatusAsync()}");
-        Log.Instance.Trace($"LegionZone status: {await IoCContainer.Resolve<LegionZoneDisabler>().GetStatusAsync()}");
-        Log.Instance.Trace($"FnKeys status: {await IoCContainer.Resolve<FnKeysDisabler>().GetStatusAsync()}");
-        return true;
-    }
-
     private static async Task<bool> InitHybridModeAsync()
     {
         try
@@ -788,8 +845,7 @@ public partial class App
         try
         {
             var ap = IoCContainer.Resolve<AutomationProcessor>();
-            await ap.InitializeAsync();
-            ap.RunOnStartup();
+            await ap.InitializeAsync(startListeners: false);
             return true;
         }
         catch (Exception ex)
@@ -1115,20 +1171,21 @@ public partial class App
         }
     }
 
-    private async Task SafeInitAsync(Func<Task<bool>> action, string taskName)
+    private static Task SafeInitAsync(Func<Task<bool>> action, string taskName)
     {
-        try
+        return Task.Run(async () =>
         {
             var sw = Stopwatch.StartNew();
-            if (await action())
+            try
             {
-                Log.Instance.Trace($"{taskName} initialized successfully. [elapsed={sw.ElapsedMilliseconds}ms]");
+                var initialized = await action().ConfigureAwait(false);
+                Log.Instance.Trace($"{taskName} initialization finished. [initialized={initialized}, elapsed={sw.ElapsedMilliseconds}ms]");
             }
-        }
-        catch (Exception ex)
-        {
-            Log.Instance.Trace($"{taskName} failed: {ex.Message}");
-        }
+            catch (Exception ex)
+            {
+                Log.Instance.Trace($"{taskName} initialization failed. [elapsed={sw.ElapsedMilliseconds}ms]", ex);
+            }
+        });
     }
 
     private void LogIdentityStatus()
@@ -1142,7 +1199,9 @@ public partial class App
         }
         catch (InvalidOperationException)
         {
-            Log.Instance.Trace($"Package Identity not found (Running as standard Win32).");
+            const string appUserModelId = "ProjectLegion.Desktop";
+            SetCurrentProcessExplicitAppUserModelID(appUserModelId);
+            Log.Instance.Trace($"Package Identity not found; using desktop AUMID: {appUserModelId}");
         }
         catch (Exception ex)
         {

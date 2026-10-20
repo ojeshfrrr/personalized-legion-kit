@@ -13,6 +13,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shell;
+using System.Windows.Threading;
 using Microsoft.Xaml.Behaviors.Core;
 using Windows.Win32;
 using Windows.Win32.System.Threading;
@@ -49,7 +50,6 @@ public partial class MainWindow
     private readonly FnKeysDisabler _fnKeysDisabler = IoCContainer.Resolve<FnKeysDisabler>();
     private readonly INavigationService _extensionNavigationService = IoCContainer.Resolve<INavigationService>();
     private readonly UpdateChecker _updateChecker = IoCContainer.Resolve<UpdateChecker>();
-    private readonly ThemeManager _themeManager = IoCContainer.Resolve<ThemeManager>();
 
     private const double CompactMinWidth = 550;
     private const double CompactMinHeight = 480;
@@ -58,6 +58,8 @@ public partial class MainWindow
 
     private TrayHelper? _trayHelper;
     private bool _windowSizeLocked;
+    private bool _featureUiInitialized;
+    private bool _visualRefreshQueued;
 
     private string? _cachedBackgroundImagePath;
     private BitmapImage? _cachedBackgroundImage;
@@ -75,13 +77,24 @@ public partial class MainWindow
         Closing += MainWindow_Closing;
         Closed += MainWindow_Closed;
         IsVisibleChanged += MainWindow_IsVisibleChanged;
-        Loaded += MainWindow_Loaded;
         SourceInitialized += MainWindow_SourceInitialized;
         StateChanged += MainWindow_StateChanged;
+        _rootFrame.PreviewMouseDown += (_, e) =>
+        {
+            if (!HardwareRuntime.ControlsEnabled && !IsReadOnlyNavigationInput(e.OriginalSource))
+                e.Handled = true;
+        };
+        _rootFrame.PreviewKeyDown += (_, e) =>
+        {
+            if (!HardwareRuntime.ControlsEnabled && e.Key is not (Key.Tab or Key.Escape) &&
+                (!IsReadOnlyNavigationInput(e.OriginalSource) &&
+                 (IsEditingInput(e.OriginalSource) || e.Key is not (Key.Up or Key.Down or Key.PageUp or Key.PageDown or Key.Home or Key.End))))
+                e.Handled = true;
+        };
+        _rootFrame.ContextMenuOpening += (_, e) => e.Handled = !HardwareRuntime.ControlsEnabled;
+        UpdateControlAccessStatus();
 
-        _themeManager.ThemeApplied += ThemeManager_ThemeApplied;
-
-        UpdateThemeToggle();
+        _startupStatusText.Text = Resource.ResourceManager.GetString("MainWindow_StartupStatus") ?? "Preparing device controls…";
 
         var version = Assembly.GetEntryAssembly()?.GetName().Version;
 #if DEBUG
@@ -108,18 +121,43 @@ public partial class MainWindow
 
     private void MainWindow_SourceInitialized(object? sender, EventArgs e) => RestoreSize();
 
-    private async void MainWindow_Loaded(object sender, RoutedEventArgs e)
+    private static bool IsReadOnlyNavigationInput(object source)
     {
-        _contentGrid.Visibility = Visibility.Hidden;
+        var element = source as DependencyObject;
+        while (element is not null)
+        {
+            if (element is MousePage mousePage && mousePage.IsReadOnlyQuerySource(source as DependencyObject))
+                return true;
+            if (element is System.Windows.Controls.Primitives.ScrollBar ||
+                element is ListBox { Name: "_navigationListBox" })
+                return true;
+            element = element is Visual ? VisualTreeHelper.GetParent(element) : LogicalTreeHelper.GetParent(element);
+        }
+        return false;
+    }
+
+    private static bool IsEditingInput(object source)
+    {
+        var element = source as DependencyObject;
+        while (element is not null)
+        {
+            if (element is System.Windows.Controls.Primitives.ButtonBase or
+                System.Windows.Controls.Primitives.Selector or
+                System.Windows.Controls.Primitives.RangeBase or System.Windows.Controls.TextBox)
+                return true;
+            element = element is Visual ? VisualTreeHelper.GetParent(element) : LogicalTreeHelper.GetParent(element);
+        }
+        return false;
+    }
+
+    public async Task InitializeAfterFeaturesAsync()
+    {
+        if (_featureUiInitialized)
+            return;
 
         if (!AppFlags.Instance.Debug)
         {
-            if (!await KeyboardBacklightPage.IsSupportedAsync())
-            {
-                _navigationStore.Items.Remove(_keyboardItem);
-            }
-
-            if (!await LampArrayRGBKeyboardPage.IsSupportedAsync())
+            if (!await Task.Run(LampArrayRGBKeyboardPage.IsSupportedAsync))
             {
                 _navigationStore.Items.Remove(_lampArrayKeyboardItem);
             }
@@ -137,11 +175,8 @@ public partial class MainWindow
 
         AddExtensionNavigationItems();
 
-        _contentGrid.Visibility = Visibility.Visible;
-
         LoadDeviceInfo();
         UpdateIndicators();
-        CheckForUpdates();
 
         InputBindings.Add(new KeyBinding(new ActionCommand(_navigationStore.NavigateToNext), Key.Tab, ModifierKeys.Control));
         InputBindings.Add(new KeyBinding(new ActionCommand(_navigationStore.NavigateToPrevious), Key.Tab, ModifierKeys.Control | ModifierKeys.Shift));
@@ -156,6 +191,52 @@ public partial class MainWindow
         _trayHelper = trayHelper;
 
         ApplyCompactLayout();
+        _featureUiInitialized = true;
+        _navigationStore.IsEnabled = true;
+        _startupPanel.Visibility = Visibility.Collapsed;
+        _navigationStore.Navigate("dashboard");
+        CheckForUpdates();
+        SetVisual();
+    }
+
+    public void ShowUiPreview()
+    {
+        _title.Text += " · PREVIEW";
+        Title = _title.Text;
+        _startupPanel.Visibility = Visibility.Collapsed;
+        _navigationStore.IsEnabled = false;
+        _rootFrame.IsHitTestVisible = false;
+        _rootFrame.Navigate(new DashboardPage());
+        SetVisual();
+    }
+
+    private async void EnableControls_Click(object sender, RoutedEventArgs e)
+    {
+        try
+        {
+            HardwareRuntime.EnableControls();
+            UpdateControlAccessStatus();
+            _trayHelper?.UpdateControlAccess();
+            await Task.Run(async () =>
+            {
+                await _specialKeyListener.StartAsync();
+                await _driverKeyListener.StartAsync();
+                await IoCContainer.Resolve<ITSModeListener>().StartAsync();
+            });
+        }
+        catch (Exception ex)
+        {
+            SnackbarHelper.Show("Controls unavailable", ex.Message, SnackbarType.Error);
+        }
+    }
+
+    private void UpdateControlAccessStatus()
+    {
+        if (_rootFrame.Content is MousePage mousePage) mousePage.RefreshControlAccess();
+        _enableControlsButton.IsEnabled = !AppFlags.Instance.ReadOnly && !AppFlags.Instance.UiPreview && !HardwareRuntime.ControlsEnabled;
+        _controlAccessStatus.Text = HardwareRuntime.ControlsEnabled
+            ? "Controls enabled for this session. Hardware changes remain unverified on this device."
+            : "Read-only. Hardware changes have not been verified on this device.";
     }
 
     private void ApplyCompactLayout()
@@ -163,6 +244,8 @@ public partial class MainWindow
         if (_applicationSettings.Store.CompactMode)
         {
             _contentGrid.Margin = new Thickness(4, 2, 0, 0);
+
+            _brandName.Visibility = Visibility.Collapsed;
 
             _contentGrid.ColumnDefinitions[0].Width = GridLength.Auto;
             _navigationStore.Margin = new Thickness(0, 0, 0, 4);
@@ -175,7 +258,6 @@ public partial class MainWindow
 
             _openLogIndicator.LayoutTransform = new ScaleTransform(0.8, 0.8);
             _deviceInfoIndicator.LayoutTransform = new ScaleTransform(0.8, 0.8);
-            _themeToggle.LayoutTransform = new ScaleTransform(0.8, 0.8);
 
             foreach (var item in _navigationStore.Items.OfType<Wpf.Ui.Controls.NavigationItem>())
             {
@@ -208,6 +290,13 @@ public partial class MainWindow
 
     private async void MainWindow_Closing(object? sender, CancelEventArgs e)
     {
+        if (AppFlags.Instance.UiPreview)
+        {
+            e.Cancel = false;
+            await App.Current.ShutdownAsync();
+            return;
+        }
+
         if (!App.IsRestoringSettings)
             SaveSize();
 
@@ -231,16 +320,14 @@ public partial class MainWindow
 
     private void MainWindow_Closed(object? sender, EventArgs args)
     {
-        _themeManager.ThemeApplied -= ThemeManager_ThemeApplied;
-
+        GamingActivityMonitor.Instance.SetWindowVisible(false);
         _trayHelper?.Dispose();
         _trayHelper = null;
     }
 
-    private void ThemeManager_ThemeApplied(object? sender, EventArgs e) => UpdateThemeToggle();
-
     private void MainWindow_StateChanged(object? sender, EventArgs e)
     {
+        GamingActivityMonitor.Instance.SetWindowVisible(IsVisible && WindowState != WindowState.Minimized);
         Log.Instance.Trace($"Window state changed to {WindowState}");
 
         if (_windowSizeLocked && WindowState == WindowState.Maximized)
@@ -265,17 +352,32 @@ public partial class MainWindow
 
     private void MainWindow_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
     {
+        GamingActivityMonitor.Instance.SetWindowVisible(IsVisible && WindowState != WindowState.Minimized);
         var settings = IoCContainer.Resolve<ApplicationSettings>();
         ApplyWindowLock(settings.Store.LockWindowSize);
         Topmost = settings.Store.AlwaysOnTop;
 
         UpdateEfficiencyMode();
 
-        if (!IsVisible)
+        if (!IsVisible || !_featureUiInitialized || _visualRefreshQueued)
             return;
 
-        CheckForUpdates();
-        SetVisual();
+        _visualRefreshQueued = true;
+        Dispatcher.BeginInvoke(new Action(() =>
+        {
+            try
+            {
+                if (!IsVisible)
+                    return;
+
+                CheckForUpdates();
+                SetVisual();
+            }
+            finally
+            {
+                _visualRefreshQueued = false;
+            }
+        }), DispatcherPriority.ApplicationIdle);
     }
 
     public void ApplyWindowLock(bool locked)
@@ -331,35 +433,6 @@ public partial class MainWindow
             return;
 
         OpenLog();
-    }
-
-    private void ThemeToggle_Click(object sender, MouseButtonEventArgs e) => CycleTheme();
-
-    private void CycleTheme()
-    {
-        var values = Enum.GetValues<Theme>();
-        var next = values[((int)_applicationSettings.Store.Theme + 1) % values.Length];
-
-        _applicationSettings.Store.Theme = next;
-        _applicationSettings.SynchronizeStore();
-
-        _themeManager.Apply();
-    }
-
-    private void UpdateThemeToggle()
-    {
-        var theme = _applicationSettings.Store.Theme;
-
-        _themeToggleIcon.Symbol = theme switch
-        {
-            Theme.Light => SymbolRegular.WeatherSunny24,
-            Theme.Dark => SymbolRegular.WeatherMoon24,
-            _ => SymbolRegular.CircleHalfFill24
-        };
-
-        var name = theme.GetDisplayName();
-        _themeToggle.ToolTip = name;
-        AutomationProperties.SetName(_themeToggle, name);
     }
 
     private void DeviceInfoIndicator_Click(object sender, MouseButtonEventArgs e) => ShowDeviceInfoWindow();
@@ -676,6 +749,7 @@ public partial class MainWindow
 
     private void NavigationStore_Navigated(INavigation sender, RoutedNavigationEventArgs e)
     {
+        Log.Instance.Trace($"Navigation completed: {_navigationStore.Current?.PageTag}");
         SetVisual();
     }
 
