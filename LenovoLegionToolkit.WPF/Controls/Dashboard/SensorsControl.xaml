@@ -1,313 +1,139 @@
-<UserControl
-    x:Class="LenovoLegionToolkit.WPF.Controls.Dashboard.SensorsControl"
-    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:behaviors="clr-namespace:LenovoLegionToolkit.WPF.Behaviors"
-    xmlns:custom="clr-namespace:LenovoLegionToolkit.WPF.Controls.Custom"
-    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
-    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:resources="clr-namespace:LenovoLegionToolkit.WPF.Resources"
-    xmlns:wpfui="http://schemas.lepo.co/wpfui/2022/xaml"
-    d:DesignHeight="450"
-    d:DesignWidth="800"
-    mc:Ignorable="d">
-    <custom:CardControl>
-        <custom:CardControl.Header>
-            <Grid>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*" />
-                    <ColumnDefinition Width="16" />
-                    <ColumnDefinition Width="*" />
-                </Grid.ColumnDefinitions>
-
-                <Grid Grid.Column="0">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="Auto" SharedSizeGroup="A" />
-                        <ColumnDefinition Width="*" SharedSizeGroup="B" />
-                        <ColumnDefinition Width="70" SharedSizeGroup="C" />
-                    </Grid.ColumnDefinitions>
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto" />
-                        <RowDefinition Height="Auto" />
-                        <RowDefinition Height="Auto" />
-                        <RowDefinition Height="Auto" />
-                        <RowDefinition Height="Auto" />
-                        <RowDefinition Height="Auto" />
-                    </Grid.RowDefinitions>
-
-                    <TextBlock
-                        Grid.Row="0"
-                        Grid.ColumnSpan="3"
-                        Margin="0,0,0,8"
-                        FontSize="18"
-                        FontWeight="Medium"
-                        Text="{x:Static resources:Resource.SensorsControl_CPU_Title}" />
-
-                    <Label
-                        Grid.Row="1"
-                        Grid.Column="0"
-                        VerticalContentAlignment="Center"
-                        Content="{x:Static resources:Resource.SensorsControl_Utilization_Title}"
-                        Foreground="{DynamicResource TextFillColorPrimaryBrush}" />
-                    <ProgressBar
-                        x:Name="_cpuUtilizationBar"
-                        Grid.Row="1"
-                        Grid.Column="1"
-                        Margin="16,0,16,0"
-                        Maximum="100"
-                        Minimum="0"
-                        Value="0">
-                        <i:Interaction.Behaviors>
-                            <behaviors:ProgressBarAnimateBehavior />
-                        </i:Interaction.Behaviors>
-                    </ProgressBar>
-                    <Label
-                        x:Name="_cpuUtilizationLabel"
-                        Grid.Row="1"
-                        Grid.Column="2"
-                        HorizontalContentAlignment="Right"
-                        VerticalContentAlignment="Center"
-                        Content="-"
-                        Foreground="{DynamicResource TextFillColorSecondaryBrush}" />
-
-                    <Label
-                        Grid.Row="2"
-                        Grid.Column="0"
-                        VerticalContentAlignment="Center"
-                        Content="{x:Static resources:Resource.SensorsControl_CoreClock_Title}"
-                        Foreground="{DynamicResource TextFillColorPrimaryBrush}" />
-                    <ProgressBar
-                        x:Name="_cpuCoreClockBar"
-                        Grid.Row="2"
-                        Grid.Column="1"
-                        Margin="16,0,16,0"
-                        Maximum="100"
-                        Minimum="0"
-                        Value="0">
-                        <i:Interaction.Behaviors>
-                            <behaviors:ProgressBarAnimateBehavior />
-                        </i:Interaction.Behaviors>
-                    </ProgressBar>
-                    <Label
-                        x:Name="_cpuCoreClockLabel"
-                        Grid.Row="2"
-                        Grid.Column="2"
-                        HorizontalContentAlignment="Right"
-                        VerticalContentAlignment="Center"
-                        Content="-"
-                        Foreground="{DynamicResource TextFillColorSecondaryBrush}" />
-
-                    <Label
-                        Grid.Row="3"
-                        Grid.Column="0"
-                        VerticalContentAlignment="Center"
-                        Content="{x:Static resources:Resource.SensorsControl_Temperature_Title}"
-                        Foreground="{DynamicResource TextFillColorPrimaryBrush}" />
-                    <ProgressBar
-                        x:Name="_cpuTemperatureBar"
-                        Grid.Row="3"
-                        Grid.Column="1"
-                        Margin="16,0,16,0"
-                        Maximum="100"
-                        Minimum="0"
-                        Value="0">
-                        <i:Interaction.Behaviors>
-                            <behaviors:ProgressBarAnimateBehavior />
-                        </i:Interaction.Behaviors>
-                    </ProgressBar>
-                    <Label
-                        x:Name="_cpuTemperatureLabel"
-                        Grid.Row="3"
-                        Grid.Column="2"
-                        HorizontalContentAlignment="Right"
-                        VerticalContentAlignment="Center"
-                        Content="-"
-                        Foreground="{DynamicResource TextFillColorSecondaryBrush}" />
-
-                    <Label
-                        Grid.Row="4"
-                        Grid.Column="0"
-                        Content="{x:Static resources:Resource.SensorsControl_Fan_Title}"
-                        Foreground="{DynamicResource TextFillColorPrimaryBrush}" />
-                    <ProgressBar
-                        x:Name="_cpuFanSpeedBar"
-                        Grid.Row="4"
-                        Grid.Column="1"
-                        Margin="16,0,16,0"
-                        Maximum="100"
-                        Minimum="0"
-                        Value="0">
-                        <i:Interaction.Behaviors>
-                            <behaviors:ProgressBarAnimateBehavior />
-                        </i:Interaction.Behaviors>
-                    </ProgressBar>
-                    <Label
-                        x:Name="_cpuFanSpeedLabel"
-                        Grid.Row="4"
-                        Grid.Column="2"
-                        HorizontalContentAlignment="Right"
-                        Content="-"
-                        Foreground="{DynamicResource TextFillColorSecondaryBrush}" />
-                </Grid>
-
-                <Grid Grid.Column="2">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="Auto" SharedSizeGroup="A" />
-                        <ColumnDefinition Width="*" SharedSizeGroup="B" />
-                        <ColumnDefinition Width="70" SharedSizeGroup="C" />
-                    </Grid.ColumnDefinitions>
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto" />
-                        <RowDefinition Height="Auto" />
-                        <RowDefinition Height="Auto" />
-                        <RowDefinition Height="Auto" />
-                        <RowDefinition Height="Auto" />
-                        <RowDefinition Height="Auto" />
-                    </Grid.RowDefinitions>
-
-                    <TextBlock
-                        Grid.Row="0"
-                        Grid.ColumnSpan="3"
-                        Margin="0,0,0,8"
-                        FontSize="18"
-                        FontWeight="Medium"
-                        Text="{x:Static resources:Resource.SensorsControl_GPU_Title}" />
-
-                    <Label
-                        Grid.Row="1"
-                        Grid.Column="0"
-                        VerticalContentAlignment="Center"
-                        Content="{x:Static resources:Resource.SensorsControl_Utilization_Title}"
-                        Foreground="{DynamicResource TextFillColorPrimaryBrush}" />
-                    <ProgressBar
-                        x:Name="_gpuUtilizationBar"
-                        Grid.Row="1"
-                        Grid.Column="1"
-                        Margin="16,0,16,0"
-                        Maximum="100"
-                        Minimum="0"
-                        Value="0">
-                        <i:Interaction.Behaviors>
-                            <behaviors:ProgressBarAnimateBehavior />
-                        </i:Interaction.Behaviors>
-                    </ProgressBar>
-                    <Label
-                        x:Name="_gpuUtilizationLabel"
-                        Grid.Row="1"
-                        Grid.Column="2"
-                        HorizontalContentAlignment="Right"
-                        VerticalContentAlignment="Center"
-                        Content="-"
-                        Foreground="{DynamicResource TextFillColorSecondaryBrush}" />
-
-                    <Label
-                        Grid.Row="2"
-                        Grid.Column="0"
-                        VerticalContentAlignment="Center"
-                        Content="{x:Static resources:Resource.SensorsControl_CoreClock_Title}"
-                        Foreground="{DynamicResource TextFillColorPrimaryBrush}" />
-                    <ProgressBar
-                        x:Name="_gpuCoreClockBar"
-                        Grid.Row="2"
-                        Grid.Column="1"
-                        Margin="16,0,16,0"
-                        Maximum="100"
-                        Minimum="0"
-                        Value="0">
-                        <i:Interaction.Behaviors>
-                            <behaviors:ProgressBarAnimateBehavior />
-                        </i:Interaction.Behaviors>
-                    </ProgressBar>
-                    <Label
-                        x:Name="_gpuCoreClockLabel"
-                        Grid.Row="2"
-                        Grid.Column="2"
-                        HorizontalContentAlignment="Right"
-                        VerticalContentAlignment="Center"
-                        Content="-"
-                        Foreground="{DynamicResource TextFillColorSecondaryBrush}" />
-
-                    <Label
-                        Grid.Row="3"
-                        Grid.Column="0"
-                        VerticalContentAlignment="Center"
-                        Content="{x:Static resources:Resource.SensorsControl_MemoryClock_Title}"
-                        Foreground="{DynamicResource TextFillColorPrimaryBrush}" />
-                    <ProgressBar
-                        x:Name="_gpuMemoryClockBar"
-                        Grid.Row="3"
-                        Grid.Column="1"
-                        Margin="16,0,16,0"
-                        Maximum="100"
-                        Minimum="0"
-                        Value="0">
-                        <i:Interaction.Behaviors>
-                            <behaviors:ProgressBarAnimateBehavior />
-                        </i:Interaction.Behaviors>
-                    </ProgressBar>
-                    <Label
-                        x:Name="_gpuMemoryClockLabel"
-                        Grid.Row="3"
-                        Grid.Column="2"
-                        HorizontalContentAlignment="Right"
-                        VerticalContentAlignment="Center"
-                        Content="-"
-                        Foreground="{DynamicResource TextFillColorSecondaryBrush}" />
-
-                    <Label
-                        Grid.Row="4"
-                        Grid.Column="0"
-                        VerticalContentAlignment="Center"
-                        Content="{x:Static resources:Resource.SensorsControl_Temperature_Title}"
-                        Foreground="{DynamicResource TextFillColorPrimaryBrush}" />
-                    <ProgressBar
-                        x:Name="_gpuTemperatureBar"
-                        Grid.Row="4"
-                        Grid.Column="1"
-                        Margin="16,0,16,0"
-                        Maximum="100"
-                        Minimum="0"
-                        Value="0">
-                        <i:Interaction.Behaviors>
-                            <behaviors:ProgressBarAnimateBehavior />
-                        </i:Interaction.Behaviors>
-                    </ProgressBar>
-                    <Label
-                        x:Name="_gpuTemperatureLabel"
-                        Grid.Row="4"
-                        Grid.Column="2"
-                        HorizontalContentAlignment="Right"
-                        VerticalContentAlignment="Center"
-                        Content="-"
-                        Foreground="{DynamicResource TextFillColorSecondaryBrush}" />
-
-                    <Label
-                        Grid.Row="5"
-                        Grid.Column="0"
-                        Content="{x:Static resources:Resource.SensorsControl_Fan_Title}"
-                        Foreground="{DynamicResource TextFillColorPrimaryBrush}" />
-                    <ProgressBar
-                        x:Name="_gpuFanSpeedBar"
-                        Grid.Row="5"
-                        Grid.Column="1"
-                        Margin="16,0,16,0"
-                        Maximum="100"
-                        Minimum="0"
-                        Value="0">
-                        <i:Interaction.Behaviors>
-                            <behaviors:ProgressBarAnimateBehavior />
-                        </i:Interaction.Behaviors>
-                    </ProgressBar>
-                    <Label
-                        x:Name="_gpuFanSpeedLabel"
-                        Grid.Row="5"
-                        Grid.Column="2"
-                        HorizontalContentAlignment="Right"
-                        Content="-"
-                        Foreground="{DynamicResource TextFillColorSecondaryBrush}" />
-                </Grid>
-            </Grid>
-        </custom:CardControl.Header>
-    </custom:CardControl>
+<UserControl xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:resources="clr-namespace:LenovoLegionToolkit.WPF.Resources" x:Class="LenovoLegionToolkit.WPF.Controls.Dashboard.SensorsControl">
+    <UserControl.Resources>
+        <Style x:Key="RailCaption" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="11"/>
+            <Setter Property="Foreground" Value="{DynamicResource ProjectLegionSecondaryTextBrush}"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+            <Setter Property="TextWrapping" Value="Wrap"/>
+        </Style>
+        <Style x:Key="RailValue" TargetType="Label">
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="Typography.NumeralAlignment" Value="Tabular"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Padding" Value="0"/>
+            <Setter Property="Foreground" Value="{DynamicResource ProjectLegionTextBrush}"/>
+            <Setter Property="HorizontalContentAlignment" Value="Right"/>
+            <Setter Property="FlowDirection" Value="LeftToRight"/>
+        </Style>
+        <Style x:Key="RailBar" TargetType="ProgressBar">
+            <Setter Property="Height" Value="3"/>
+            <Setter Property="Foreground" Value="{DynamicResource ProjectLegionSecondaryTextBrush}"/>
+            <Setter Property="Background" Value="{DynamicResource ProjectLegionBorderBrush}"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="IsHitTestVisible" Value="False"/>
+            <Setter Property="Opacity" Value="0.35"/>
+        </Style>
+    </UserControl.Resources>
+    <StackPanel>
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <Border Grid.Column="0" Margin="0,0,6,0" Style="{StaticResource ProjectLegionInstrumentPanelStyle}" BorderThickness="0">
+                <StackPanel>
+                    <TextBlock FontSize="16" FontWeight="SemiBold" Text="{x:Static resources:Resource.SensorsControl_CPU_Title}"/>
+                    <Grid Margin="0,10,0,14">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="108"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <Grid Width="108" Height="108">
+                            <ProgressBar x:Name="_cpuTemperatureBar" Width="108" Height="108" Style="{StaticResource ProjectLegionDialStyle}" Value="0"/>
+                            <StackPanel VerticalAlignment="Center" Margin="14,0">
+                                <Viewbox Stretch="Uniform" StretchDirection="DownOnly">
+                                    <Label x:Name="_cpuTemperatureLabel" Padding="0" FontSize="30" FontWeight="SemiBold" Content="—" AutomationProperties.Name="{x:Static resources:Resource.SensorsControl_Temperature_Title}"/>
+                                </Viewbox>
+                                <TextBlock Margin="0,3,0,0" HorizontalAlignment="Center" Style="{StaticResource RailCaption}" Text="{x:Static resources:Resource.SensorsControl_Temperature_Title}"/>
+                            </StackPanel>
+                        </Grid>
+                        <StackPanel Grid.Column="1" Margin="12,0,0,0" VerticalAlignment="Center" HorizontalAlignment="Right">
+                            <Label x:Name="_cpuUtilizationLabel" Padding="0" FontSize="22" FontWeight="SemiBold" Content="—" HorizontalContentAlignment="Right" AutomationProperties.Name="{x:Static resources:Resource.SensorsControl_Utilization_Title}"/>
+                            <TextBlock Margin="0,3,0,6" Style="{StaticResource RailCaption}" HorizontalAlignment="Right" Text="{x:Static resources:Resource.SensorsControl_Utilization_Title}"/>
+                            <ProgressBar x:Name="_cpuUtilizationBar" Foreground="{DynamicResource ProjectLegionAccentBrush}" Opacity="0.8" Width="54" Style="{StaticResource RailBar}" Value="0"/>
+                        </StackPanel>
+                    </Grid>
+                    <Border BorderBrush="{DynamicResource ProjectLegionBorderBrush}" BorderThickness="0,1,0,0" Padding="0,12,0,0">
+                        <StackPanel>
+                            <Grid Margin="0,0,0,4">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Style="{StaticResource RailCaption}" Text="{x:Static resources:Resource.SensorsControl_CoreClock_Title}"/>
+                                <Label x:Name="_cpuCoreClockLabel" Grid.Column="1" Style="{StaticResource RailValue}" AutomationProperties.Name="{x:Static resources:Resource.SensorsControl_CoreClock_Title}" Content="—"/>
+                            </Grid>
+                            <ProgressBar x:Name="_cpuCoreClockBar" Style="{StaticResource RailBar}" Margin="0,0,0,10" Value="0"/>
+                            <Grid Margin="0,0,0,4">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Style="{StaticResource RailCaption}" Text="{x:Static resources:Resource.SensorsControl_Fan_Title}"/>
+                                <Label x:Name="_cpuFanSpeedLabel" Grid.Column="1" Style="{StaticResource RailValue}" AutomationProperties.Name="{x:Static resources:Resource.SensorsControl_Fan_Title}" Content="—"/>
+                            </Grid>
+                            <ProgressBar x:Name="_cpuFanSpeedBar" Style="{StaticResource RailBar}" Margin="0,0,0,10" Value="0"/>
+                        </StackPanel>
+                    </Border>
+                </StackPanel>
+            </Border>
+            <Border Grid.Column="1" Margin="6,0,0,0" Style="{StaticResource ProjectLegionInstrumentPanelStyle}" BorderThickness="0">
+                <StackPanel>
+                    <TextBlock FontSize="16" FontWeight="SemiBold" Text="{x:Static resources:Resource.SensorsControl_GPU_Title}"/>
+                    <Grid Margin="0,10,0,14">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="108"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <Grid Width="108" Height="108">
+                            <ProgressBar x:Name="_gpuTemperatureBar" Width="108" Height="108" Style="{StaticResource ProjectLegionDialStyle}" Value="0"/>
+                            <StackPanel VerticalAlignment="Center" Margin="14,0">
+                                <Viewbox Stretch="Uniform" StretchDirection="DownOnly">
+                                    <Label x:Name="_gpuTemperatureLabel" Padding="0" FontSize="30" FontWeight="SemiBold" Content="—" AutomationProperties.Name="{x:Static resources:Resource.SensorsControl_Temperature_Title}"/>
+                                </Viewbox>
+                                <TextBlock Margin="0,3,0,0" HorizontalAlignment="Center" Style="{StaticResource RailCaption}" Text="{x:Static resources:Resource.SensorsControl_Temperature_Title}"/>
+                            </StackPanel>
+                        </Grid>
+                        <StackPanel Grid.Column="1" Margin="12,0,0,0" VerticalAlignment="Center" HorizontalAlignment="Right">
+                            <Label x:Name="_gpuUtilizationLabel" Padding="0" FontSize="22" FontWeight="SemiBold" Content="—" HorizontalContentAlignment="Right" AutomationProperties.Name="{x:Static resources:Resource.SensorsControl_Utilization_Title}"/>
+                            <TextBlock Margin="0,3,0,6" Style="{StaticResource RailCaption}" HorizontalAlignment="Right" Text="{x:Static resources:Resource.SensorsControl_Utilization_Title}"/>
+                            <ProgressBar x:Name="_gpuUtilizationBar" Foreground="{DynamicResource ProjectLegionAccentBrush}" Opacity="0.8" Width="54" Style="{StaticResource RailBar}" Value="0"/>
+                        </StackPanel>
+                    </Grid>
+                    <Border BorderBrush="{DynamicResource ProjectLegionBorderBrush}" BorderThickness="0,1,0,0" Padding="0,12,0,0">
+                        <StackPanel>
+                            <Grid Margin="0,0,0,4">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Style="{StaticResource RailCaption}" Text="{x:Static resources:Resource.SensorsControl_CoreClock_Title}"/>
+                                <Label x:Name="_gpuCoreClockLabel" Grid.Column="1" Style="{StaticResource RailValue}" AutomationProperties.Name="{x:Static resources:Resource.SensorsControl_CoreClock_Title}" Content="—"/>
+                            </Grid>
+                            <ProgressBar x:Name="_gpuCoreClockBar" Style="{StaticResource RailBar}" Margin="0,0,0,10" Value="0"/>
+                            <Grid Margin="0,0,0,4">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Style="{StaticResource RailCaption}" Text="{x:Static resources:Resource.SensorsControl_Fan_Title}"/>
+                                <Label x:Name="_gpuFanSpeedLabel" Grid.Column="1" Style="{StaticResource RailValue}" AutomationProperties.Name="{x:Static resources:Resource.SensorsControl_Fan_Title}" Content="—"/>
+                            </Grid>
+                            <ProgressBar x:Name="_gpuFanSpeedBar" Style="{StaticResource RailBar}" Margin="0,0,0,10" Value="0"/>
+                            <Grid Margin="0,0,0,4">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Style="{StaticResource RailCaption}" Text="{x:Static resources:Resource.SensorsControl_MemoryClock_Title}"/>
+                                <Label x:Name="_gpuMemoryClockLabel" Grid.Column="1" Style="{StaticResource RailValue}" AutomationProperties.Name="{x:Static resources:Resource.SensorsControl_MemoryClock_Title}" Content="—"/>
+                            </Grid>
+                            <ProgressBar x:Name="_gpuMemoryClockBar" Style="{StaticResource RailBar}" Margin="0,0,0,10" Value="0"/>
+                        </StackPanel>
+                    </Border>
+                </StackPanel>
+            </Border>
+        </Grid>
+        <TextBlock x:Name="_readStatusText" Margin="0,6,0,0" FontSize="11" Foreground="{DynamicResource ProjectLegionSecondaryTextBrush}" TextWrapping="Wrap" ToolTip="Unavailable sensor readings are shown as a dash." Text="Loading sensor readings…"/>
+    </StackPanel>
 </UserControl>
