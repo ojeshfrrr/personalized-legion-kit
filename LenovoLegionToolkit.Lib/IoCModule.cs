@@ -115,7 +115,6 @@ public class IoCModule : Module
         builder.Register<RGBKeyboardBacklightListener>().AutoActivateListener();
         builder.Register<SessionLockUnlockListener>().AutoActivateListener();
         builder.Register<SpecialKeyListener>().SingleInstance().AutoActivateListener();
-        builder.Register<SystemThemeListener>().AutoActivateListener();
         builder.Register<ThermalModeListener>().AutoActivateListener();
         builder.Register<WinKeyListener>().AutoActivateListener();
         builder.Register<ITSModeListener>().AutoActivateListener();
@@ -161,6 +160,7 @@ public class IoCModule : Module
         builder.Register<SunriseSunset>();
 
         builder.Register<BatteryDischargeRateMonitorService>();
+        builder.RegisterType<Services.Mouse.MouseControlService>().SingleInstance();
         builder.Register<DgpuAwakeManager>().SingleInstance();
 
         builder.Register<AmdOverclockingController>();
