@@ -25,12 +25,11 @@
                     <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
 
-                <StackPanel Grid.Row="0" Margin="0,24,0,24">
+                <StackPanel Grid.Row="0" Margin="0,16,0,12">
 
                     <TextBlock
                         Focusable="True"
-                        FontSize="24"
-                        FontWeight="Medium"
+                        Style="{StaticResource ProjectLegionPageTitleStyle}"
                         Text="{x:Static resources:Resource.AutomationPage_Actions_Title}" />
 
                     <TextBlock
@@ -38,6 +37,9 @@
                         Focusable="True"
                         TextWrapping="WrapWithOverflow"
                         Text="{x:Static resources:Resource.AutomationPage_Actions_Message}" />
+                    <TextBlock Margin="0,8,0,0" TextWrapping="Wrap"
+                               Foreground="{DynamicResource ProjectLegionSecondaryTextBrush}"
+                               Text="Automatic actions start only when enabled for this session. Saved startup actions are not run when the app opens." />
                 </StackPanel>
 
                 <controls:LoadableControl
@@ -46,7 +48,7 @@
                     ContentVisibilityWhileLoading="Collapsed">
                     <StackPanel>
 
-                        <custom:CardControl Margin="0,0,0,24">
+                        <custom:CardControl Margin="0,0,0,12">
                             <custom:CardControl.Header>
                                 <controls:CardHeaderControl Title="{x:Static resources:Resource.AutomationPage_ActionsEnabled_Title}" Subtitle="{x:Static resources:Resource.AutomationPage_ActionsEnable_Message}" />
                             </custom:CardControl.Header>
@@ -59,10 +61,11 @@
 
                         <TextBlock
                             x:Name="_noAutomaticActionsText"
+                            Style="{StaticResource ProjectLegionEmptyStateStyle}"
                             Margin="0,16,0,16"
-                            HorizontalAlignment="Center"
+                            HorizontalAlignment="Stretch"
                             Focusable="True"
-                            FontWeight="Medium"
+                            FontWeight="Normal"
                             Foreground="{DynamicResource TextFillColorSecondaryBrush}"
                             Text="{x:Static resources:Resource.AutomationPage_Actions_Empty}" />
 
@@ -80,12 +83,11 @@
                     </StackPanel>
                 </controls:LoadableControl>
 
-                <StackPanel Grid.Row="2" Margin="0,24,0,24">
+                <StackPanel Grid.Row="2" Margin="0,16,0,12">
 
                     <TextBlock
                         Focusable="True"
-                        FontSize="24"
-                        FontWeight="Medium"
+                        Style="{StaticResource ProjectLegionSectionTitleStyle}"
                         Text="{x:Static resources:Resource.AutomationPage_QuickActions_Title}" />
 
                     <TextBlock
@@ -104,10 +106,11 @@
 
                         <TextBlock
                             x:Name="_noManualActionsText"
+                            Style="{StaticResource ProjectLegionEmptyStateStyle}"
                             Margin="0,16,0,16"
-                            HorizontalAlignment="Center"
+                            HorizontalAlignment="Stretch"
                             Focusable="True"
-                            FontWeight="Medium"
+                            FontWeight="Normal"
                             Foreground="{DynamicResource TextFillColorSecondaryBrush}"
                             Text="{x:Static resources:Resource.AutomationPage_QuickActions_Empty}" />
 

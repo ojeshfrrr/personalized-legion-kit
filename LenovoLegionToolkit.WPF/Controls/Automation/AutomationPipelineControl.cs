@@ -54,12 +54,16 @@ public class AutomationPipelineControl : UserControl
         Margin = new(0, 16, 0, 0),
         ColumnDefinitions =
         {
-            new() { Width = GridLength.Auto },
             new() { Width = new(1, GridUnitType.Star) },
+        },
+        RowDefinitions =
+        {
+            new() { Height = GridLength.Auto },
+            new() { Height = GridLength.Auto },
         }
     };
 
-    private readonly StackPanel _leftButtonsPanel = new()
+    private readonly WrapPanel _leftButtonsPanel = new()
     {
         Orientation = Orientation.Horizontal,
     };
@@ -267,10 +271,14 @@ public class AutomationPipelineControl : UserControl
             _rightButtonsPanel.Children.Add(_deletePipelineButton);
 
             Grid.SetColumn(_leftButtonsPanel, 0);
-            Grid.SetColumn(_rightButtonsPanel, 1);
+            Grid.SetRow(_rightButtonsPanel, 1);
+            _rightButtonsPanel.Margin = new Thickness(0, 12, 0, 0);
             _buttonsStackPanel.Children.Add(_leftButtonsPanel);
             _buttonsStackPanel.Children.Add(_rightButtonsPanel);
 
+            var stepsTitle = new TextBlock { Text = "Action sequence" };
+            stepsTitle.SetResourceReference(StyleProperty, "ProjectLegionSectionTitleStyle");
+            _stackPanel.Children.Add(stepsTitle);
             _stackPanel.Children.Add(_stepsStackPanel);
             _stackPanel.Children.Add(_validationWarningTextBlock);
             _stackPanel.Children.Add(_buttonsStackPanel);

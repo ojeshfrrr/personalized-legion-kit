@@ -45,7 +45,7 @@ public abstract class AbstractAutomationStepControl : UserControl
 
     private readonly SymbolIcon _iconControl = new()
     {
-        FontSize = 24,
+        FontSize = 18,
         Margin = new(4, 0, 12, 0),
         VerticalAlignment = VerticalAlignment.Center,
     };
@@ -105,6 +105,7 @@ public abstract class AbstractAutomationStepControl : UserControl
 
     private void InitializeComponent()
     {
+        _cardControl.SetResourceReference(StyleProperty, "ProjectLegionPreferenceRowStyle");
         _dragHandle.MouseLeftButtonDown += (_, e) =>
         {
             if (e.ClickCount > 1) return;
