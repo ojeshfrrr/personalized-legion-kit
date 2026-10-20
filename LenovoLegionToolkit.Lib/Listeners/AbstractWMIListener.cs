@@ -5,7 +5,7 @@ using LenovoLegionToolkit.Lib.Utils;
 namespace LenovoLegionToolkit.Lib.Listeners;
 
 public abstract class AbstractWMIListener<TEventArgs, TValue, TRawValue>(Func<Action<TRawValue>, IDisposable> listen)
-    : IListener<TEventArgs>
+    : IListener<TEventArgs>, IDisposable
     where TEventArgs : EventArgs
 {
     private IDisposable? _disposable;
@@ -55,6 +55,13 @@ public abstract class AbstractWMIListener<TEventArgs, TValue, TRawValue>(Func<Ac
         }
 
         return Task.CompletedTask;
+    }
+
+    public void Dispose()
+    {
+        _disposable?.Dispose();
+        _disposable = null;
+        GC.SuppressFinalize(this);
     }
 
     protected abstract TValue GetValue(TRawValue value);
