@@ -67,7 +67,7 @@ public partial class AboutPage
     }
     private void OpenLogFolder_Click(object sender, RoutedEventArgs e)
     {
-        string logPath = Environment.ExpandEnvironmentVariables("%LOCALAPPDATA%\\LenovoLegionToolkit\\log");
+        var logPath = Path.Combine(Folders.AppData, "log");
 
         if (Directory.Exists(logPath))
         {

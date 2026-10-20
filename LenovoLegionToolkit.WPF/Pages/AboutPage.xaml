@@ -11,25 +11,23 @@
 
     <StackPanel Margin="0,0,16,12">
         <TextBlock
-            Margin="0,16,0,24"
             Focusable="True"
-            FontSize="24"
-            FontWeight="Medium"
+            Style="{StaticResource ProjectLegionPageTitleStyle}"
             Text="{x:Static resources:Resource.AboutPage_Title}" />
 
         <TextBlock
             Padding="0,0,0,8"
             Focusable="True"
-            FontSize="16"
-            FontWeight="Medium"
+            FontSize="24"
+            FontWeight="SemiBold"
             Text="{x:Static resources:Resource.AboutPage_AppName}" />
         <TextBlock
-            x:Name="_version"
+            x:Name="_version" Style="{StaticResource ProjectLegionTechnicalTextStyle}"
             Padding="0,0,0,8"
             Focusable="True"
             Text="{x:Static resources:Resource.AboutPage_Version}" />
         <TextBlock
-            x:Name="_build"
+            x:Name="_build" Style="{StaticResource ProjectLegionTechnicalTextStyle}"
             Padding="0,0,0,16"
             Focusable="True"
             Text="{x:Static resources:Resource.AboutPage_Build}" />
@@ -43,64 +41,57 @@
         <TextBlock
             Padding="0,24,0,8"
             Focusable="True"
-            FontSize="14"
-            FontWeight="Medium"
+            Style="{StaticResource ProjectLegionSectionTitleStyle}"
             Text="{x:Static resources:Resource.AboutPage_Links}" />
         <wpfui:Hyperlink
             Click="Hyperlink_Click"
-            Content="{x:Static resources:Resource.AboutPage_ProjectWebsiteOnGitHub}"
+            Content="Original source project (GPL-3.0)"
             Icon="Link24"
             Tag="https://github.com/LenovoLegionToolkit-Team/LenovoLegionToolkit" />
-        <wpfui:Hyperlink
-            Click="Hyperlink_Click"
-            Content="{x:Static resources:Resource.AboutPage_LatestReleaseOnGitHub}"
-            Icon="Link24"
-            Tag="https://github.com/LenovoLegionToolkit-Team/LenovoLegionToolkit/releases/latest" />
+        <TextBlock Margin="0,8,0,0" Text="Project Legion is an unofficial independent derivative and is not affiliated with or endorsed by Lenovo or the original maintainers." TextWrapping="Wrap" />
 
         <TextBlock
             Padding="0,24,0,8"
             Focusable="True"
-            FontSize="14"
-            FontWeight="Medium"
+            Style="{StaticResource ProjectLegionSectionTitleStyle}"
             Text="{x:Static resources:Resource.AboutPage_ThirdPartyLibraries}" />
 
-        <WrapPanel>
-            <wpfui:Hyperlink Click="Hyperlink_Click" Content="AsyncLock" Tag="https://github.com/neosmart/AsyncLock" />
-            <wpfui:Hyperlink Click="Hyperlink_Click" Content="Autofac" Tag="https://github.com/autofac/Autofac" />
-            <wpfui:Hyperlink Click="Hyperlink_Click" Content="AvalonEdit" Tag="https://github.com/icsharpcode/AvalonEdit" />
-            <wpfui:Hyperlink Click="Hyperlink_Click" Content="Ben.Demystifier" Tag="https://github.com/benaadams/Ben.Demystifier" />
-            <wpfui:Hyperlink Click="Hyperlink_Click" Content="ColorPicker" Tag="https://github.com/PixiEditor/ColorPicker" />
-            <wpfui:Hyperlink Click="Hyperlink_Click" Content="CoordinateSharp" Tag="https://github.com/Tronald/CoordinateSharp" />
-            <wpfui:Hyperlink Click="Hyperlink_Click" Content="CsWin32" Tag="https://github.com/microsoft/CsWin32" />
-            <wpfui:Hyperlink Click="Hyperlink_Click" Content="Humanizer" Tag="https://github.com/Humanizr/Humanizer" />
-            <wpfui:Hyperlink Click="Hyperlink_Click" Content="LibreHardwareMonitor" Tag="https://github.com/LenovoLegionToolkit-Team/LibreHardwareMonitor" />
-            <wpfui:Hyperlink Click="Hyperlink_Click" Content="ManagedNativeWifi" Tag="https://github.com/emoacht/ManagedNativeWifi" />
-            <wpfui:Hyperlink Click="Hyperlink_Click" Content="Markdig" Tag="https://github.com/xoofx/markdig" />
-            <wpfui:Hyperlink Click="Hyperlink_Click" Content="Markdig.Wpf" Tag="https://github.com/Kryptos-FR/markdig.wpf" />
-            <wpfui:Hyperlink Click="Hyperlink_Click" Content="NAudio.Wasapi" Tag="https://github.com/naudio/NAudio" />
-            <wpfui:Hyperlink Click="Hyperlink_Click" Content="Newtonsoft.Json" Tag="https://github.com/JamesNK/Newtonsoft.Json" />
-            <wpfui:Hyperlink Click="Hyperlink_Click" Content="NvAPIWrapper" Tag="https://github.com/LenovoLegionToolkit-Team/NvAPIWrapper" />
-            <wpfui:Hyperlink Click="Hyperlink_Click" Content="Octokit" Tag="https://github.com/octokit/octokit.net" />
-            <wpfui:Hyperlink Click="Hyperlink_Click" Content="PawnIO" Tag="https://github.com/namazso/PawnIO" />
-            <wpfui:Hyperlink Click="Hyperlink_Click" Content="PresentMonFps" Tag="https://github.com/LenovoLegionToolkit-Team/PresentMonFps" />
-            <wpfui:Hyperlink Click="Hyperlink_Click" Content="PubSub" Tag="https://github.com/upta/pubsub" />
-            <wpfui:Hyperlink Click="Hyperlink_Click" Content="RAMSPDToolkit" Tag="https://github.com/Blacktempel/RAMSPDToolkit" />
-            <wpfui:Hyperlink Click="Hyperlink_Click" Content="Roslyn Scripting" Tag="https://github.com/dotnet/roslyn" />
-            <wpfui:Hyperlink Click="Hyperlink_Click" Content="TaskScheduler" Tag="https://github.com/dahall/TaskScheduler" />
-            <wpfui:Hyperlink Click="Hyperlink_Click" Content="UniversalFanControl.Lib" Tag="https://github.com/LenovoLegionToolkit-Team/UniversalFanControl" />
-            <wpfui:Hyperlink Click="Hyperlink_Click" Content="WindowsDisplayAPI" Tag="https://github.com/LenovoLegionToolkit-Team/WindowsDisplayAPI" />
-            <wpfui:Hyperlink Click="Hyperlink_Click" Content="WPF-UI" Tag="https://github.com/lepoco/wpfui" />
-            <wpfui:Hyperlink Click="Hyperlink_Click" Content="WpfScreenHelper" Tag="https://github.com/micdenny/WpfScreenHelper" />
-            <wpfui:Hyperlink Click="Hyperlink_Click" Content="XamlAnimatedGif" Tag="https://github.com/thomaslevesque/XamlAnimatedGif" />
-            <wpfui:Hyperlink Click="Hyperlink_Click" Content="ZenStates-Core" Tag="https://github.com/LenovoLegionToolkit-Team/ZenStates-Core" />
+        <WrapPanel Margin="0,0,0,12">
+            <wpfui:Hyperlink Margin="0,0,12,8" Click="Hyperlink_Click" Content="AsyncLock" Tag="https://github.com/neosmart/AsyncLock" />
+            <wpfui:Hyperlink Margin="0,0,12,8" Click="Hyperlink_Click" Content="Autofac" Tag="https://github.com/autofac/Autofac" />
+            <wpfui:Hyperlink Margin="0,0,12,8" Click="Hyperlink_Click" Content="AvalonEdit" Tag="https://github.com/icsharpcode/AvalonEdit" />
+            <wpfui:Hyperlink Margin="0,0,12,8" Click="Hyperlink_Click" Content="Ben.Demystifier" Tag="https://github.com/benaadams/Ben.Demystifier" />
+            <wpfui:Hyperlink Margin="0,0,12,8" Click="Hyperlink_Click" Content="ColorPicker" Tag="https://github.com/PixiEditor/ColorPicker" />
+            <wpfui:Hyperlink Margin="0,0,12,8" Click="Hyperlink_Click" Content="CoordinateSharp" Tag="https://github.com/Tronald/CoordinateSharp" />
+            <wpfui:Hyperlink Margin="0,0,12,8" Click="Hyperlink_Click" Content="CsWin32" Tag="https://github.com/microsoft/CsWin32" />
+            <wpfui:Hyperlink Margin="0,0,12,8" Click="Hyperlink_Click" Content="Humanizer" Tag="https://github.com/Humanizr/Humanizer" />
+            <wpfui:Hyperlink Margin="0,0,12,8" Click="Hyperlink_Click" Content="LibreHardwareMonitor" Tag="https://github.com/LenovoLegionToolkit-Team/LibreHardwareMonitor" />
+            <wpfui:Hyperlink Margin="0,0,12,8" Click="Hyperlink_Click" Content="ManagedNativeWifi" Tag="https://github.com/emoacht/ManagedNativeWifi" />
+            <wpfui:Hyperlink Margin="0,0,12,8" Click="Hyperlink_Click" Content="Markdig" Tag="https://github.com/xoofx/markdig" />
+            <wpfui:Hyperlink Margin="0,0,12,8" Click="Hyperlink_Click" Content="Markdig.Wpf" Tag="https://github.com/Kryptos-FR/markdig.wpf" />
+            <wpfui:Hyperlink Margin="0,0,12,8" Click="Hyperlink_Click" Content="NAudio.Wasapi" Tag="https://github.com/naudio/NAudio" />
+            <wpfui:Hyperlink Margin="0,0,12,8" Click="Hyperlink_Click" Content="Newtonsoft.Json" Tag="https://github.com/JamesNK/Newtonsoft.Json" />
+            <wpfui:Hyperlink Margin="0,0,12,8" Click="Hyperlink_Click" Content="NvAPIWrapper" Tag="https://github.com/LenovoLegionToolkit-Team/NvAPIWrapper" />
+            <wpfui:Hyperlink Margin="0,0,12,8" Click="Hyperlink_Click" Content="Octokit" Tag="https://github.com/octokit/octokit.net" />
+            <wpfui:Hyperlink Margin="0,0,12,8" Click="Hyperlink_Click" Content="PawnIO" Tag="https://github.com/namazso/PawnIO" />
+            <wpfui:Hyperlink Margin="0,0,12,8" Click="Hyperlink_Click" Content="PresentMonFps" Tag="https://github.com/LenovoLegionToolkit-Team/PresentMonFps" />
+            <wpfui:Hyperlink Margin="0,0,12,8" Click="Hyperlink_Click" Content="PubSub" Tag="https://github.com/upta/pubsub" />
+            <wpfui:Hyperlink Margin="0,0,12,8" Click="Hyperlink_Click" Content="RAMSPDToolkit" Tag="https://github.com/Blacktempel/RAMSPDToolkit" />
+            <wpfui:Hyperlink Margin="0,0,12,8" Click="Hyperlink_Click" Content="Roslyn Scripting" Tag="https://github.com/dotnet/roslyn" />
+            <wpfui:Hyperlink Margin="0,0,12,8" Click="Hyperlink_Click" Content="TaskScheduler" Tag="https://github.com/dahall/TaskScheduler" />
+            <wpfui:Hyperlink Margin="0,0,12,8" Click="Hyperlink_Click" Content="UniversalFanControl.Lib" Tag="https://github.com/LenovoLegionToolkit-Team/UniversalFanControl" />
+            <wpfui:Hyperlink Margin="0,0,12,8" Click="Hyperlink_Click" Content="WindowsDisplayAPI" Tag="https://github.com/LenovoLegionToolkit-Team/WindowsDisplayAPI" />
+            <wpfui:Hyperlink Margin="0,0,12,8" Click="Hyperlink_Click" Content="WPF-UI" Tag="https://github.com/lepoco/wpfui" />
+            <wpfui:Hyperlink Margin="0,0,12,8" Click="Hyperlink_Click" Content="WpfScreenHelper" Tag="https://github.com/micdenny/WpfScreenHelper" />
+            <wpfui:Hyperlink Margin="0,0,12,8" Click="Hyperlink_Click" Content="XamlAnimatedGif" Tag="https://github.com/thomaslevesque/XamlAnimatedGif" />
+            <wpfui:Hyperlink Margin="0,0,12,8" Click="Hyperlink_Click" Content="ZenStates-Core" Tag="https://github.com/LenovoLegionToolkit-Team/ZenStates-Core" />
         </WrapPanel>
 
         <TextBlock
             Padding="0,24,0,8"
             AutomationProperties.Name="{Binding RelativeSource={RelativeSource Mode=Self}, Path=Text}"
             Focusable="True"
-            FontSize="14"
-            FontWeight="Medium"
+            Style="{StaticResource ProjectLegionSectionTitleStyle}"
             Text="{x:Static resources:Resource.AboutPage_ApplicationFolders}" />
 
         <wpfui:Hyperlink
