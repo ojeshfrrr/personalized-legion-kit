@@ -10,6 +10,7 @@ using LenovoLegionToolkit.Lib.Listeners;
 using LenovoLegionToolkit.Lib.Settings;
 using LenovoLegionToolkit.Lib.Utils;
 using LenovoLegionToolkit.WPF.Resources;
+using LenovoLegionToolkit.WPF.Utils;
 using LenovoLegionToolkit.WPF.Windows.Dashboard;
 
 namespace LenovoLegionToolkit.WPF.Controls.Dashboard;
@@ -19,29 +20,60 @@ public partial class DiscreteGPUControl
     private readonly GPUController _gpuController = IoCContainer.Resolve<GPUController>();
     private readonly ApplicationSettings _settings = IoCContainer.Resolve<ApplicationSettings>();
     private readonly NativeWindowsMessageListener _nativeWindowsMessageListener = IoCContainer.Resolve<NativeWindowsMessageListener>();
+    private volatile bool _visibleForUpdates;
+    private readonly OptionalUiActivity _activity;
+    private IDisposable? _gpuMonitoringLease;
 
     public DiscreteGPUControl()
     {
         InitializeComponent();
 
-        _gpuController.Refreshed += GpuController_Refreshed;
-        _nativeWindowsMessageListener.Changed += NativeWindowsMessageListener_Changed;
-
-        IsVisibleChanged += DiscreteGPUControl_IsVisibleChanged;
+        _activity = new OptionalUiActivity(this, async active =>
+        {
+            _visibleForUpdates = active;
+            if (active)
+            {
+                _gpuMonitoringLease ??= _gpuController.AcquireOptionalMonitoring();
+                await RefreshAsync();
+            }
+            else
+            {
+                _gpuMonitoringLease?.Dispose();
+                _gpuMonitoringLease = null;
+                _content.Visibility = Visibility.Hidden;
+            }
+        });
     }
 
-    protected override void OnFinishedLoading() { }
+    protected override void OnFinishedLoading()
+    {
+        _gpuController.Refreshed += GpuController_Refreshed;
+        _nativeWindowsMessageListener.Changed += NativeWindowsMessageListener_Changed;
+    }
+
+    protected override void OnFinishedUnloading()
+    {
+        _visibleForUpdates = false;
+        _gpuController.Refreshed -= GpuController_Refreshed;
+        _nativeWindowsMessageListener.Changed -= NativeWindowsMessageListener_Changed;
+    }
 
     protected override async Task OnRefreshAsync()
     {
-        if (!IsVisible || Window.GetWindow(this)?.WindowState == WindowState.Minimized)
+        if (!_activity.IsActive || GamingActivityMonitor.Instance.OptionalWorkPaused)
             return;
 
-        if (!_gpuController.IsSupported())
-            throw new InvalidOperationException("Unsupported operation");
+        _visibleForUpdates = true;
+        var interval = _settings.Store.GPUMonitoringInterval;
+        await Task.Run(async () =>
+        {
+            if (!_visibleForUpdates) return;
+            if (!_gpuController.IsSupported())
+                throw new InvalidOperationException("Unsupported operation");
+            if (!_visibleForUpdates) return;
 
-        _gpuController.Interval = _settings.Store.GPUMonitoringInterval;
-        await _gpuController.StartAsync();
+            await _gpuController.StartAsync(interval: interval).ConfigureAwait(false);
+        });
     }
 
     private async void NativeWindowsMessageListener_Changed(object? sender, NativeWindowsMessageListener.ChangedEventArgs e)
@@ -49,27 +81,22 @@ public partial class DiscreteGPUControl
         if (e.Message != NativeWindowsMessage.DisplayDeviceChanged)
             return;
 
-        if (Window.GetWindow(this)?.WindowState == WindowState.Minimized)
+        if (!_activity.IsActive || GamingActivityMonitor.Instance.OptionalWorkPaused)
             return;
 
         Visibility = Visibility.Visible;
         await RefreshAsync();
     }
 
-    private async void DiscreteGPUControl_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
+    private void GpuController_Refreshed(object? sender, GPUStatus e)
     {
-        if (IsVisible)
-            return;
-
-        _content.Visibility = Visibility.Hidden;
-
-        if (!_settings.Store.GameDetection.UseDiscreteGPU)
-            await _gpuController.StopAsync();
+        if (!_visibleForUpdates || GamingActivityMonitor.Instance.OptionalWorkPaused) return;
+        ApplyGpuStatus(e);
     }
 
-    private void GpuController_Refreshed(object? sender, GPUStatus e) => Dispatcher.Invoke(() =>
+    private void ApplyGpuStatus(GPUStatus e) => Dispatcher.Invoke(() =>
     {
-        if (!IsVisible)
+        if (!_activity.IsActive || GamingActivityMonitor.Instance.OptionalWorkPaused)
             return;
 
         var tooltipStringBuilder = new StringBuilder(Resource.DiscreteGPUControl_PerformanceState);

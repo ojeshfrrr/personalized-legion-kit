@@ -33,6 +33,8 @@ public partial class DiscreteGPUManagementWindow : BaseWindow
     private readonly GPUController _gpuController = IoCContainer.Resolve<GPUController>();
     private readonly ObservableCollection<DiscreteGPUAppViewModel> _apps = new();
     private bool _isInitializing = true;
+    private readonly OptionalUiActivity _activity;
+    private IDisposable? _gpuMonitoringLease;
 
     public DiscreteGPUManagementWindow()
     {
@@ -56,6 +58,19 @@ public partial class DiscreteGPUManagementWindow : BaseWindow
 
         Loaded += DiscreteGPUManagementWindow_Loaded;
         _gpuController.Refreshed += GpuController_Refreshed;
+        _activity = new OptionalUiActivity(this, async active =>
+        {
+            if (active)
+            {
+                _gpuMonitoringLease ??= _gpuController.AcquireOptionalMonitoring();
+                await _gpuController.StartAsync(interval: _settings.Store.GPUMonitoringInterval);
+            }
+            else
+            {
+                _gpuMonitoringLease?.Dispose();
+                _gpuMonitoringLease = null;
+            }
+        });
 
         _isInitializing = false;
     }
@@ -90,8 +105,10 @@ public partial class DiscreteGPUManagementWindow : BaseWindow
 
     private void GpuController_Refreshed(object? sender, GPUStatus e)
     {
+        if (GamingActivityMonitor.Instance.OptionalWorkPaused) return;
         Dispatcher.Invoke(() =>
         {
+            if (!_activity.IsActive || GamingActivityMonitor.Instance.OptionalWorkPaused) return;
             if (_pStateComboBox.ItemsSource is not List<PStateItemViewModel> items || items.Count <= 1)
             {
                 var supported = _gpuController.GetSupportedPerformanceStates();
@@ -108,6 +125,7 @@ public partial class DiscreteGPUManagementWindow : BaseWindow
 
     private async Task RefreshAppListAsync()
     {
+        if (GamingActivityMonitor.Instance.OptionalWorkPaused) return;
         if (_isRefreshing) return;
         _isRefreshing = true;
 
