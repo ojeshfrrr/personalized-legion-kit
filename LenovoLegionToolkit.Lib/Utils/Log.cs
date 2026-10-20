@@ -22,6 +22,7 @@ public class Log
     private readonly object _lock = new();
     private readonly string _folderPath;
     private readonly string _logPath;
+    private readonly bool _persistToFile;
 
     public bool IsTraceEnabled { get; set; }
 
@@ -29,13 +30,21 @@ public class Log
 
     private Log()
     {
-        _folderPath = Path.Combine(Folders.AppData, "log");
-        Directory.CreateDirectory(_folderPath);
-        _logPath = Path.Combine(_folderPath, $"log_{DateTime.UtcNow:yyyy_MM_dd_HH_mm_ss}.txt");
+        // An isolated QA profile is the explicitly permitted destination for diagnostic output.
+        // A plain --read-only or --ui-preview run must not create files in the user's profile.
+        _persistToFile = !Folders.IsReadOnlySession || Folders.IsIsolatedProfile;
+        _folderPath = _persistToFile ? Path.Combine(Folders.AppData, "log") : string.Empty;
+        _logPath = _persistToFile ? Path.Combine(_folderPath, $"log_{DateTime.UtcNow:yyyy_MM_dd_HH_mm_ss}.txt") : string.Empty;
+
+        if (_persistToFile)
+            Directory.CreateDirectory(_folderPath);
     }
 
     public void ErrorReport(string header, Exception ex)
     {
+        if (!_persistToFile)
+            return;
+
         try
         {
             var errorReportPath = Path.Combine(_folderPath, $"error_{DateTime.UtcNow:yyyy_MM_dd_HH_mm_ss}.txt");
@@ -54,7 +63,7 @@ public class Log
         [CallerLineNumber] int lineNumber = -1,
         [CallerMemberName] string? caller = null)
     {
-        if (!IsTraceEnabled)
+        if (!_persistToFile || !IsTraceEnabled)
         {
             return;
         }
