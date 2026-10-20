@@ -16,6 +16,7 @@ public class RGBKeyboardBacklightController(RGBKeyboardSettings settings, Vantag
 {
     private static readonly AsyncLock LogicLock = new();
     private readonly RGBDeviceFactory _deviceFactory = new();
+    public bool HasLightControlOwnership { get; private set; }
 
     public bool ForceDisable
     {
@@ -57,6 +58,7 @@ public class RGBKeyboardBacklightController(RGBKeyboardSettings settings, Vantag
 #if !MOCK_RGB
                 await WMI.LenovoGameZoneData.SetLightControlOwnerAsync(enable ? 1 : 0).ConfigureAwait(false);
 #endif
+                HasLightControlOwnership = enable;
 
                 if (restorePreset)
                 {
