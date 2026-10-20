@@ -632,19 +632,35 @@ public class SensorsGroupController : IDisposable
             return;
         }
 
-        StopProducerLoop();
-
-        _producerCts = new CancellationTokenSource();
-        var token = _producerCts.Token;
-        _producerTask = Task.Run(() => ProducerLoop(token), token);
+        // Existing subscribers only change scope/cadence. Do not recreate their
+        // worker or overlap an in-flight native read during a page transition.
+        if (_producerCts is { IsCancellationRequested: false } && _producerTask is { IsCompleted: false }) return;
+        var previous = _producerTask;
+        var cts = new CancellationTokenSource();
+        _producerCts = cts;
+        var token = cts.Token;
+        _producerTask = Task.Run(async () =>
+        {
+            try
+            {
+                if (previous is not null) await previous.ConfigureAwait(false);
+                token.ThrowIfCancellationRequested();
+                await ProducerLoop(token).ConfigureAwait(false);
+            }
+            catch (OperationCanceledException) when (token.IsCancellationRequested) { }
+            finally
+            {
+                lock (_subscribers)
+                    if (ReferenceEquals(_producerCts, cts)) _producerCts = null;
+                cts.Dispose();
+            }
+        });
     }
 
     private void StopProducerLoop()
     {
         _producerCts?.Cancel();
-        _producerCts?.Dispose();
         _producerCts = null;
-        _producerTask = null;
     }
 
     private async Task ProducerLoop(CancellationToken token)
@@ -703,7 +719,12 @@ public class SensorsGroupController : IDisposable
 
     public void Dispose()
     {
-        StopProducerLoop();
+        lock (_subscribers)
+        {
+            _isResetting = true;
+            _subscribers.Clear();
+            StopProducerLoop();
+        }
         _cpuProvider.SensorResetNeeded -= OnSensorResetNeeded;
         lock (_hardwareLock) { _computer?.Close(); _computer = null; _hardwareInitialized = false; }
         _initSemaphore.Dispose();
