@@ -15,7 +15,7 @@ using Windows.Win32.System.Power;
 
 namespace LenovoLegionToolkit.Lib.Controllers.Sensors;
 
-public abstract class AbstractSensorsController(GPUController gpuController) : ISensorsController
+public abstract class AbstractSensorsController(GPUController gpuController) : ISensorsController, IDisposable
 {
     protected readonly struct GPUInfo(
         int utilization,
@@ -72,6 +72,12 @@ public abstract class AbstractSensorsController(GPUController gpuController) : I
     protected int? _pchMaxFanSpeedCache;
 
     public virtual bool HasPchFan => false;
+
+    public void Dispose()
+    {
+        _percentProcessorPerformanceCounter.Dispose();
+        GC.SuppressFinalize(this);
+    }
 
     public abstract Task<bool> IsSupportedAsync();
 
