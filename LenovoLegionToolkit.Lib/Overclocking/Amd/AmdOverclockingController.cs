@@ -154,6 +154,9 @@ public sealed class AmdOverclockingController : IDisposable
 
     public void SaveShutdownInfo(ShutdownInfo info)
     {
+        if (Folders.IsReadOnlySession)
+            return;
+
         var isAmd = _machineInformation?.Properties.IsAmdDevice
             ?? Compatibility.GetMachineInformationAsync().Result.Properties.IsAmdDevice;
 
@@ -200,6 +203,9 @@ public sealed class AmdOverclockingController : IDisposable
 
     public void SaveProfile(OverclockingProfile profile, string? path = null)
     {
+        if (Folders.IsReadOnlySession)
+            return;
+
         if (path != null)
         {
             try
@@ -235,6 +241,9 @@ public sealed class AmdOverclockingController : IDisposable
 
     public void SaveDefaultProfile(OverclockingProfile profile)
     {
+        if (Folders.IsReadOnlySession)
+            return;
+
         if (File.Exists(_defaultProfilePath)) return;
 
         try
