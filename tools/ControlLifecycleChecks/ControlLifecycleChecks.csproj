@@ -1,0 +1,13 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <UseWPF>true</UseWPF>
+    <AssemblyName>ProjectLegion.ControlLifecycleChecks</AssemblyName>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="PubSub" Version="4.0.2" />
+    <Compile Include="..\..\LenovoLegionToolkit.Lib\Messaging\MessagingCenter.cs" Link="Production\MessagingCenter.cs" />
+    <Compile Include="..\..\LenovoLegionToolkit.Lib\Messaging\Messages\IMessage.cs" Link="Production\IMessage.cs" />
+    <Compile Include="..\..\LenovoLegionToolkit.WPF\Controls\AbstractRefreshingControl.cs" Link="Production\AbstractRefreshingControl.cs" />
+  </ItemGroup>
+</Project>
