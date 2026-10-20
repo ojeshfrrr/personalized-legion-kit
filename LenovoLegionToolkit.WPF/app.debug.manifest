@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <assembly manifestVersion="1.0" xmlns="urn:schemas-microsoft-com:asm.v1">
 
-	<assemblyIdentity version="1.0.0.0" name="LenovoLegionToolkit.app"/>
+	<assemblyIdentity version="0.1.0.0" name="ProjectLegion.app"/>
 
 	<trustInfo xmlns="urn:schemas-microsoft-com:asm.v2">
 		<security>
@@ -26,8 +26,8 @@
 	</application>
 
 	<msix xmlns="urn:schemas-microsoft-com:msix.v1"
-		  publisher="CN=LenovoLegionToolkit"
-		  packageName="eef45acd-2cf3-4d7d-9d33-92f37c74cc31"
+		  publisher="CN=ProjectLegion"
+		  packageName="7e8d0b61-1706-4f8c-98d7-a35e5a319244"
 		  applicationId="App" />
 
 </assembly>
