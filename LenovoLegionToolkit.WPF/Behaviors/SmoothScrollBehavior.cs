@@ -5,6 +5,7 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Media3D;
+using LenovoLegionToolkit.Lib.Utils;
 
 namespace LenovoLegionToolkit.WPF.Behaviors;
 
@@ -101,6 +102,12 @@ public static class SmoothScrollBehavior
 
         public void Scroll(double delta)
         {
+            if (GamingActivityMonitor.Instance.OptionalWorkPaused)
+            {
+                Stop();
+                _scrollViewer.ScrollToVerticalOffset(_scrollViewer.VerticalOffset - delta);
+                return;
+            }
             if (!_isHooked)
             {
                 _targetOffset = _scrollViewer.VerticalOffset;
@@ -138,6 +145,11 @@ public static class SmoothScrollBehavior
 
         private void OnRendering(object? sender, EventArgs e)
         {
+            if (!_scrollViewer.IsVisible || GamingActivityMonitor.Instance.OptionalWorkPaused)
+            {
+                Stop();
+                return;
+            }
             double currentTick = _stopwatch.Elapsed.TotalSeconds;
             double dt = currentTick - _lastTickSeconds;
             _lastTickSeconds = currentTick;
