@@ -7,6 +7,7 @@ using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Threading;
 using System.Threading.Tasks;
 using LenovoLegionToolkit.Lib.Controllers.GodMode;
 using LenovoLegionToolkit.Lib.Controllers.Sensors;
@@ -149,6 +150,7 @@ public static partial class Compatibility
     ];
 
     private static MachineInformation? _machineInformation;
+    private static readonly SemaphoreSlim MachineInformationGate = new(1, 1);
     private static FakeMachineInformation? _fakeMachineInformation;
 
     public static Task<bool> CheckBasicCompatibilityAsync() => WMI.LenovoGameZoneData.ExistsAsync();
@@ -173,6 +175,9 @@ public static partial class Compatibility
 
     private static async Task EnsureFakeMachineInformationLoadedAsync()
     {
+        // Fake identity files are development fixtures, never a production compatibility source.
+        if (!AppFlags.Instance.Debug)
+            return;
         if (FakeMachineInformationMode)
         {
             return;
@@ -193,8 +198,17 @@ public static partial class Compatibility
 
     public static async Task<MachineInformation> GetMachineInformationAsync()
     {
-        if (_machineInformation != null) return _machineInformation.Value;
+        await MachineInformationGate.WaitAsync().ConfigureAwait(false);
+        try
+        {
+            if (_machineInformation != null) return _machineInformation.Value;
+            return await ReadMachineInformationAsync().ConfigureAwait(false);
+        }
+        finally { MachineInformationGate.Release(); }
+    }
 
+    private static async Task<MachineInformation> ReadMachineInformationAsync()
+    {
         var (vendor, machineType, model, serialNumber) = await GetModelDataAsync().ConfigureAwait(false);
         var generation = GetMachineGeneration(model);
         var legionSeries = GetLegionSeries(model, machineType);
