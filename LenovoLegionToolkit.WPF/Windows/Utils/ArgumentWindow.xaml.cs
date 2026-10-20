@@ -234,6 +234,9 @@ public partial class ArgumentWindow
 
     private void Save_Click(object sender, RoutedEventArgs e)
     {
+        if (Folders.IsReadOnlySession)
+            return;
+
         try
         {
             var newArgs = new List<string>();

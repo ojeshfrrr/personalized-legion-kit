@@ -57,7 +57,12 @@ public partial class SettingsBackupWindow
         {
             var appData = Folders.AppData;
             if (!Directory.Exists(appData))
+            {
+                if (Folders.IsReadOnlySession)
+                    return;
+
                 Directory.CreateDirectory(appData);
+            }
 
             foreach (var fileName in KnownSettingsFiles)
             {
@@ -148,6 +153,13 @@ public partial class SettingsBackupWindow
 
     private async void RestoreButton_Click(object sender, RoutedEventArgs e)
     {
+        if (Folders.IsReadOnlySession)
+        {
+            await SnackbarHelper.ShowAsync(Resource.SettingsBackupWindow_Title,
+                "Settings restore is disabled in read-only or preview mode.", SnackbarType.Warning);
+            return;
+        }
+
         var selectedItems = _items.Where(x => x.IsSelected).ToList();
         if (selectedItems.Count == 0)
         {
