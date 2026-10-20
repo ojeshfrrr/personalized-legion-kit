@@ -2,6 +2,7 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Threading;
 using Humanizer;
 using LenovoLegionToolkit.Lib;
 using LenovoLegionToolkit.Lib.Settings;
@@ -19,31 +20,32 @@ public partial class BatteryPage
 
     private CancellationTokenSource? _cts;
     private Task? _refreshTask;
+    private readonly OptionalUiActivity _activity;
 
     public BatteryPage()
     {
         InitializeComponent();
 
-        IsVisibleChanged += BatteryPage_IsVisibleChanged;
+        _activity = new OptionalUiActivity(this, SetActivityAsync);
     }
 
-    private async void BatteryPage_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
+    private async Task SetActivityAsync(bool active)
     {
-        if (IsVisible)
+        if (active)
         {
             Refresh();
             return;
         }
 
-        if (_cts is not null)
-            await _cts.CancelAsync();
-
+        var cts = _cts;
+        var refreshTask = _refreshTask;
         _cts = null;
-
-        if (_refreshTask is not null)
-            await _refreshTask;
-
         _refreshTask = null;
+        if (cts is not null)
+            await cts.CancelAsync();
+        if (refreshTask is not null)
+            await refreshTask;
+        cts?.Dispose();
     }
 
     private void Refresh()
@@ -61,22 +63,37 @@ public partial class BatteryPage
             {
                 try
                 {
+                    if (GamingActivityMonitor.Instance.OptionalWorkPaused) break;
                     var batteryInfo = Battery.GetBatteryInformation();
+                    token.ThrowIfCancellationRequested();
                     var powerAdapterStatus = await Power.IsPowerAdapterConnectedAsync();
+                    token.ThrowIfCancellationRequested();
                     var onBatterySince = Battery.GetOnBatterySince();
-                    Dispatcher.Invoke(() => Set(batteryInfo, powerAdapterStatus, onBatterySince));
+                    await Dispatcher.InvokeAsync(() =>
+                    {
+                        if (!token.IsCancellationRequested && IsVisible && !GamingActivityMonitor.Instance.OptionalWorkPaused)
+                            Set(batteryInfo, powerAdapterStatus, onBatterySince);
+                    }, DispatcherPriority.Background, token);
 
-                    await Task.Delay(TimeSpan.FromSeconds(2), token);
                 }
-                catch (OperationCanceledException) { }
+                catch (OperationCanceledException) { break; }
                 catch (Exception ex)
                 {
                     Log.Instance.Trace($"Battery information refresh failed.", ex);
+                    await Dispatcher.InvokeAsync(() =>
+                    {
+                        if (token.IsCancellationRequested || !IsVisible) return;
+                        _percentRemaining.Text = "—";
+                        _batteryChargeBar.Value = 0;
+                        _status.Text = "Battery information is temporarily unavailable.";
+                    });
                 }
+                try { await Task.Delay(TimeSpan.FromSeconds(2), token); }
+                catch (OperationCanceledException) { break; }
             }
 
             Log.Instance.Trace($"Battery information refresh stopped.");
-        }, token);
+        });
     }
 
     private void Set(BatteryInformation batteryInfo, PowerAdapterStatus powerAdapterStatus, DateTime? onBatterySince)
@@ -98,6 +115,7 @@ public partial class BatteryPage
         };
 
         _percentRemaining.Text = $"{batteryInfo.BatteryPercentage}{Resource.Percent}";
+        _batteryChargeBar.Value = Math.Clamp((double)batteryInfo.BatteryPercentage, 0, 100);
         _status.Text = GetStatusText(batteryInfo);
         _lowBattery.Visibility = batteryInfo.IsLowBattery ? Visibility.Visible : Visibility.Collapsed;
         _lowWattageCharger.Visibility = powerAdapterStatus == PowerAdapterStatus.ConnectedLowWattage ? Visibility.Visible : Visibility.Collapsed;
