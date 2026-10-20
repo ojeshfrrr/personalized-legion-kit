@@ -8,6 +8,7 @@ using LenovoLegionToolkit.Lib.Messaging;
 using LenovoLegionToolkit.Lib.Messaging.Messages;
 using LenovoLegionToolkit.Lib.Utils;
 using LenovoLegionToolkit.WPF.Extensions;
+using LenovoLegionToolkit.WPF.Utils;
 using Wpf.Ui.Common;
 using Wpf.Ui.Controls;
 using CardControl = LenovoLegionToolkit.WPF.Controls.Custom.CardControl;
@@ -21,6 +22,7 @@ public abstract class AbstractToggleFeatureCardControl<T> : AbstractRefreshingCo
     private readonly CardControl _cardControl = new();
 
     private readonly CardHeaderControl _cardHeaderControl = new();
+    protected override string StatusTitle => Title;
 
     private readonly ToggleSwitch _toggle = new();
 
@@ -104,6 +106,8 @@ public abstract class AbstractToggleFeatureCardControl<T> : AbstractRefreshingCo
         }));
     }
 
+    protected override void OnFinishedUnloading() => MessagingCenter.Unsubscribe<FeatureStateMessage<T>>(this);
+
     protected virtual async Task OnStateChange(ToggleSwitch toggle, IFeature<T> feature)
     {
         var exceptionOccurred = false;
@@ -119,7 +123,13 @@ public abstract class AbstractToggleFeatureCardControl<T> : AbstractRefreshingCo
             if (state.Equals(await feature.GetStateAsync()))
                 return;
 
-            await feature.SetStateAsync(state);
+            await HardwareCommandRunner.RunAsync(async () =>
+            {
+                await feature.SetStateAsync(state);
+                var observed = await feature.GetStateAsync();
+                if (!observed.Equals(state))
+                    throw new InvalidOperationException("The device did not confirm the requested setting. Read the current value before retrying.");
+            });
         }
         catch (Exception ex)
         {
@@ -128,6 +138,7 @@ public abstract class AbstractToggleFeatureCardControl<T> : AbstractRefreshingCo
             Log.Instance.Trace($"Failed to change state. [feature={GetType().Name}]", ex);
 
             OnStateChangeException(ex);
+            SnackbarHelper.Show("Setting change not verified", ex.Message, SnackbarType.Error);
         }
         finally
         {

@@ -11,6 +11,7 @@ using LenovoLegionToolkit.Lib.Messaging.Messages;
 using LenovoLegionToolkit.Lib.Utils;
 using LenovoLegionToolkit.WPF.Controls.Custom;
 using LenovoLegionToolkit.WPF.Extensions;
+using LenovoLegionToolkit.WPF.Utils;
 using Wpf.Ui.Common;
 
 namespace LenovoLegionToolkit.WPF.Controls;
@@ -22,6 +23,7 @@ public abstract class AbstractComboBoxFeatureCardControl<T> : AbstractRefreshing
     private readonly CardControl _cardControl = new();
 
     private readonly CardHeaderControl _cardHeaderControl = new();
+    protected override string StatusTitle => Title;
 
     protected readonly ComboBox _comboBox = new();
 
@@ -111,6 +113,8 @@ public abstract class AbstractComboBoxFeatureCardControl<T> : AbstractRefreshing
         }));
     }
 
+    protected override void OnFinishedUnloading() => MessagingCenter.Unsubscribe<FeatureStateMessage<T>>(this);
+
     protected virtual async Task OnStateChangeAsync(ComboBox comboBox, IFeature<T> feature, T? newValue, T? oldValue)
     {
         var exceptionOccurred = false;
@@ -133,7 +137,13 @@ public abstract class AbstractComboBoxFeatureCardControl<T> : AbstractRefreshing
             if (selectedState.Equals(currentState))
                 return;
 
-            await feature.SetStateAsync(selectedState);
+            await HardwareCommandRunner.RunAsync(async () =>
+            {
+                await feature.SetStateAsync(selectedState);
+                var observed = await feature.GetStateAsync();
+                if (!observed.Equals(selectedState))
+                    throw new InvalidOperationException("The device did not confirm the requested setting. Read the current value before retrying.");
+            });
         }
         catch (Exception ex)
         {
@@ -142,6 +152,7 @@ public abstract class AbstractComboBoxFeatureCardControl<T> : AbstractRefreshing
             Log.Instance.Trace($"Failed to change state. [feature={GetType().Name}]", ex);
 
             OnStateChangeException(ex);
+            SnackbarHelper.Show("Setting change not verified", ex.Message, SnackbarType.Error);
         }
         finally
         {
