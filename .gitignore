@@ -14,6 +14,7 @@
 # Project-specific exclusions
 build/
 BuildLLT/
+BuildProjectLegion/
 *.pfx
 make_release.bat
 make_debug.bat
