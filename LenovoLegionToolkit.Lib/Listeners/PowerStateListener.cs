@@ -174,6 +174,7 @@ public sealed class PowerStateListener : IListener<PowerStateListener.ChangedEve
 
             var powerAdapterStateChanged = powerAdapterState != _lastPowerAdapterState;
 
+            if (HardwareRuntime.ControlsEnabled)
             switch (powerStateEvent)
             {
                 case PowerStateEvent.Suspend:

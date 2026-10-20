@@ -18,6 +18,8 @@ public class RGBKeyboardBacklightListener(RGBKeyboardBacklightController control
 
     protected override async Task OnChangedAsync(RGBKeyboardBacklightChanged value)
     {
+        if (!HardwareRuntime.ControlsEnabled)
+            return;
         try
         {
             if (!await controller.IsSupportedAsync().ConfigureAwait(false))

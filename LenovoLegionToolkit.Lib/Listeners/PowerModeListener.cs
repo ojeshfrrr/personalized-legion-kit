@@ -37,8 +37,13 @@ public class PowerModeListener(
 
     protected override bool RaiseChangedAutomatically => false;
 
-    protected override Task OnChangedAsync(PowerModeState value) =>
-        ProcessChangeAsync(value);
+    protected override Task OnChangedAsync(PowerModeState value)
+    {
+        if (HardwareRuntime.ControlsEnabled)
+            return ProcessChangeAsync(value);
+        RaiseChanged(value);
+        return Task.CompletedTask;
+    }
 
     public Task NotifyAsync(PowerModeState value)
     {

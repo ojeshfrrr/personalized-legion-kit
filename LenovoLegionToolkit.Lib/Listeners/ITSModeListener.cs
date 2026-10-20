@@ -56,7 +56,8 @@ public class ITSModeListener(
 
     internal virtual async Task OnChangedAsync(ITSMode value, bool showNotification)
     {
-        await ChangeDependenciesAsync(value).ConfigureAwait(false);
+        if (HardwareRuntime.ControlsEnabled)
+            await ChangeDependenciesAsync(value).ConfigureAwait(false);
         if (showNotification)
         {
             PublishNotification(value);

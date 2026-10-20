@@ -314,7 +314,8 @@ public class NativeWindowsMessageListener : NativeWindow, IListener<NativeWindow
 
     private void OnBatterySaverEnabled()
     {
-        Task.Run(async () => await _powerModeFeature.EnsureCorrectWindowsPowerSettingsAreSetAsync().ConfigureAwait(false));
+        if (HardwareRuntime.ControlsEnabled)
+            Task.Run(async () => await _powerModeFeature.EnsureCorrectWindowsPowerSettingsAreSetAsync().ConfigureAwait(false));
 
         RaiseChanged(NativeWindowsMessage.BatterySaverEnabled);
     }
@@ -356,6 +357,7 @@ public class NativeWindowsMessageListener : NativeWindow, IListener<NativeWindow
 
     private void OnDisplayDeviceChanged()
     {
+        if (HardwareRuntime.ControlsEnabled)
         Task.Run(async () =>
         {
             if (await _dgpuNotify.IsSupportedAsync().ConfigureAwait(false))
@@ -374,7 +376,8 @@ public class NativeWindowsMessageListener : NativeWindow, IListener<NativeWindow
 
         ref var kbStruct = ref Unsafe.AsRef<KBDLLHOOKSTRUCT>((void*)lParam.Value);
 
-        _smartFnLockController.OnKeyboardEvent(wParam.Value, kbStruct);
+        if (HardwareRuntime.ControlsEnabled)
+            _smartFnLockController.OnKeyboardEvent(wParam.Value, kbStruct);
 
         if (wParam.Value != PInvoke.WM_KEYUP)
             return PInvoke.CallNextHookEx(HHOOK.Null, nCode, wParam, lParam);
