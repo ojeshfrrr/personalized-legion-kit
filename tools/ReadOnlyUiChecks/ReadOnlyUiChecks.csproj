@@ -1,0 +1,14 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <AssemblyName>ProjectLegion.ReadOnlyUiChecks</AssemblyName>
+    <UseWPF>true</UseWPF>
+    <UseWindowsForms>true</UseWindowsForms>
+    <RollForward>Major</RollForward>
+    <ApplicationManifest>..\..\LenovoLegionToolkit.WPF\app.manifest</ApplicationManifest>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\LenovoLegionToolkit.WPF\LenovoLegionToolkit.WPF.csproj" />
+    <Content Include="..\..\LenovoLegionToolkit.WPF\App.xaml" Link="ProductionApp.xaml" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+</Project>
