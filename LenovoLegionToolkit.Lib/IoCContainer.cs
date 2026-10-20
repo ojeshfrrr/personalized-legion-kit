@@ -23,11 +23,18 @@ public static class IoCContainer
 
             _container = cb.Build();
 
-            if (_container.IsRegistered<System.DgpuAwakeManager>())
-            {
-                _ = _container.Resolve<System.DgpuAwakeManager>();
-            }
         }
+    }
+
+    public static void Dispose()
+    {
+        IContainer? container;
+        lock (Lock)
+        {
+            container = _container;
+            _container = null;
+        }
+        container?.Dispose();
     }
 
     public static T Resolve<T>(params Autofac.Core.Parameter[] parameters) where T : notnull
