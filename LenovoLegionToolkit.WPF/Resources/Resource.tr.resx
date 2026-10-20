@@ -121,7 +121,7 @@
     <value>Uygulama klasörleri</value>
   </data>
   <data name="AboutPage_AppName" xml:space="preserve">
-    <value>Lenovo Legion Toolkit</value>
+    <value>Project Legion</value>
   </data>
   <data name="AboutPage_Build" xml:space="preserve">
     <value>Yapı</value>
@@ -335,7 +335,7 @@
     <value>Uygula &amp; Kapat</value>
   </data>
   <data name="AppName" xml:space="preserve">
-    <value>Lenovo Legion Toolkit</value>
+    <value>Project Legion</value>
   </data>
   <data name="ArgumentWindow_Category_Debugging" xml:space="preserve">
     <value>Hata Ayıklama</value>
@@ -428,7 +428,7 @@
     <value>Etkinleştir</value>
   </data>
   <data name="AutomationPage_ActionsEnable_Message" xml:space="preserve">
-    <value>Otomatik eylemlerin çalışması için Lenovo Legion Toolkit çalışıyor olmalıdır.</value>
+    <value>Otomatik eylemlerin çalışması için Project Legion çalışıyor olmalıdır.</value>
   </data>
   <data name="AutomationPage_Actions_Empty" xml:space="preserve">
     <value>Eylem bulunamadı. Yeni Eylem oluşturmak için "Yeni ekle"yi tıklayın.</value>
@@ -796,7 +796,7 @@ Dizüstü bilgisayar uyurken veya kapalıyken şarj edildiyse bu süre doğru ol
     <value>Kapat</value>
   </data>
   <data name="CloseAppAutomationStepControl_Message" xml:space="preserve">
-    <value>Lenovo Legion Toolkit'i Kapat</value>
+    <value>Project Legion'i Kapat</value>
   </data>
   <data name="CloseAppAutomationStepControl_Title" xml:space="preserve">
     <value>Uygulamayı kapat</value>
@@ -1042,38 +1042,6 @@ Bu modları değiştirmek yeniden başlatma gerektirebilir.</value>
   <data name="Displays" xml:space="preserve">
     <value>Ekranlar</value>
   </data>
-  <data name="DonatePage_Bartosz_Description" xml:space="preserve">
-    <value>Bartosz, Lenovo Legion Toolkit'i geliştirdi ve bugün uygulamadaki tüm özelliklerin temelini oluşturan mimariyi tasarladı.</value>
-  </data>
-  <data name="DonatePage_Bartosz_Role" xml:space="preserve">
-    <value>Orijinal Yaratıcı</value>
-  </data>
-  <data name="DonatePage_BottomMessage" xml:space="preserve">
-    <value>Bağış yapamasanız bile, GitHub'da bu projeyi kullanmak, paylaşmak ve yıldızlamak bile büyük bir katkı sağlar. Her türlü desteğiniz için içtenlikle teşekkür ederiz</value>
-  </data>
-  <data name="DonatePage_DrSkinner_Description" xml:space="preserve">
-    <value>Mevcut proje lideri olarak temel özelliklerin geliştirilmesinden, kalite güvencesinden, UI/UX tasarımından ve projenin genel yönlendirilmesinden sorumlu.</value>
-  </data>
-  <data name="DonatePage_DrSkinner_Role" xml:space="preserve">
-    <value>Ana Geliştirici ve Proje Lideri</value>
-  </data>
-  <data name="DonatePage_Kaguya_Description" xml:space="preserve">
-    <value>Donanım araştırması ve tersine mühendislik alanlarında uzmanlaşmış olup, temel özelliklerin geliştirilmesinden düşük seviyeli sistem entegrasyonuna kadar geniş bir yelpazede katkılarda bulunmaktadır.</value>
-  </data>
-  <data name="DonatePage_Kaguya_Role" xml:space="preserve">
-    <value>Ana Geliştirici ve Tersine Mühendislik Uzmanı</value>
-  </data>
-  <data name="DonatePage_Message" xml:space="preserve">
-    <value>Lenovo Legion Toolkit'in geliştirilmesi ve bakımı çok zaman ve emek gerektiriyor. Bu yazılımı kullanmaktan memnun kaldıysanız, bunu mümkün kılan geliştiricilere sponsor olarak yazılımın geleceğine destek olabilirsiniz.
-
-Desteğiniz için teşekkür ederiz!</value>
-  </data>
-  <data name="DonatePage_Sponsor" xml:space="preserve">
-    <value>Sponsor</value>
-  </data>
-  <data name="DonatePage_Title" xml:space="preserve">
-    <value>Bağış</value>
-  </data>
   <data name="DpiScaleAutomationStepControl_Message" xml:space="preserve">
     <value>Dahili ekranın ölçeğini değiştirin.</value>
   </data>
@@ -1150,7 +1118,7 @@ Desteğiniz için teşekkür ederiz!</value>
     <value>Fn+R kısayolu kullanıldığında kullanmak istemediğiniz yenileme hızlarını kaldırın.</value>
   </data>
   <data name="ExcludeRefreshRatesWindow_NoRefreshRatesFound_Message" xml:space="preserve">
-    <value>Dizüstü bilgisayar ekranının açık olduğundan emin olun. Lenovo Legion Toolkit, açık olmayan bir ekran için yenileme hızlarını yükleyemez.</value>
+    <value>Dizüstü bilgisayar ekranının açık olduğundan emin olun. Project Legion, açık olmayan bir ekran için yenileme hızlarını yükleyemez.</value>
   </data>
   <data name="ExcludeRefreshRatesWindow_NoRefreshRatesFound_Title" xml:space="preserve">
     <value>Yenileme Hızı bulunamadı</value>
@@ -1743,7 +1711,7 @@ Devre dışı bırakmak için Evet'i, yok saymak için Hayır'ı tıklayın.</va
     <value>Makro</value>
   </data>
   <data name="MacroPage_Enable_Subtitle" xml:space="preserve">
-    <value>Otomatik makroların çalışması için Lenovo Legion Toolkit çalışıyor olmalıdır.</value>
+    <value>Otomatik makroların çalışması için Project Legion çalışıyor olmalıdır.</value>
   </data>
   <data name="MacroPage_Enable_Title" xml:space="preserve">
     <value>Etkinleştir</value>
@@ -1827,7 +1795,7 @@ Devre dışı bırakmak için Evet'i, yok saymak için Hayır'ı tıklayın.</va
     <value>Menü</value>
   </data>
   <data name="MainWindow_NavigationItem_Donate" xml:space="preserve">
-    <value>Bağış</value>
+    <value>Credits &amp; legal</value>
   </data>
   <data name="MainWindow_NavigationItem_Keyboard" xml:space="preserve">
     <value>Klavye</value>
@@ -3414,7 +3382,7 @@ Bu seçeneği değiştirdikten sonra yeniden başlatma önerilir.</value>
     <value>Fn+Q ile Özel Moda geçin</value>
   </data>
   <data name="ShowAppAutomationStepControl_Message" xml:space="preserve">
-    <value>Lenovo Legion Toolkit'i Göster</value>
+    <value>Project Legion'i Göster</value>
   </data>
   <data name="ShowAppAutomationStepControl_Title" xml:space="preserve">
     <value>Uygulamayı Göster</value>
@@ -3757,7 +3725,7 @@ Devam etmeyi seçerseniz, kayıt etme otomatik olarak etkinleştirilecektir.</va
     <value>Cihaz Tipi</value>
   </data>
   <data name="UnsupportedWindow_Message" xml:space="preserve">
-    <value>Lenovo Legion Toolkit, cihazınızla test edilmemiştir.</value>
+    <value>Project Legion, cihazınızla test edilmemiştir.</value>
   </data>
   <data name="UnsupportedWindow_Model" xml:space="preserve">
     <value>Model</value>

@@ -121,7 +121,7 @@
     <value>アプリケーションのフォルダ</value>
   </data>
   <data name="AboutPage_AppName" xml:space="preserve">
-    <value>Lenovo Legion Toolkit</value>
+    <value>Project Legion</value>
   </data>
   <data name="AboutPage_Build" xml:space="preserve">
     <value>Build</value>
@@ -335,7 +335,7 @@
     <value>適用して閉じる</value>
   </data>
   <data name="AppName" xml:space="preserve">
-    <value>Lenovo Legion Toolkit</value>
+    <value>Project Legion</value>
   </data>
   <data name="ArgumentWindow_Category_Debugging" xml:space="preserve">
     <value>デバッグ</value>
@@ -428,7 +428,7 @@
     <value>有効化</value>
   </data>
   <data name="AutomationPage_ActionsEnable_Message" xml:space="preserve">
-    <value>自動アクションが機能するには、Lenovo Legion Toolkit が実行されている必要があります。</value>
+    <value>自動アクションが機能するには、Project Legion が実行されている必要があります。</value>
   </data>
   <data name="AutomationPage_Actions_Empty" xml:space="preserve">
     <value>アクションが定義されていません。「新しく追加」をクリックして新しいアクションを作成します。</value>
@@ -796,7 +796,7 @@
     <value>閉じる</value>
   </data>
   <data name="CloseAppAutomationStepControl_Message" xml:space="preserve">
-    <value>Lenovo Legion Toolkit を閉じる</value>
+    <value>Project Legion を閉じる</value>
   </data>
   <data name="CloseAppAutomationStepControl_Title" xml:space="preserve">
     <value>アプリを閉じる</value>
@@ -1042,38 +1042,6 @@
   <data name="Displays" xml:space="preserve">
     <value>表示</value>
   </data>
-  <data name="DonatePage_Bartosz_Description" xml:space="preserve">
-    <value>BartoszはLenovo Legion Toolkitを作成し、今日のアプリケーションのすべての機能を動作させる基本的なアーキテクチャを作成しました。</value>
-  </data>
-  <data name="DonatePage_Bartosz_Role" xml:space="preserve">
-    <value>オリジナルの作成者</value>
-  </data>
-  <data name="DonatePage_BottomMessage" xml:space="preserve">
-    <value>寄付ができない場合でも、GitHub上でプロジェクトを単純に使用、共有、主演することは長い道のりです。サポートのすべてのビットは本当に感謝されています</value>
-  </data>
-  <data name="DonatePage_DrSkinner_Description" xml:space="preserve">
-    <value>現在のプロジェクトリーダーとして、中核的な機能開発、品質保証、UI/UX設計、およびプロジェクト全体の方向性を担当しています。</value>
-  </data>
-  <data name="DonatePage_DrSkinner_Role" xml:space="preserve">
-    <value>コア開発者＆プロジェクトリード</value>
-  </data>
-  <data name="DonatePage_Kaguya_Description" xml:space="preserve">
-    <value>ハードウェア研究とリバースエンジニアリングを専門としており、コア機能の開発と低レベルのシステム統合に及ぶ貢献があります。</value>
-  </data>
-  <data name="DonatePage_Kaguya_Role" xml:space="preserve">
-    <value>コア開発者＆リバーサー</value>
-  </data>
-  <data name="DonatePage_Message" xml:space="preserve">
-    <value>Lenovo Legion Toolkit の開発とメンテナンスには多くの時間と労力がかかります。 このソフトウェアを楽しんでいただけるならば、それを可能にする作者を後援することで、その未来を支えることができます。
-
-ご支援ありがとうございます！</value>
-  </data>
-  <data name="DonatePage_Sponsor" xml:space="preserve">
-    <value>スポンサー情報</value>
-  </data>
-  <data name="DonatePage_Title" xml:space="preserve">
-    <value>寄付</value>
-  </data>
   <data name="DpiScaleAutomationStepControl_Message" xml:space="preserve">
     <value>内蔵ディスプレイのスケーリングを変更します。</value>
   </data>
@@ -1150,7 +1118,7 @@
     <value>Fn+R ショートカットを使用するときに、使用しないリフレッシュレートのチェックを外します。</value>
   </data>
   <data name="ExcludeRefreshRatesWindow_NoRefreshRatesFound_Message" xml:space="preserve">
-    <value>デバイスのディスプレイがオンになっていることを確認します。Lenovo Legion Toolkitは、電源が入っていないディスプレイのリフレッシュレートをロードできません。</value>
+    <value>デバイスのディスプレイがオンになっていることを確認します。Project Legionは、電源が入っていないディスプレイのリフレッシュレートをロードできません。</value>
   </data>
   <data name="ExcludeRefreshRatesWindow_NoRefreshRatesFound_Title" xml:space="preserve">
     <value>リフレッシュレートが見つかりません</value>
@@ -1743,7 +1711,7 @@ format@@2 無効にするには「はい」をクリックし、無視するに�
     <value>マクロ</value>
   </data>
   <data name="MacroPage_Enable_Subtitle" xml:space="preserve">
-    <value>マクロが機能するには、Lenovo Legion Toolkit が実行されている必要があります。</value>
+    <value>マクロが機能するには、Project Legion が実行されている必要があります。</value>
   </data>
   <data name="MacroPage_Enable_Title" xml:space="preserve">
     <value>有効化</value>
@@ -1827,7 +1795,7 @@ format@@2 無効にするには「はい」をクリックし、無視するに�
     <value>ダッシュボード</value>
   </data>
   <data name="MainWindow_NavigationItem_Donate" xml:space="preserve">
-    <value>寄付</value>
+    <value>Credits &amp; legal</value>
   </data>
   <data name="MainWindow_NavigationItem_Keyboard" xml:space="preserve">
     <value>キーボード</value>
@@ -3414,7 +3382,7 @@ Click No to disable Hardware Sensor feature.</value>
     <value>Fn+Q でカスタムモードに切り替える</value>
   </data>
   <data name="ShowAppAutomationStepControl_Message" xml:space="preserve">
-    <value>Lenovo Legion Toolkit を表示</value>
+    <value>Project Legion を表示</value>
   </data>
   <data name="ShowAppAutomationStepControl_Title" xml:space="preserve">
     <value>アプリを表示</value>
@@ -3758,7 +3726,7 @@ Click No to disable Hardware Sensor feature.</value>
     <value>デバイスの種類</value>
   </data>
   <data name="UnsupportedWindow_Message" xml:space="preserve">
-    <value>Lenovo Legion Toolkit はお使いのデバイスでテストされていません。</value>
+    <value>Project Legion はお使いのデバイスでテストされていません。</value>
   </data>
   <data name="UnsupportedWindow_Model" xml:space="preserve">
     <value>モデル</value>

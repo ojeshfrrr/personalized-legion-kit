@@ -121,7 +121,7 @@
     <value>Foldery aplikacji</value>
   </data>
   <data name="AboutPage_AppName" xml:space="preserve">
-    <value>Zestaw narzędzi Legion Lenovo</value>
+    <value>Project Legion</value>
   </data>
   <data name="AboutPage_Build" xml:space="preserve">
     <value>Build</value>
@@ -335,7 +335,7 @@
     <value>Zastosuj i zamknij</value>
   </data>
   <data name="AppName" xml:space="preserve">
-    <value>Lenovo Legion Toolkit</value>
+    <value>Project Legion</value>
   </data>
   <data name="ArgumentWindow_Category_Debugging" xml:space="preserve">
     <value>Debugowanie</value>
@@ -428,7 +428,7 @@
     <value>Włącz</value>
   </data>
   <data name="AutomationPage_ActionsEnable_Message" xml:space="preserve">
-    <value>Akcje będą działać, tylko gdy Lenovo Legion Toolkit jest uruchomiony.</value>
+    <value>Akcje będą działać, tylko gdy Project Legion jest uruchomiony.</value>
   </data>
   <data name="AutomationPage_Actions_Empty" xml:space="preserve">
     <value>Nie zdefiniowano żadnych akcji. Kliknij "dodaj nową", aby utworzyć nową akcję.</value>
@@ -1042,38 +1042,6 @@ Zmiana trybu może wymagać ponownego uruchomienia.</value>
   <data name="Displays" xml:space="preserve">
     <value>Wyświetlanie</value>
   </data>
-  <data name="DonatePage_Bartosz_Description" xml:space="preserve">
-    <value>Bartosz stworzył zestaw narzędzi Legion Lenovo i utworzył podstawową architekturę, która wspomaga każdą funkcję w aplikacji dzisiaj.</value>
-  </data>
-  <data name="DonatePage_Bartosz_Role" xml:space="preserve">
-    <value>Oryginalny Twórca</value>
-  </data>
-  <data name="DonatePage_BottomMessage" xml:space="preserve">
-    <value>Nawet jeśli nie możesz przekazać dotacji, po prostu użycie, udostępnianie i głodowanie projektu na GitHubie idzie daleko. Każdy bit wsparcia jest naprawdę doceniany</value>
-  </data>
-  <data name="DonatePage_DrSkinner_Description" xml:space="preserve">
-    <value>Odpowiedzialny za rozwój podstawowych cech, zapewnienie jakości, projekt UI/UX oraz ogólny kierunek projektu jako aktualny kierunek projektu.</value>
-  </data>
-  <data name="DonatePage_DrSkinner_Role" xml:space="preserve">
-    <value>Główny programista i wiodący projekt</value>
-  </data>
-  <data name="DonatePage_Kaguya_Description" xml:space="preserve">
-    <value>Specjaliści w zakresie badań sprzętu komputerowego i inżynierii odwrotnej z wkładem obejmującym rozwój podstawowych funkcji i niską integrację systemową.</value>
-  </data>
-  <data name="DonatePage_Kaguya_Role" xml:space="preserve">
-    <value>Główny deweloper i Odwrócenie</value>
-  </data>
-  <data name="DonatePage_Message" xml:space="preserve">
-    <value>Rozwój i utrzymanie zestawu narzędzi Legion Lenovo wymaga dużo czasu i wysiłku. Jeśli lubisz korzystać z tego oprogramowania, możesz wspierać jego przyszłość sponsorując autorów, którzy to umożliwią.
-
-Dziękujemy za wsparcie!</value>
-  </data>
-  <data name="DonatePage_Sponsor" xml:space="preserve">
-    <value>Jednostka sponsorująca</value>
-  </data>
-  <data name="DonatePage_Title" xml:space="preserve">
-    <value>Przekaż darowiznę</value>
-  </data>
   <data name="DpiScaleAutomationStepControl_Message" xml:space="preserve">
     <value>Zmień skalowanie wbudowanego wyświetlacza.</value>
   </data>
@@ -1150,7 +1118,7 @@ Dziękujemy za wsparcie!</value>
     <value>Odznaczone częstotliwości odświeżania nie będą mogły być zmieniane skrótem klawiszowym Fn+R.</value>
   </data>
   <data name="ExcludeRefreshRatesWindow_NoRefreshRatesFound_Message" xml:space="preserve">
-    <value>Upewnij się, że ekran laptopa jest włączony. Lenovo Legion Toolkit nie może załadować częstotliwości odświeżania dla ekranu, który jest wyłączony.</value>
+    <value>Upewnij się, że ekran laptopa jest włączony. Project Legion nie może załadować częstotliwości odświeżania dla ekranu, który jest wyłączony.</value>
   </data>
   <data name="ExcludeRefreshRatesWindow_NoRefreshRatesFound_Title" xml:space="preserve">
     <value>Nie znaleziono żadnych częstotliwości odświeżania</value>
@@ -1744,7 +1712,7 @@ Kliknij Tak, aby wyłączyć i nie ignorować.</value>
     <value>Makro</value>
   </data>
   <data name="MacroPage_Enable_Subtitle" xml:space="preserve">
-    <value>Aby makra działały, Lenovo Legion Toolkit musi być włączony w tle.</value>
+    <value>Aby makra działały, Project Legion musi być włączony w tle.</value>
   </data>
   <data name="MacroPage_Enable_Title" xml:space="preserve">
     <value>Włącz</value>
@@ -1828,7 +1796,7 @@ Kliknij Tak, aby wyłączyć i nie ignorować.</value>
     <value>Kokpit</value>
   </data>
   <data name="MainWindow_NavigationItem_Donate" xml:space="preserve">
-    <value>Wspomóż</value>
+    <value>Credits &amp; legal</value>
   </data>
   <data name="MainWindow_NavigationItem_Keyboard" xml:space="preserve">
     <value>Klawiatura</value>
@@ -3759,7 +3727,7 @@ Jeśli zdecydujesz się kontynuować, logowanie zostanie włączone automatyczni
     <value>Typ maszyny</value>
   </data>
   <data name="UnsupportedWindow_Message" xml:space="preserve">
-    <value>Lenovo Legion Toolkit nie został sprawdzony dla tego urządzenia.</value>
+    <value>Project Legion nie został sprawdzony dla tego urządzenia.</value>
   </data>
   <data name="UnsupportedWindow_Model" xml:space="preserve">
     <value>Model</value>

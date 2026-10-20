@@ -121,7 +121,7 @@
     <value>Folder Aplikasi</value>
   </data>
   <data name="AboutPage_AppName" xml:space="preserve">
-    <value>Lenovo Legion Toolkit</value>
+    <value>Project Legion</value>
   </data>
   <data name="AboutPage_Build" xml:space="preserve">
     <value>Build</value>
@@ -335,7 +335,7 @@
     <value>Terapkan &amp; Tutup</value>
   </data>
   <data name="AppName" xml:space="preserve">
-    <value>Lenovo Legion Toolkit</value>
+    <value>Project Legion</value>
   </data>
   <data name="ArgumentWindow_Category_Debugging" xml:space="preserve">
     <value>Debugging</value>
@@ -428,7 +428,7 @@
     <value>Aktifkan</value>
   </data>
   <data name="AutomationPage_ActionsEnable_Message" xml:space="preserve">
-    <value>Lenovo Legion Toolkit harus berjalan agar tindakan otomatis dapat berfungsi.</value>
+    <value>Project Legion harus berjalan agar tindakan otomatis dapat berfungsi.</value>
   </data>
   <data name="AutomationPage_Actions_Empty" xml:space="preserve">
     <value>No Actions defined. Click "Add new" to create new Action.</value>
@@ -795,7 +795,7 @@ This time might not be accurate, if laptop was charged when sleeping or off.</va
     <value>Close</value>
   </data>
   <data name="CloseAppAutomationStepControl_Message" xml:space="preserve">
-    <value>Close the Lenovo Legion Toolkit</value>
+    <value>Close the Project Legion</value>
   </data>
   <data name="CloseAppAutomationStepControl_Title" xml:space="preserve">
     <value>Close App</value>
@@ -1041,38 +1041,6 @@ Switching modes may require restart.</value>
   <data name="Displays" xml:space="preserve">
     <value>Displays</value>
   </data>
-  <data name="DonatePage_Bartosz_Description" xml:space="preserve">
-    <value>Bartosz created Lenovo Legion Toolkit and authored the foundational architecture that powers every feature in the application today.</value>
-  </data>
-  <data name="DonatePage_Bartosz_Role" xml:space="preserve">
-    <value>Original Creator</value>
-  </data>
-  <data name="DonatePage_BottomMessage" xml:space="preserve">
-    <value>Even if you can't donate, simply using, sharing, and starring the project on GitHub goes a long way. Every bit of support is genuinely appreciated</value>
-  </data>
-  <data name="DonatePage_DrSkinner_Description" xml:space="preserve">
-    <value>Responsible for core feature development, quality assurance, UI/UX design, and overall project direction as the current project lead.</value>
-  </data>
-  <data name="DonatePage_DrSkinner_Role" xml:space="preserve">
-    <value>Core Developer &amp; Project Lead</value>
-  </data>
-  <data name="DonatePage_Kaguya_Description" xml:space="preserve">
-    <value>Specializes in hardware research and reverse engineering, with contributions spanning core feature development and low-level system integration.</value>
-  </data>
-  <data name="DonatePage_Kaguya_Role" xml:space="preserve">
-    <value>Core Developer &amp; Reverser</value>
-  </data>
-  <data name="DonatePage_Message" xml:space="preserve">
-    <value>Development and maintenance of Lenovo Legion Toolkit takes a lot of time and effort. If you enjoy using this software, you can support its future by sponsoring the authors who make it possible.
-
-Thank you for your support!</value>
-  </data>
-  <data name="DonatePage_Sponsor" xml:space="preserve">
-    <value>Sponsor</value>
-  </data>
-  <data name="DonatePage_Title" xml:space="preserve">
-    <value>Donasi</value>
-  </data>
   <data name="DpiScaleAutomationStepControl_Message" xml:space="preserve">
     <value>Change scaling of the built-in display.</value>
   </data>
@@ -1149,7 +1117,7 @@ Thank you for your support!</value>
     <value>Uncheck refresh rates that you do not want to use when Fn+R shortcut is used.</value>
   </data>
   <data name="ExcludeRefreshRatesWindow_NoRefreshRatesFound_Message" xml:space="preserve">
-    <value>Make sure that laptop display is on. Lenovo Legion Toolkit can't load refresh rates for a display that is not on.</value>
+    <value>Make sure that laptop display is on. Project Legion can't load refresh rates for a display that is not on.</value>
   </data>
   <data name="ExcludeRefreshRatesWindow_NoRefreshRatesFound_Title" xml:space="preserve">
     <value>No Refresh Rates found</value>
@@ -1742,7 +1710,7 @@ Click Yes to disable and No to ignore.</value>
     <value>Makro</value>
   </data>
   <data name="MacroPage_Enable_Subtitle" xml:space="preserve">
-    <value>Lenovo Legion Toolkit must be running for macros to work.</value>
+    <value>Project Legion must be running for macros to work.</value>
   </data>
   <data name="MacroPage_Enable_Title" xml:space="preserve">
     <value>Enable</value>
@@ -1826,7 +1794,7 @@ Click Yes to disable and No to ignore.</value>
     <value>Dasbor</value>
   </data>
   <data name="MainWindow_NavigationItem_Donate" xml:space="preserve">
-    <value>Donate</value>
+    <value>Credits &amp; legal</value>
   </data>
   <data name="MainWindow_NavigationItem_Keyboard" xml:space="preserve">
     <value>Keyboard</value>
@@ -3407,7 +3375,7 @@ If disabled, this app will handle Fn shortcuts.</value>
     <value>Switch to Custom Mode with Fn+Q</value>
   </data>
   <data name="ShowAppAutomationStepControl_Message" xml:space="preserve">
-    <value>Show the Lenovo Legion Toolkit</value>
+    <value>Show the Project Legion</value>
   </data>
   <data name="ShowAppAutomationStepControl_Title" xml:space="preserve">
     <value>Show App</value>
@@ -3750,7 +3718,7 @@ Logging will be enabled automatically, if you choose to continue.</value>
     <value>Machine Type</value>
   </data>
   <data name="UnsupportedWindow_Message" xml:space="preserve">
-    <value>Lenovo Legion Toolkit has not been tested with your device.</value>
+    <value>Project Legion has not been tested with your device.</value>
   </data>
   <data name="UnsupportedWindow_Model" xml:space="preserve">
     <value>Model</value>

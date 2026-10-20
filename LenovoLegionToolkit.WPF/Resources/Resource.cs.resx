@@ -121,7 +121,7 @@
     <value>Složka aplikací</value>
   </data>
   <data name="AboutPage_AppName" xml:space="preserve">
-    <value>Lenovo Legion Toolkit</value>
+    <value>Project Legion</value>
   </data>
   <data name="AboutPage_Build" xml:space="preserve">
     <value>Sestavení</value>
@@ -335,7 +335,7 @@
     <value>Použít a zavřít</value>
   </data>
   <data name="AppName" xml:space="preserve">
-    <value>Lenovo Legion Toolkit</value>
+    <value>Project Legion</value>
   </data>
   <data name="ArgumentWindow_Category_Debugging" xml:space="preserve">
     <value>Ladění</value>
@@ -428,7 +428,7 @@
     <value>Povolit</value>
   </data>
   <data name="AutomationPage_ActionsEnable_Message" xml:space="preserve">
-    <value>Lenovo Legion Toolkit musí být zapnut, aby fungovaly automatické akce.</value>
+    <value>Project Legion musí být zapnut, aby fungovaly automatické akce.</value>
   </data>
   <data name="AutomationPage_Actions_Empty" xml:space="preserve">
     <value>Nejsou definovány žádné akce. Kliknutím na „Přidat novou“ vytvoříte novou akci.</value>
@@ -796,7 +796,7 @@ Tento čas nemusí být přesný, pokud byl notebook nabíjen ve spánku nebo ve
     <value>Zavřít</value>
   </data>
   <data name="CloseAppAutomationStepControl_Message" xml:space="preserve">
-    <value>Zavřít Lenovo Legion Toolkit</value>
+    <value>Zavřít Project Legion</value>
   </data>
   <data name="CloseAppAutomationStepControl_Title" xml:space="preserve">
     <value>Zavřít aplikaci</value>
@@ -1042,38 +1042,6 @@ Přepínání režimů může vyžadovat restart.</value>
   <data name="Displays" xml:space="preserve">
     <value>Zobrazení</value>
   </data>
-  <data name="DonatePage_Bartosz_Description" xml:space="preserve">
-    <value>Bartosz vytvořil Lenovo Legion Toolkit a napsal základní architekturu, která dnes ovládá všechny funkce v aplikaci.</value>
-  </data>
-  <data name="DonatePage_Bartosz_Role" xml:space="preserve">
-    <value>Původní tvůrce</value>
-  </data>
-  <data name="DonatePage_BottomMessage" xml:space="preserve">
-    <value>I když nemůžete darovat, jednoduše používejte, sdílejte a přidáváte projekt na GitHubu dlouhou cestu. Každá část podpory je skutečně oceněna.</value>
-  </data>
-  <data name="DonatePage_DrSkinner_Description" xml:space="preserve">
-    <value>Odpovědnost za vývoj, zabezpečení kvality, UI/UX design a celkové směřování projektu jako aktuální vedoucí projekt.</value>
-  </data>
-  <data name="DonatePage_DrSkinner_Role" xml:space="preserve">
-    <value>Hlavní vývojář a vedoucí projekt</value>
-  </data>
-  <data name="DonatePage_Kaguya_Description" xml:space="preserve">
-    <value>Specializuje se na výzkum hardwaru a reverzní inženýrství, s přispěním k vývoji klíčových funkcí a k nízkoúrovňové integraci systému.</value>
-  </data>
-  <data name="DonatePage_Kaguya_Role" xml:space="preserve">
-    <value>Hlavní vývojář &amp; Reverser</value>
-  </data>
-  <data name="DonatePage_Message" xml:space="preserve">
-    <value>Rozvoj a údržba Lenovo Legion Toolkit trvá mnoho času a úsilí. Pokud se vám tento software líbí, můžete podpořit jeho budoucnost sponzorováním autorů, kteří jej umožní.
-
-Děkujeme za vaši podporu!</value>
-  </data>
-  <data name="DonatePage_Sponsor" xml:space="preserve">
-    <value>Sponzor</value>
-  </data>
-  <data name="DonatePage_Title" xml:space="preserve">
-    <value>Přispět</value>
-  </data>
   <data name="DpiScaleAutomationStepControl_Message" xml:space="preserve">
     <value>Změnit škálování vestavěného displeje.</value>
   </data>
@@ -1150,7 +1118,7 @@ Děkujeme za vaši podporu!</value>
     <value>Zaškrtni obnovovací frekvence, které chceš používat při použití zkratky Fn+R.</value>
   </data>
   <data name="ExcludeRefreshRatesWindow_NoRefreshRatesFound_Message" xml:space="preserve">
-    <value>Ujisti se, že je zapnutý displej notebooku. Lenovo Legion Toolkit nemůže načíst obnovovací frekvence pro displej, který není zapnutý.</value>
+    <value>Ujisti se, že je zapnutý displej notebooku. Project Legion nemůže načíst obnovovací frekvence pro displej, který není zapnutý.</value>
   </data>
   <data name="ExcludeRefreshRatesWindow_NoRefreshRatesFound_Title" xml:space="preserve">
     <value>Nebyly nalezeny žádné obnovovací frekvence</value>
@@ -1743,7 +1711,7 @@ Click Anes to disable and No to ignore.</value>
     <value>Makro</value>
   </data>
   <data name="MacroPage_Enable_Subtitle" xml:space="preserve">
-    <value>Lenovo Legion Toolkit musí běžet, aby makra fungovala.</value>
+    <value>Project Legion musí běžet, aby makra fungovala.</value>
   </data>
   <data name="MacroPage_Enable_Title" xml:space="preserve">
     <value>Povolit</value>
@@ -1827,7 +1795,7 @@ Click Anes to disable and No to ignore.</value>
     <value>Přehled</value>
   </data>
   <data name="MainWindow_NavigationItem_Donate" xml:space="preserve">
-    <value>Přispět</value>
+    <value>Credits &amp; legal</value>
   </data>
   <data name="MainWindow_NavigationItem_Keyboard" xml:space="preserve">
     <value>Klávesnice</value>
@@ -3757,7 +3725,7 @@ Pokud se rozhodneš pokračovat, protokolování bude automaticky povoleno.</val
     <value>Typ zařízení</value>
   </data>
   <data name="UnsupportedWindow_Message" xml:space="preserve">
-    <value>Lenovo Legion Toolkit nebyl testován na vašem zařízení.</value>
+    <value>Project Legion nebyl testován na vašem zařízení.</value>
   </data>
   <data name="UnsupportedWindow_Model" xml:space="preserve">
     <value>Model</value>

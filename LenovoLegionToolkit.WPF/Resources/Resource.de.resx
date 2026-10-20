@@ -121,7 +121,7 @@
     <value>Anwendungsordner</value>
   </data>
   <data name="AboutPage_AppName" xml:space="preserve">
-    <value>Lenovo Legion Toolkit</value>
+    <value>Project Legion</value>
   </data>
   <data name="AboutPage_Build" xml:space="preserve">
     <value>Build</value>
@@ -335,7 +335,7 @@
     <value>Anwenden &amp; Schließen</value>
   </data>
   <data name="AppName" xml:space="preserve">
-    <value>Lenovo Legion Toolkit</value>
+    <value>Project Legion</value>
   </data>
   <data name="ArgumentWindow_Category_Debugging" xml:space="preserve">
     <value>Debuggen</value>
@@ -428,7 +428,7 @@
     <value>Einschalten</value>
   </data>
   <data name="AutomationPage_ActionsEnable_Message" xml:space="preserve">
-    <value>Lenovo Legion Toolkit muss ausgeführt werden, damit die automatischen Aktionen funktionieren.</value>
+    <value>Project Legion muss ausgeführt werden, damit die automatischen Aktionen funktionieren.</value>
   </data>
   <data name="AutomationPage_Actions_Empty" xml:space="preserve">
     <value>Keine Aktionen definiert. Klicke auf "Neu hinzufügen", um eine neue Aktion zu erstellen.</value>
@@ -795,7 +795,7 @@ Diese Zeit ist möglicherweise nicht genau, wenn der Laptop im Schlaf oder im au
     <value>Beenden</value>
   </data>
   <data name="CloseAppAutomationStepControl_Message" xml:space="preserve">
-    <value>Schließe das Lenovo Legion Toolkit</value>
+    <value>Schließe das Project Legion</value>
   </data>
   <data name="CloseAppAutomationStepControl_Title" xml:space="preserve">
     <value>App schließen</value>
@@ -1041,38 +1041,6 @@ Ein Wechsel des Modus kann einen Neustart erfordern.</value>
   <data name="Displays" xml:space="preserve">
     <value>Anzeigen</value>
   </data>
-  <data name="DonatePage_Bartosz_Description" xml:space="preserve">
-    <value>Bartosz hat das Lenovo Legion Toolkit erstellt und die Grundlagenarchitektur geschrieben, die alle Funktionen der Applikation heute unterstützt.</value>
-  </data>
-  <data name="DonatePage_Bartosz_Role" xml:space="preserve">
-    <value>Original-Ersteller</value>
-  </data>
-  <data name="DonatePage_BottomMessage" xml:space="preserve">
-    <value>Auch wenn Sie das Projekt auf GitHub nicht spenden können, können Sie es einfach nutzen, teilen und starten, aber jede Unterstützung wird wirklich geschätzt</value>
-  </data>
-  <data name="DonatePage_DrSkinner_Description" xml:space="preserve">
-    <value>Verantwortlich für die Entwicklung von Kernfunktionen, die Qualitätssicherung, das UI/UX-Design und die gesamte Projektrichtung als aktuelle Projektleitung.</value>
-  </data>
-  <data name="DonatePage_DrSkinner_Role" xml:space="preserve">
-    <value>Kernentwickler &amp; Projektleiter</value>
-  </data>
-  <data name="DonatePage_Kaguya_Description" xml:space="preserve">
-    <value>Spezialisiert auf Hardwareforschung und Reverse Engineering, mit Beiträgen, die die Kernkompetenz und die Low-Level-Systemintegration umfassen.</value>
-  </data>
-  <data name="DonatePage_Kaguya_Role" xml:space="preserve">
-    <value>Kernentwickler &amp; Reverser</value>
-  </data>
-  <data name="DonatePage_Message" xml:space="preserve">
-    <value>Die Entwicklung und Wartung des Lenovo Legion Toolkit erfordert viel Zeit und Aufwand. Wenn Ihnen die Verwendung dieser Software gefällt, können Sie ihre Zukunft unterstützen, indem Sie die Autoren sponsern, die es möglich machen.
-
-Vielen Dank für Ihre Unterstützung!</value>
-  </data>
-  <data name="DonatePage_Sponsor" xml:space="preserve">
-    <value>Sponsor</value>
-  </data>
-  <data name="DonatePage_Title" xml:space="preserve">
-    <value>Spenden</value>
-  </data>
   <data name="DpiScaleAutomationStepControl_Message" xml:space="preserve">
     <value>Ändern Sie die Skalierung des eingebauten Displays.</value>
   </data>
@@ -1149,7 +1117,7 @@ Vielen Dank für Ihre Unterstützung!</value>
     <value>Deaktivieren Sie die Aktualisierungsraten, die Sie nicht verwenden möchten, wenn die Tastenkombination Fn+R verwendet wird.</value>
   </data>
   <data name="ExcludeRefreshRatesWindow_NoRefreshRatesFound_Message" xml:space="preserve">
-    <value>Stellen Sie sicher, dass der Laptop-Bildschirm eingeschaltet ist. Das Lenovo Legion Toolkit kann keine Bildwiederholraten für ein nicht eingeschaltetes Display laden.</value>
+    <value>Stellen Sie sicher, dass der Laptop-Bildschirm eingeschaltet ist. Das Project Legion kann keine Bildwiederholraten für ein nicht eingeschaltetes Display laden.</value>
   </data>
   <data name="ExcludeRefreshRatesWindow_NoRefreshRatesFound_Title" xml:space="preserve">
     <value>Keine Bildwiederholraten gefunden</value>
@@ -1742,7 +1710,7 @@ Klicken Sie auf Ja zum Deaktivieren und Nein zum Ignorieren.</value>
     <value>Makro</value>
   </data>
   <data name="MacroPage_Enable_Subtitle" xml:space="preserve">
-    <value>Lenovo Legion Toolkit muss ausgeführt werden, damit Makros funktionieren.</value>
+    <value>Project Legion muss ausgeführt werden, damit Makros funktionieren.</value>
   </data>
   <data name="MacroPage_Enable_Title" xml:space="preserve">
     <value>Aktivieren</value>
@@ -1826,7 +1794,7 @@ Klicken Sie auf Ja zum Deaktivieren und Nein zum Ignorieren.</value>
     <value>Übersicht</value>
   </data>
   <data name="MainWindow_NavigationItem_Donate" xml:space="preserve">
-    <value>Spenden</value>
+    <value>Credits &amp; legal</value>
   </data>
   <data name="MainWindow_NavigationItem_Keyboard" xml:space="preserve">
     <value>Tastatur</value>
@@ -3413,7 +3381,7 @@ Nach dem Ändern dieser Option wird ein Neustart empfohlen.</value>
     <value>Mit Fn+Q in den benutzerdefinierten Modus wechseln</value>
   </data>
   <data name="ShowAppAutomationStepControl_Message" xml:space="preserve">
-    <value>Zeige das Lenovo Legion Toolkit</value>
+    <value>Zeige das Project Legion</value>
   </data>
   <data name="ShowAppAutomationStepControl_Title" xml:space="preserve">
     <value>App anzeigen</value>
@@ -3756,7 +3724,7 @@ Die Protokollierung wird automatisch aktiviert, wenn Sie fortfahren möchten.</v
     <value>Gerätetyp</value>
   </data>
   <data name="UnsupportedWindow_Message" xml:space="preserve">
-    <value>Lenovo Legion Toolkit wurde nicht mit Ihrem Gerät getestet.</value>
+    <value>Project Legion wurde nicht mit Ihrem Gerät getestet.</value>
   </data>
   <data name="UnsupportedWindow_Model" xml:space="preserve">
     <value>Modell</value>

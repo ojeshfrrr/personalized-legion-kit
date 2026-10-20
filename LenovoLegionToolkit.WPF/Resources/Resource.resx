@@ -121,7 +121,7 @@
     <value>Application Folders</value>
   </data>
   <data name="AboutPage_AppName" xml:space="preserve">
-    <value>Lenovo Legion Toolkit</value>
+    <value>Project Legion</value>
   </data>
   <data name="AboutPage_Build" xml:space="preserve">
     <value>Build</value>
@@ -335,7 +335,7 @@
     <value>Apply &amp; Close</value>
   </data>
   <data name="AppName" xml:space="preserve">
-    <value>Lenovo Legion Toolkit</value>
+    <value>Project Legion</value>
   </data>
   <data name="ArgumentWindow_Category_Debugging" xml:space="preserve">
     <value>Debugging</value>
@@ -428,7 +428,7 @@
     <value>Enable</value>
   </data>
   <data name="AutomationPage_ActionsEnable_Message" xml:space="preserve">
-    <value>Lenovo Legion Toolkit must be running for automatic actions to work.</value>
+    <value>Project Legion must be running for automatic actions to work.</value>
   </data>
   <data name="AutomationPage_Actions_Empty" xml:space="preserve">
     <value>No Actions defined. Click "Add new" to create new Action.</value>
@@ -796,7 +796,7 @@ This time might not be accurate, if laptop was charged when sleeping or off.</va
     <value>Close</value>
   </data>
   <data name="CloseAppAutomationStepControl_Message" xml:space="preserve">
-    <value>Close the Lenovo Legion Toolkit</value>
+    <value>Close the Project Legion</value>
   </data>
   <data name="CloseAppAutomationStepControl_Title" xml:space="preserve">
     <value>Close App</value>
@@ -1042,44 +1042,6 @@ Switching modes may require restart.</value>
   <data name="Displays" xml:space="preserve">
     <value>Displays</value>
   </data>
-  <data name="DonatePage_Bartosz_Description" xml:space="preserve">
-    <value>Bartosz created Lenovo Legion Toolkit and authored the foundational architecture that powers every feature in the application today.</value>
-  </data>
-  <data name="DonatePage_Bartosz_Role" xml:space="preserve">
-    <value>Original Creator</value>
-  </data>
-  <data name="DonatePage_BottomMessage" xml:space="preserve">
-    <value>Even if you can't donate, simply using, sharing, and starring the project on GitHub goes a long way. Every bit of support is genuinely appreciated</value>
-  </data>
-  <data name="DonatePage_DrSkinner_BuyMeACoffee" xml:space="preserve">
-    <value>Buy Me a Coffee</value>
-  </data>
-  <data name="DonatePage_DrSkinner_Description" xml:space="preserve">
-    <value>Responsible for core feature development, quality assurance, UI/UX design, and overall project direction as the current project lead.</value>
-  </data>
-  <data name="DonatePage_DrSkinner_GitHubSponsors" xml:space="preserve">
-    <value>GitHub Sponsors</value>
-  </data>
-  <data name="DonatePage_DrSkinner_Role" xml:space="preserve">
-    <value>Core Developer &amp; Project Lead</value>
-  </data>
-  <data name="DonatePage_Kaguya_Description" xml:space="preserve">
-    <value>Specializes in hardware research and reverse engineering, with contributions spanning core feature development and low-level system integration.</value>
-  </data>
-  <data name="DonatePage_Kaguya_Role" xml:space="preserve">
-    <value>Core Developer &amp; Reverser</value>
-  </data>
-  <data name="DonatePage_Message" xml:space="preserve">
-    <value>Development and maintenance of Lenovo Legion Toolkit takes a lot of time and effort. If you enjoy using this software, you can support its future by sponsoring the authors who make it possible.
-
-Thank you for your support!</value>
-  </data>
-  <data name="DonatePage_Sponsor" xml:space="preserve">
-    <value>Sponsor</value>
-  </data>
-  <data name="DonatePage_Title" xml:space="preserve">
-    <value>Donate</value>
-  </data>
   <data name="DpiScaleAutomationStepControl_Message" xml:space="preserve">
     <value>Adjust display scaling for text, icons, and UI elements.</value>
   </data>
@@ -1156,7 +1118,7 @@ Thank you for your support!</value>
     <value>Uncheck refresh rates that you do not want to use when Fn+R shortcut is used.</value>
   </data>
   <data name="ExcludeRefreshRatesWindow_NoRefreshRatesFound_Message" xml:space="preserve">
-    <value>Make sure that laptop display is on. Lenovo Legion Toolkit can't load refresh rates for a display that is not on.</value>
+    <value>Make sure that laptop display is on. Project Legion can't load refresh rates for a display that is not on.</value>
   </data>
   <data name="ExcludeRefreshRatesWindow_NoRefreshRatesFound_Title" xml:space="preserve">
     <value>No Refresh Rates found</value>
@@ -1751,7 +1713,7 @@ Click Yes to disable and No to ignore.</value>
     <value>Macro</value>
   </data>
   <data name="MacroPage_Enable_Subtitle" xml:space="preserve">
-    <value>Lenovo Legion Toolkit must be running for macros to work.</value>
+    <value>Project Legion must be running for macros to work.</value>
   </data>
   <data name="MacroPage_Enable_Title" xml:space="preserve">
     <value>Enable</value>
@@ -1828,6 +1790,9 @@ Click Yes to disable and No to ignore.</value>
   <data name="MainWindow_NavigationItem_Actions" xml:space="preserve">
     <value>Actions</value>
   </data>
+  <data name="MainWindow_NavigationItem_Automation" xml:space="preserve">
+    <value>Automation</value>
+  </data>
   <data name="MainWindow_NavigationItem_Battery" xml:space="preserve">
     <value>Battery</value>
   </data>
@@ -1835,10 +1800,19 @@ Click Yes to disable and No to ignore.</value>
     <value>Dashboard</value>
   </data>
   <data name="MainWindow_NavigationItem_Donate" xml:space="preserve">
-    <value>Donate</value>
+    <value>Credits &amp; legal</value>
+  </data>
+  <data name="MainWindow_NavigationItem_Graphics" xml:space="preserve">
+    <value>Graphics</value>
+  </data>
+  <data name="MainWindow_NavigationItem_Home" xml:space="preserve">
+    <value>Home</value>
   </data>
   <data name="MainWindow_NavigationItem_Keyboard" xml:space="preserve">
     <value>Keyboard</value>
+  </data>
+  <data name="MainWindow_NavigationItem_KeyboardRgb" xml:space="preserve">
+    <value>Keyboard RGB</value>
   </data>
   <data name="MainWindow_NavigationItem_Macro" xml:space="preserve">
     <value>Macro</value>
@@ -1846,8 +1820,14 @@ Click Yes to disable and No to ignore.</value>
   <data name="MainWindow_NavigationItem_Packages" xml:space="preserve">
     <value>Downloads</value>
   </data>
+  <data name="MainWindow_NavigationItem_Performance" xml:space="preserve">
+    <value>Performance</value>
+  </data>
   <data name="MainWindow_NavigationItem_Settings" xml:space="preserve">
     <value>Settings</value>
+  </data>
+  <data name="MainWindow_NavigationItem_Thermals" xml:space="preserve">
+    <value>Thermals</value>
   </data>
   <data name="MainWindow_UpdateAvailable" xml:space="preserve">
     <value>Update available!</value>
@@ -3451,7 +3431,7 @@ Performance mode can also be changed with Fn+Q.</value>
     <value>Switch to Custom Mode with Fn+Q</value>
   </data>
   <data name="ShowAppAutomationStepControl_Message" xml:space="preserve">
-    <value>Show the Lenovo Legion Toolkit</value>
+    <value>Show the Project Legion</value>
   </data>
   <data name="ShowAppAutomationStepControl_Title" xml:space="preserve">
     <value>Show App</value>
@@ -3797,7 +3777,7 @@ Logging will be enabled automatically, if you choose to continue.</value>
     <value>Machine Type</value>
   </data>
   <data name="UnsupportedWindow_Message" xml:space="preserve">
-    <value>Lenovo Legion Toolkit has not been tested with your device.</value>
+    <value>Project Legion has not been tested with your device.</value>
   </data>
   <data name="UnsupportedWindow_Model" xml:space="preserve">
     <value>Model</value>
@@ -3894,5 +3874,8 @@ Logging will be enabled automatically, if you choose to continue.</value>
   </data>
   <data name="Yes" xml:space="preserve">
     <value>Yes</value>
+  </data>
+  <data name="MainWindow_StartupStatus" xml:space="preserve">
+    <value>Checking compatibility and preparing device controls…</value>
   </data>
 </root>

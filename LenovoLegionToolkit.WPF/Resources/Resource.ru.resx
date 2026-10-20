@@ -121,7 +121,7 @@
     <value>Папки приложения</value>
   </data>
   <data name="AboutPage_AppName" xml:space="preserve">
-    <value>Lenovo Legion Toolkit</value>
+    <value>Project Legion</value>
   </data>
   <data name="AboutPage_Build" xml:space="preserve">
     <value>Сборка</value>
@@ -335,7 +335,7 @@
     <value>Применить и закрыть</value>
   </data>
   <data name="AppName" xml:space="preserve">
-    <value>Lenovo Legion Toolkit</value>
+    <value>Project Legion</value>
   </data>
   <data name="ArgumentWindow_Category_Debugging" xml:space="preserve">
     <value>Отладка</value>
@@ -428,7 +428,7 @@
     <value>Активировать</value>
   </data>
   <data name="AutomationPage_ActionsEnable_Message" xml:space="preserve">
-    <value>Lenovo Legion Toolkit должен быть запущен для выполнения автоматических действий.</value>
+    <value>Project Legion должен быть запущен для выполнения автоматических действий.</value>
   </data>
   <data name="AutomationPage_Actions_Empty" xml:space="preserve">
     <value>Действия не заданы. Нажмите "Добавить новое действие" для создания.</value>
@@ -1042,38 +1042,6 @@
   <data name="Displays" xml:space="preserve">
     <value>Отображает</value>
   </data>
-  <data name="DonatePage_Bartosz_Description" xml:space="preserve">
-    <value>Bartosz создал Lenovo Legion Toolkit и написал основы архитектуры, которая обеспечивает все возможности для применения сегодня.</value>
-  </data>
-  <data name="DonatePage_Bartosz_Role" xml:space="preserve">
-    <value>Исходный Создатель</value>
-  </data>
-  <data name="DonatePage_BottomMessage" xml:space="preserve">
-    <value>Даже если вы не можете пожертвовать, просто используйте, делитесь и играйте в проект на GitHub долгий путь. Каждая бита поддержки действительно ценится</value>
-  </data>
-  <data name="DonatePage_DrSkinner_Description" xml:space="preserve">
-    <value>Отвечает за разработку ключевых особенностей, обеспечение качества, дизайн UI/UX и общее направление проекта в качестве ведущего в данный момент проекта.</value>
-  </data>
-  <data name="DonatePage_DrSkinner_Role" xml:space="preserve">
-    <value>Главный разработчик и руководитель проекта</value>
-  </data>
-  <data name="DonatePage_Kaguya_Description" xml:space="preserve">
-    <value>Специализируется на исследованиях аппаратного обеспечения и реверсивном проектировании, а также на разработке и системной интеграции на низком уровне.</value>
-  </data>
-  <data name="DonatePage_Kaguya_Role" xml:space="preserve">
-    <value>Основной разработчик и ревертор</value>
-  </data>
-  <data name="DonatePage_Message" xml:space="preserve">
-    <value>На разработку и поддержку Lenovo Legion Toolkit уходит много времени и усилий. Если приложение вам по душе, вы можете помочь его дальнейшему развитию, став спонсором авторов.
-
-Благодарим за вашу поддержку!</value>
-  </data>
-  <data name="DonatePage_Sponsor" xml:space="preserve">
-    <value>Спонсор</value>
-  </data>
-  <data name="DonatePage_Title" xml:space="preserve">
-    <value>Сделать пожертвование</value>
-  </data>
   <data name="DpiScaleAutomationStepControl_Message" xml:space="preserve">
     <value>Изменить масштабирование встроенного дисплея.</value>
   </data>
@@ -1150,7 +1118,7 @@
     <value>Снимите галочки с частот обновления, которые вы не хотите учитывать при использовании сочетания клавиш Fn+R.</value>
   </data>
   <data name="ExcludeRefreshRatesWindow_NoRefreshRatesFound_Message" xml:space="preserve">
-    <value>Убедитесь, что дисплей ноутбука включен. Lenovo Legion Toolkit не может загрузить частоты обновления для не включенного дисплея.</value>
+    <value>Убедитесь, что дисплей ноутбука включен. Project Legion не может загрузить частоты обновления для не включенного дисплея.</value>
   </data>
   <data name="ExcludeRefreshRatesWindow_NoRefreshRatesFound_Title" xml:space="preserve">
     <value>Частота обновления не обнаружена</value>
@@ -1743,7 +1711,7 @@
     <value>Макрос</value>
   </data>
   <data name="MacroPage_Enable_Subtitle" xml:space="preserve">
-    <value>Lenovo Legion Toolkit должен быть запущен для работы макросов.</value>
+    <value>Project Legion должен быть запущен для работы макросов.</value>
   </data>
   <data name="MacroPage_Enable_Title" xml:space="preserve">
     <value>Активировать</value>
@@ -1827,7 +1795,7 @@
     <value>Обзор</value>
   </data>
   <data name="MainWindow_NavigationItem_Donate" xml:space="preserve">
-    <value>Донат</value>
+    <value>Credits &amp; legal</value>
   </data>
   <data name="MainWindow_NavigationItem_Keyboard" xml:space="preserve">
     <value>Клавиатура</value>
@@ -3758,7 +3726,7 @@ Click No to disable Hardware Sensor feature.</value>
     <value>Тип модели устройства</value>
   </data>
   <data name="UnsupportedWindow_Message" xml:space="preserve">
-    <value>Lenovo Legion Toolkit не был проверен на вашем устройстве.</value>
+    <value>Project Legion не был проверен на вашем устройстве.</value>
   </data>
   <data name="UnsupportedWindow_Model" xml:space="preserve">
     <value>Модель</value>

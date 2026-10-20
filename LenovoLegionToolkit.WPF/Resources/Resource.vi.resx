@@ -121,7 +121,7 @@
     <value>Thư mục ứng dụng</value>
   </data>
   <data name="AboutPage_AppName" xml:space="preserve">
-    <value>Lenovo Legion Toolkit</value>
+    <value>Project Legion</value>
   </data>
   <data name="AboutPage_Build" xml:space="preserve">
     <value>Bản dựng</value>
@@ -335,7 +335,7 @@
     <value>Áp dụng và đóng</value>
   </data>
   <data name="AppName" xml:space="preserve">
-    <value>Lenovo Legion Toolkit</value>
+    <value>Project Legion</value>
   </data>
   <data name="ArgumentWindow_Category_Debugging" xml:space="preserve">
     <value>Gỡ lỗi</value>
@@ -428,7 +428,7 @@
     <value>Kích hoạt</value>
   </data>
   <data name="AutomationPage_ActionsEnable_Message" xml:space="preserve">
-    <value>Lenovo Legion Toolkit phải chạy trong nền để các Hành động làm việc.</value>
+    <value>Project Legion phải chạy trong nền để các Hành động làm việc.</value>
   </data>
   <data name="AutomationPage_Actions_Empty" xml:space="preserve">
     <value>Chưa có Hành động nào được tạo. Bấm "Thêm mới" để tạo Hành động mới.</value>
@@ -796,7 +796,7 @@ Thời gian có thể không chính xác nếu laptop được sạc khi Ngủ h
     <value>Đóng</value>
   </data>
   <data name="CloseAppAutomationStepControl_Message" xml:space="preserve">
-    <value>Đóng Lenovo Legion Toolkit</value>
+    <value>Đóng Project Legion</value>
   </data>
   <data name="CloseAppAutomationStepControl_Title" xml:space="preserve">
     <value>Đóng ứng dụng</value>
@@ -1042,38 +1042,6 @@ Chuyển đổi giữa các chế độ có thể cần phải khởi động l�
   <data name="Displays" xml:space="preserve">
     <value>Hiển thị</value>
   </data>
-  <data name="DonatePage_Bartosz_Description" xml:space="preserve">
-    <value>Bartosz là người đã sáng tạo ra Lenovo Legion Toolkit và là tác giả của kiến trúc nền tảng giúp vận hành mọi tính năng trong ứng dụng ngày hôm nay.</value>
-  </data>
-  <data name="DonatePage_Bartosz_Role" xml:space="preserve">
-    <value>Người sáng tạo gốc</value>
-  </data>
-  <data name="DonatePage_BottomMessage" xml:space="preserve">
-    <value>Ngay cả khi bạn không thể quyên góp, chỉ cần sử dụng, chia sẻ và đóng vai chính cho dự án trên GitHub sẽ đi một chặng đường dài. Mọi sự hỗ trợ đều được đánh giá cao</value>
-  </data>
-  <data name="DonatePage_DrSkinner_Description" xml:space="preserve">
-    <value>Chịu trách nhiệm phát triển tính năng cốt lõi, đảm bảo chất lượng, thiết kế UI/UX và định hướng dự án tổng thể với tư cách là người đứng đầu dự án hiện tại.</value>
-  </data>
-  <data name="DonatePage_DrSkinner_Role" xml:space="preserve">
-    <value>Nhà phát triển cốt lõi &amp; Trưởng dự án</value>
-  </data>
-  <data name="DonatePage_Kaguya_Description" xml:space="preserve">
-    <value>Chuyên nghiên cứu phần cứng và kỹ thuật đảo ngược, với những đóng góp bao gồm phát triển tính năng cốt lõi và tích hợp hệ thống cấp thấp.</value>
-  </data>
-  <data name="DonatePage_Kaguya_Role" xml:space="preserve">
-    <value>Nhà phát triển cốt lõi &amp; Chuyên viên đảo ngược</value>
-  </data>
-  <data name="DonatePage_Message" xml:space="preserve">
-    <value>Việc phát triển và bảo trì Lenovo Legion Toolkit mất rất nhiều thời gian và công sức. Nếu bạn thích sử dụng phần mềm này, bạn có thể hỗ trợ tương lai của nó bằng cách tài trợ cho các tác giả đã biến nó thành hiện thực.
-
-Cảm ơn bạn đã ủng hộ!</value>
-  </data>
-  <data name="DonatePage_Sponsor" xml:space="preserve">
-    <value>Tài trợ</value>
-  </data>
-  <data name="DonatePage_Title" xml:space="preserve">
-    <value>Ủng hộ</value>
-  </data>
   <data name="DpiScaleAutomationStepControl_Message" xml:space="preserve">
     <value>Thay đổi độ phóng to của màn hình gắn liền máy tính.</value>
   </data>
@@ -1150,7 +1118,7 @@ Cảm ơn bạn đã ủng hộ!</value>
     <value>Bỏ tích những tần số quét mà bạn không muốn dùng khi dùng tổ hợp phím Fn+R.</value>
   </data>
   <data name="ExcludeRefreshRatesWindow_NoRefreshRatesFound_Message" xml:space="preserve">
-    <value>Hãy đảm bảo màn hình laptop bật. Lenovo Legion Toolkit không thể đổi tần số quét nếu màn hình laptop không bật.</value>
+    <value>Hãy đảm bảo màn hình laptop bật. Project Legion không thể đổi tần số quét nếu màn hình laptop không bật.</value>
   </data>
   <data name="ExcludeRefreshRatesWindow_NoRefreshRatesFound_Title" xml:space="preserve">
     <value>Không có tần số quét nào được tìm thấy</value>
@@ -1744,7 +1712,7 @@ Chọn Có để tắt và Không để bỏ qua.</value>
     <value>Macro</value>
   </data>
   <data name="MacroPage_Enable_Subtitle" xml:space="preserve">
-    <value>Lenovo Legion Toolkit phải chạy trong nền để Macros làm việc.</value>
+    <value>Project Legion phải chạy trong nền để Macros làm việc.</value>
   </data>
   <data name="MacroPage_Enable_Title" xml:space="preserve">
     <value>Kích hoạt</value>
@@ -1828,7 +1796,7 @@ Chọn Có để tắt và Không để bỏ qua.</value>
     <value>Trang chủ</value>
   </data>
   <data name="MainWindow_NavigationItem_Donate" xml:space="preserve">
-    <value>Ủng hộ</value>
+    <value>Credits &amp; legal</value>
   </data>
   <data name="MainWindow_NavigationItem_Keyboard" xml:space="preserve">
     <value>Bàn phím</value>
@@ -3415,7 +3383,7 @@ Nên khởi động lại sau khi thay đổi tùy chọn này.</value>
     <value>Đổi sang Chế độ Tùy chỉnh khi Fn+Q</value>
   </data>
   <data name="ShowAppAutomationStepControl_Message" xml:space="preserve">
-    <value>Hiển thị Lenovo Legion Toolkit</value>
+    <value>Hiển thị Project Legion</value>
   </data>
   <data name="ShowAppAutomationStepControl_Title" xml:space="preserve">
     <value>Hiển thị ứng dụng</value>
@@ -3758,7 +3726,7 @@ Logging sẽ được tự động bật, nếu bạn chọn tiếp tục.</valu
     <value>Mã máy</value>
   </data>
   <data name="UnsupportedWindow_Message" xml:space="preserve">
-    <value>Lenovo Legion Toolkit chưa được kiểm thử trên thiết bị của bạn.</value>
+    <value>Project Legion chưa được kiểm thử trên thiết bị của bạn.</value>
   </data>
   <data name="UnsupportedWindow_Model" xml:space="preserve">
     <value>Mẫu máy</value>

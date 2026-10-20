@@ -121,7 +121,7 @@
     <value>Folderele aplicației</value>
   </data>
   <data name="AboutPage_AppName" xml:space="preserve">
-    <value>Toolkit Legiune Lenovo</value>
+    <value>Project Legion</value>
   </data>
   <data name="AboutPage_Build" xml:space="preserve">
     <value>Compilare</value>
@@ -335,7 +335,7 @@
     <value>Aplicare &amp; închidere</value>
   </data>
   <data name="AppName" xml:space="preserve">
-    <value>Lenovo Legion Toolkit</value>
+    <value>Project Legion</value>
   </data>
   <data name="ArgumentWindow_Category_Debugging" xml:space="preserve">
     <value>Depanare</value>
@@ -428,7 +428,7 @@
     <value>Activare</value>
   </data>
   <data name="AutomationPage_ActionsEnable_Message" xml:space="preserve">
-    <value>Lenovo Legion Toolkit trebuie să ruleze pentru ca acțiunile automate să funcționeze.</value>
+    <value>Project Legion trebuie să ruleze pentru ca acțiunile automate să funcționeze.</value>
   </data>
   <data name="AutomationPage_Actions_Empty" xml:space="preserve">
     <value>Nicio Acțiune definită. Apăsați pe "Adăugați nou" pentru a crea o nouă Acțiune.</value>
@@ -1042,38 +1042,6 @@ Schimbarea modurilor poate necesita repornirea.</value>
   <data name="Displays" xml:space="preserve">
     <value>Afişare</value>
   </data>
-  <data name="DonatePage_Bartosz_Description" xml:space="preserve">
-    <value>Bartosz a creat Lenovo Legion Toolkit şi a elaborat arhitectura fundamentală care consolidează fiecare caracteristică a cererii de astăzi.</value>
-  </data>
-  <data name="DonatePage_Bartosz_Role" xml:space="preserve">
-    <value>Creator Original</value>
-  </data>
-  <data name="DonatePage_BottomMessage" xml:space="preserve">
-    <value>Chiar dacă nu poți dona, pur și simplu utiliza, partaja și susține proiectul pe GitHub merge mult. Fiecare mic sprijin este cu adevărat apreciat</value>
-  </data>
-  <data name="DonatePage_DrSkinner_Description" xml:space="preserve">
-    <value>Responsabil pentru dezvoltarea caracteristicilor, asigurarea calității, proiectarea UI/UX și orientarea generală a proiectului, ca lider actual al proiectului.</value>
-  </data>
-  <data name="DonatePage_DrSkinner_Role" xml:space="preserve">
-    <value>Dezvoltator principal &amp; Proiect Lead</value>
-  </data>
-  <data name="DonatePage_Kaguya_Description" xml:space="preserve">
-    <value>Specializează în cercetarea hardware și ingineria inversă, cu contribuții care acoperă dezvoltarea caracteristicilor fundamentale și integrarea sistemelor la nivel scăzut.</value>
-  </data>
-  <data name="DonatePage_Kaguya_Role" xml:space="preserve">
-    <value>Dezvoltator &amp; Reverser de bază</value>
-  </data>
-  <data name="DonatePage_Message" xml:space="preserve">
-    <value>Dezvoltarea și întreținerea setului de instrumente Lenovo Legion necesită mult timp și efort. Dacă vă place să utilizaţi acest software, puteţi sprijini viitorul acestuia sponsorizând autorii care fac acest lucru posibil.
-
-Vă mulţumim pentru sprijin!</value>
-  </data>
-  <data name="DonatePage_Sponsor" xml:space="preserve">
-    <value>Sponsor</value>
-  </data>
-  <data name="DonatePage_Title" xml:space="preserve">
-    <value>Donație</value>
-  </data>
   <data name="DpiScaleAutomationStepControl_Message" xml:space="preserve">
     <value>Schimbă scalarea afișajului încorporat.</value>
   </data>
@@ -1150,7 +1118,7 @@ Vă mulţumim pentru sprijin!</value>
     <value>Debifați ratele de reîmprospătare pe care nu doriți să le utilizați pentru comanda rapidă Fn+R.</value>
   </data>
   <data name="ExcludeRefreshRatesWindow_NoRefreshRatesFound_Message" xml:space="preserve">
-    <value>Asigurați-vă că afișajul laptopului este pornit. Lenovo Legion Toolkit nu poate încărca rate de reîmprospătare pentru un afișaj care nu este pornit.</value>
+    <value>Asigurați-vă că afișajul laptopului este pornit. Project Legion nu poate încărca rate de reîmprospătare pentru un afișaj care nu este pornit.</value>
   </data>
   <data name="ExcludeRefreshRatesWindow_NoRefreshRatesFound_Title" xml:space="preserve">
     <value>Nicio rată de reîmprospătare găsită</value>
@@ -1743,7 +1711,7 @@ Apasă Da pentru a dezactiva şi nu pentru a ignora.</value>
     <value>Macro</value>
   </data>
   <data name="MacroPage_Enable_Subtitle" xml:space="preserve">
-    <value>Lenovo Legion Toolkit trebuie să alerge la funcţionarea macro-urilor.</value>
+    <value>Project Legion trebuie să alerge la funcţionarea macro-urilor.</value>
   </data>
   <data name="MacroPage_Enable_Title" xml:space="preserve">
     <value>Activare</value>
@@ -1827,7 +1795,7 @@ Apasă Da pentru a dezactiva şi nu pentru a ignora.</value>
     <value>Bord</value>
   </data>
   <data name="MainWindow_NavigationItem_Donate" xml:space="preserve">
-    <value>Donație</value>
+    <value>Credits &amp; legal</value>
   </data>
   <data name="MainWindow_NavigationItem_Keyboard" xml:space="preserve">
     <value>Tastatură</value>
@@ -3758,7 +3726,7 @@ Salvarea logurilor va fi activată automat dacă alegeți să continuați.</valu
     <value>Tip sistem</value>
   </data>
   <data name="UnsupportedWindow_Message" xml:space="preserve">
-    <value>Lenovo Legion Toolkit nu a fost testat cu dispozitivul dvs.</value>
+    <value>Project Legion nu a fost testat cu dispozitivul dvs.</value>
   </data>
   <data name="UnsupportedWindow_Model" xml:space="preserve">
     <value>Model</value>

@@ -121,7 +121,7 @@
     <value>Φάκελοι εφαρμογής</value>
   </data>
   <data name="AboutPage_AppName" xml:space="preserve">
-    <value>Lenovo Legion Toolkit (Ανεπίσημη Διακλάδωση)</value>
+    <value>Project Legion</value>
   </data>
   <data name="AboutPage_Build" xml:space="preserve">
     <value>Κατασκευή</value>
@@ -335,7 +335,7 @@
     <value>Εφαρμογή και κλείσιμο</value>
   </data>
   <data name="AppName" xml:space="preserve">
-    <value>Lenovo Legion Toolkit</value>
+    <value>Project Legion</value>
   </data>
   <data name="ArgumentWindow_Category_Debugging" xml:space="preserve">
     <value>Αποσφαλμάτωση</value>
@@ -428,7 +428,7 @@
     <value>Ενεργοποιημένες</value>
   </data>
   <data name="AutomationPage_ActionsEnable_Message" xml:space="preserve">
-    <value>Το Lenovo Legion Toolkit πρέπει να εκτελείται για να λειτουργήσουν οι αυτόματες δράσεις.</value>
+    <value>Το Project Legion πρέπει να εκτελείται για να λειτουργήσουν οι αυτόματες δράσεις.</value>
   </data>
   <data name="AutomationPage_Actions_Empty" xml:space="preserve">
     <value>Δεν έχουν οριστεί Δράσεις. Πατήστε "Προσθήκη νέας" για να δημιουργήσετε μια νέα Δράση.</value>
@@ -1043,38 +1043,6 @@
   <data name="Displays" xml:space="preserve">
     <value>Εμφανίζει</value>
   </data>
-  <data name="DonatePage_Bartosz_Description" xml:space="preserve">
-    <value>Ο Bartosz δημιούργησε το Toolkit Λεγεώνας Lenovo και συνέταξε την θεμελιακή αρχιτεκτονική που τροφοδοτεί κάθε χαρακτηριστικό της εφαρμογής σήμερα.</value>
-  </data>
-  <data name="DonatePage_Bartosz_Role" xml:space="preserve">
-    <value>Αρχικός Δημιουργός</value>
-  </data>
-  <data name="DonatePage_BottomMessage" xml:space="preserve">
-    <value>Ακόμα κι αν δεν μπορείτε να δωρίσετε, απλά χρησιμοποιώντας, μοιράζοντας, και πρωταγωνιστώντας το έργο στο GitHub πηγαίνει πολύ μακριά.</value>
-  </data>
-  <data name="DonatePage_DrSkinner_Description" xml:space="preserve">
-    <value>Υπεύθυνος για την ανάπτυξη βασικών χαρακτηριστικών, τη διασφάλιση ποιότητας, το σχεδιασμό UI/UX και τη συνολική κατεύθυνση του έργου ως το σημερινό προβάδισμα.</value>
-  </data>
-  <data name="DonatePage_DrSkinner_Role" xml:space="preserve">
-    <value>Κύριος Προγραμματιστής &amp; Επικεφαλής Έργου</value>
-  </data>
-  <data name="DonatePage_Kaguya_Description" xml:space="preserve">
-    <value>Ειδικεύεται στην έρευνα υλικού και την αντίστροφη μηχανική, με συνεισφορές που εκτείνονται στην ανάπτυξη βασικών χαρακτηριστικών και την ενσωμάτωση συστημάτων χαμηλού επιπέδου.</value>
-  </data>
-  <data name="DonatePage_Kaguya_Role" xml:space="preserve">
-    <value>Βασικός Προγραμματιστής &amp; Αντιστροφέας</value>
-  </data>
-  <data name="DonatePage_Message" xml:space="preserve">
-    <value>Development and maintenance of Lenovo Legion Toolkit takes a lot of time and effort. If you enjoy using this software, you can support its future by sponsoring the authors who make it possible.
-
-Thank you for your support!</value>
-  </data>
-  <data name="DonatePage_Sponsor" xml:space="preserve">
-    <value>Χορηγός</value>
-  </data>
-  <data name="DonatePage_Title" xml:space="preserve">
-    <value>Δωρεά</value>
-  </data>
   <data name="DpiScaleAutomationStepControl_Message" xml:space="preserve">
     <value>Αλλαγή κλιμάκωσης της ενσωματωμένης οθόνης.</value>
   </data>
@@ -1151,7 +1119,7 @@ Thank you for your support!</value>
     <value>Καταργήστε επιλογές ρυθμού ανανέωσης που δε θέλετε να χρησιμοποιήσετε μέσω της συντόμευσης Fn+R.</value>
   </data>
   <data name="ExcludeRefreshRatesWindow_NoRefreshRatesFound_Message" xml:space="preserve">
-    <value>Βεβαιωθείτε ότι η οθόνη του υπολογιστή είναι ενεργοποιημένη. Το Lenovo Legion Toolkit δεν μπορεί να φορτώσει ρυθμούς ανανέωσης σε απενεργοποιημένη οθόνη.</value>
+    <value>Βεβαιωθείτε ότι η οθόνη του υπολογιστή είναι ενεργοποιημένη. Το Project Legion δεν μπορεί να φορτώσει ρυθμούς ανανέωσης σε απενεργοποιημένη οθόνη.</value>
   </data>
   <data name="ExcludeRefreshRatesWindow_NoRefreshRatesFound_Title" xml:space="preserve">
     <value>Δεν βρέθηκαν ρυθμοί ανανέωσης</value>
@@ -1744,7 +1712,7 @@ Do not proceed unless you possess the necessary technical expertise.</value>
     <value>Μακροεντολή</value>
   </data>
   <data name="MacroPage_Enable_Subtitle" xml:space="preserve">
-    <value>Το Lenovo Legion Toolkit πρέπει να εκτελείται για να λειτουργήσουν οι μακροεντολές.</value>
+    <value>Το Project Legion πρέπει να εκτελείται για να λειτουργήσουν οι μακροεντολές.</value>
   </data>
   <data name="MacroPage_Enable_Title" xml:space="preserve">
     <value>Ενεργοποίηση</value>
@@ -1828,7 +1796,7 @@ Do not proceed unless you possess the necessary technical expertise.</value>
     <value>Πίνακας</value>
   </data>
   <data name="MainWindow_NavigationItem_Donate" xml:space="preserve">
-    <value>Δωρεά</value>
+    <value>Credits &amp; legal</value>
   </data>
   <data name="MainWindow_NavigationItem_Keyboard" xml:space="preserve">
     <value>Πληκτρολόγιο</value>
@@ -3759,7 +3727,7 @@ Click No to disable Hardware Sensor feature.</value>
     <value>Τύπος Μηχανήματος</value>
   </data>
   <data name="UnsupportedWindow_Message" xml:space="preserve">
-    <value>Το Lenovo Legion Toolkit δεν έχει δοκιμαστεί με τη συσκευή σας.</value>
+    <value>Το Project Legion δεν έχει δοκιμαστεί με τη συσκευή σας.</value>
   </data>
   <data name="UnsupportedWindow_Model" xml:space="preserve">
     <value>Μοντέλο</value>

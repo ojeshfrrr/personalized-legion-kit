@@ -121,7 +121,7 @@
     <value>Baǵdarlama papkaları</value>
   </data>
   <data name="AboutPage_AppName" xml:space="preserve">
-    <value>Lenovo Legion Toolkit</value>
+    <value>Project Legion</value>
   </data>
   <data name="AboutPage_Build" xml:space="preserve">
     <value>Qurıw</value>
@@ -335,7 +335,7 @@
     <value>Qollanıw hám jabıw</value>
   </data>
   <data name="AppName" xml:space="preserve">
-    <value>Lenovo Legion Toolkit</value>
+    <value>Project Legion</value>
   </data>
   <data name="ArgumentWindow_Category_Debugging" xml:space="preserve">
     <value>Debugging</value>
@@ -428,7 +428,7 @@
     <value>Iske túsiriw</value>
   </data>
   <data name="AutomationPage_ActionsEnable_Message" xml:space="preserve">
-    <value>Avtomatikalıq háreketlerdiń orınlanıwı ushın Lenovo Legion Toolkit iske túsirilgen bolıwı kerek.</value>
+    <value>Avtomatikalıq háreketlerdiń orınlanıwı ushın Project Legion iske túsirilgen bolıwı kerek.</value>
   </data>
   <data name="AutomationPage_Actions_Empty" xml:space="preserve">
     <value>Háreketler anıqlanbaǵan. Jańa háreket jaratıw ushın "Jańadan qosıw" túymesin basıń.</value>
@@ -796,7 +796,7 @@ Eger noutbuk uyqı rejiminde yamasa óshirilgen waqıtta zaryadlanǵan bolsa, bu
     <value>Jabıw</value>
   </data>
   <data name="CloseAppAutomationStepControl_Message" xml:space="preserve">
-    <value>Close the Lenovo Legion Toolkit</value>
+    <value>Close the Project Legion</value>
   </data>
   <data name="CloseAppAutomationStepControl_Title" xml:space="preserve">
     <value>Close App</value>
@@ -1040,38 +1040,6 @@ Eger noutbuk uyqı rejiminde yamasa óshirilgen waqıtta zaryadlanǵan bolsa, bu
   </data>
   <data name="Displays" xml:space="preserve">
     <value>Displays</value>
-  </data>
-  <data name="DonatePage_Bartosz_Description" xml:space="preserve">
-    <value>Bartosz created Lenovo Legion Toolkit and authored the foundational architecture that powers every feature in the application today.</value>
-  </data>
-  <data name="DonatePage_Bartosz_Role" xml:space="preserve">
-    <value>Original Creator</value>
-  </data>
-  <data name="DonatePage_BottomMessage" xml:space="preserve">
-    <value>Even if you can't donate, simply using, sharing, and starring the project on GitHub goes a long way. Every bit of support is genuinely appreciated</value>
-  </data>
-  <data name="DonatePage_DrSkinner_Description" xml:space="preserve">
-    <value>Responsible for core feature development, quality assurance, UI/UX design, and overall project direction as the current project lead.</value>
-  </data>
-  <data name="DonatePage_DrSkinner_Role" xml:space="preserve">
-    <value>Core Developer &amp; Project Lead</value>
-  </data>
-  <data name="DonatePage_Kaguya_Description" xml:space="preserve">
-    <value>Specializes in hardware research and reverse engineering, with contributions spanning core feature development and low-level system integration.</value>
-  </data>
-  <data name="DonatePage_Kaguya_Role" xml:space="preserve">
-    <value>Core Developer &amp; Reverser</value>
-  </data>
-  <data name="DonatePage_Message" xml:space="preserve">
-    <value>Development and maintenance of Lenovo Legion Toolkit takes a lot of time and effort. If you enjoy using this software, you can support its future by sponsoring the authors who make it possible.
-
-Thank you for your support!</value>
-  </data>
-  <data name="DonatePage_Sponsor" xml:space="preserve">
-    <value>Sponsor</value>
-  </data>
-  <data name="DonatePage_Title" xml:space="preserve">
-    <value>Qollap-quwatlaw</value>
   </data>
   <data name="DpiScaleAutomationStepControl_Message" xml:space="preserve">
     <value>Change scaling of the built-in display.</value>
@@ -1742,7 +1710,7 @@ Click Yes to disable and No to ignore.</value>
     <value>Macro</value>
   </data>
   <data name="MacroPage_Enable_Subtitle" xml:space="preserve">
-    <value>Lenovo Legion Toolkit must be running for macros to work.</value>
+    <value>Project Legion must be running for macros to work.</value>
   </data>
   <data name="MacroPage_Enable_Title" xml:space="preserve">
     <value>Enable</value>
@@ -1826,7 +1794,7 @@ Click Yes to disable and No to ignore.</value>
     <value>Basqarıw paneli</value>
   </data>
   <data name="MainWindow_NavigationItem_Donate" xml:space="preserve">
-    <value>Qollap-quwatlaw</value>
+    <value>Credits &amp; legal</value>
   </data>
   <data name="MainWindow_NavigationItem_Keyboard" xml:space="preserve">
     <value>Klaviatura</value>
@@ -3413,7 +3381,7 @@ Bul varianttı ózgertkennen keyin qayta iske túsiriw usınıs etiledi.</value>
     <value>Switch to Custom Mode with Fn+Q</value>
   </data>
   <data name="ShowAppAutomationStepControl_Message" xml:space="preserve">
-    <value>Show the Lenovo Legion Toolkit</value>
+    <value>Show the Project Legion</value>
   </data>
   <data name="ShowAppAutomationStepControl_Title" xml:space="preserve">
     <value>Show App</value>
@@ -3756,7 +3724,7 @@ Eger siz dawam etiwdi tańlasańız, jurnaldı júrgiziw avtomatikalıq qosılad
     <value>Qurılma modeliniń túri</value>
   </data>
   <data name="UnsupportedWindow_Message" xml:space="preserve">
-    <value>Lenovo Legion Toolkit siziń qurılmańızda tekserilmedi.</value>
+    <value>Project Legion siziń qurılmańızda tekserilmedi.</value>
   </data>
   <data name="UnsupportedWindow_Model" xml:space="preserve">
     <value>Model</value>

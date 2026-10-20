@@ -121,7 +121,7 @@
     <value>Carpetas de aplicaciones</value>
   </data>
   <data name="AboutPage_AppName" xml:space="preserve">
-    <value>Lenovo Legion Toolkit</value>
+    <value>Project Legion</value>
   </data>
   <data name="AboutPage_Build" xml:space="preserve">
     <value>Revisión</value>
@@ -335,7 +335,7 @@
     <value>Aplicar y cerrar</value>
   </data>
   <data name="AppName" xml:space="preserve">
-    <value>Lenovo Legion Toolkit</value>
+    <value>Project Legion</value>
   </data>
   <data name="ArgumentWindow_Category_Debugging" xml:space="preserve">
     <value>Depuración de errores</value>
@@ -428,7 +428,7 @@
     <value>Activar</value>
   </data>
   <data name="AutomationPage_ActionsEnable_Message" xml:space="preserve">
-    <value>Lenovo Legion Toolkit deberá estar ejecutándose para que funcionen las acciones automáticas.</value>
+    <value>Project Legion deberá estar ejecutándose para que funcionen las acciones automáticas.</value>
   </data>
   <data name="AutomationPage_Actions_Empty" xml:space="preserve">
     <value>Ninguna acción definida. Haga clic en "Añadir nueva" para crear una nueva acción.</value>
@@ -1042,38 +1042,6 @@ El cambio de modo puede requerir un reinicio.</value>
   <data name="Displays" xml:space="preserve">
     <value>Mostrar</value>
   </data>
-  <data name="DonatePage_Bartosz_Description" xml:space="preserve">
-    <value>Bartosz creó la Herramienta de Legión Len y creó la arquitectura fundacional que potencia todas las características de la aplicación hoy.</value>
-  </data>
-  <data name="DonatePage_Bartosz_Role" xml:space="preserve">
-    <value>Creador original</value>
-  </data>
-  <data name="DonatePage_BottomMessage" xml:space="preserve">
-    <value>Incluso si usted no puede donar, simplemente usando, compartiendo y destacando el proyecto en GitHub va muy lejos. Cada pedazo de apoyo es realmente apreciado</value>
-  </data>
-  <data name="DonatePage_DrSkinner_Description" xml:space="preserve">
-    <value>Responsable del desarrollo central de características, garantía de calidad, diseño de UI/UX y dirección general del proyecto como líder actual.</value>
-  </data>
-  <data name="DonatePage_DrSkinner_Role" xml:space="preserve">
-    <value>Desarrollador del núcleo y líder del proyecto</value>
-  </data>
-  <data name="DonatePage_Kaguya_Description" xml:space="preserve">
-    <value>Se especializa en investigación de hardware e ingeniería inversa, con contribuciones que abarcan el núcleo de desarrollo de características y la integración de sistemas de bajo nivel.</value>
-  </data>
-  <data name="DonatePage_Kaguya_Role" xml:space="preserve">
-    <value>Desarrollador del núcleo e inversor</value>
-  </data>
-  <data name="DonatePage_Message" xml:space="preserve">
-    <value>El desarrollo y el mantenimiento de la Herramienta de Legión Lena requiere mucho tiempo y esfuerzo. Si te gusta usar este software, puedes apoyar su futuro patrocinando a los autores que lo hacen posible.
-
-¡Gracias por tu apoyo!</value>
-  </data>
-  <data name="DonatePage_Sponsor" xml:space="preserve">
-    <value>Patrocinador</value>
-  </data>
-  <data name="DonatePage_Title" xml:space="preserve">
-    <value>Donar</value>
-  </data>
   <data name="DpiScaleAutomationStepControl_Message" xml:space="preserve">
     <value>Cambiar la escala de la pantalla incorporada.</value>
   </data>
@@ -1150,7 +1118,7 @@ El cambio de modo puede requerir un reinicio.</value>
     <value>Desmarcar las tasas de actualización que no desea utilizar al usar las teclas Fn+R.</value>
   </data>
   <data name="ExcludeRefreshRatesWindow_NoRefreshRatesFound_Message" xml:space="preserve">
-    <value>Asegúrese de que la pantalla del portátil está encendida. Lenovo Legion Toolkit no puede cargar las tasas de refresco de una pantalla que no está encendida.</value>
+    <value>Asegúrese de que la pantalla del portátil está encendida. Project Legion no puede cargar las tasas de refresco de una pantalla que no está encendida.</value>
   </data>
   <data name="ExcludeRefreshRatesWindow_NoRefreshRatesFound_Title" xml:space="preserve">
     <value>No se han encontrado tasas de refresco</value>
@@ -1745,7 +1713,7 @@ Haga clic en Sí para deshabilitarla y en No para ignorarla.</value>
     <value>Macro</value>
   </data>
   <data name="MacroPage_Enable_Subtitle" xml:space="preserve">
-    <value>Lenovo Legion Toolkit deberá estar ejecutándose para que funcionen las macros.</value>
+    <value>Project Legion deberá estar ejecutándose para que funcionen las macros.</value>
   </data>
   <data name="MacroPage_Enable_Title" xml:space="preserve">
     <value>Activar</value>
@@ -1829,7 +1797,7 @@ Haga clic en Sí para deshabilitarla y en No para ignorarla.</value>
     <value>Panel de control</value>
   </data>
   <data name="MainWindow_NavigationItem_Donate" xml:space="preserve">
-    <value>Donar</value>
+    <value>Credits &amp; legal</value>
   </data>
   <data name="MainWindow_NavigationItem_Keyboard" xml:space="preserve">
     <value>Teclado</value>
@@ -3416,7 +3384,7 @@ Se recomienda reiniciar después de cambiar esta opción.</value>
     <value>Cambiar al modo personalizado con Fn+Q</value>
   </data>
   <data name="ShowAppAutomationStepControl_Message" xml:space="preserve">
-    <value>Mostrar Lenovo Legion Toolkit</value>
+    <value>Mostrar Project Legion</value>
   </data>
   <data name="ShowAppAutomationStepControl_Title" xml:space="preserve">
     <value>Mostrar aplicación</value>
@@ -3760,7 +3728,7 @@ El registro de sucesos se activará automáticamente, si decide continuar.</valu
     <value>Tipo de máquina</value>
   </data>
   <data name="UnsupportedWindow_Message" xml:space="preserve">
-    <value>Lenovo Legion Toolkit no se ha probado con tu dispositivo.</value>
+    <value>Project Legion no se ha probado con tu dispositivo.</value>
   </data>
   <data name="UnsupportedWindow_Model" xml:space="preserve">
     <value>Modelo</value>

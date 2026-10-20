@@ -121,7 +121,7 @@
     <value>Applicatiemappen</value>
   </data>
   <data name="AboutPage_AppName" xml:space="preserve">
-    <value>Lenovo Legioen Gereedschapskit</value>
+    <value>Project Legion</value>
   </data>
   <data name="AboutPage_Build" xml:space="preserve">
     <value>Versie</value>
@@ -335,7 +335,7 @@
     <value>Opslaan &amp; sluiten</value>
   </data>
   <data name="AppName" xml:space="preserve">
-    <value>Lenovo Legion Toolkit</value>
+    <value>Project Legion</value>
   </data>
   <data name="ArgumentWindow_Category_Debugging" xml:space="preserve">
     <value>Foutopsporing</value>
@@ -428,7 +428,7 @@
     <value>Inschakelen</value>
   </data>
   <data name="AutomationPage_ActionsEnable_Message" xml:space="preserve">
-    <value>Lenovo Legion Toolkit moet actief zijn om automatische acties te laten werken.</value>
+    <value>Project Legion moet actief zijn om automatische acties te laten werken.</value>
   </data>
   <data name="AutomationPage_Actions_Empty" xml:space="preserve">
     <value>Geen acties gedefinieerd. Klik op "Nieuwe toevoegen" om een nieuwe actie te maken.</value>
@@ -1042,38 +1042,6 @@ Voor het wisselen van modi is mogelijk opnieuw opstarten vereist.</value>
   <data name="Displays" xml:space="preserve">
     <value>Weergaven</value>
   </data>
-  <data name="DonatePage_Bartosz_Description" xml:space="preserve">
-    <value>Bartosz heeft Lenovo Legioen Toolkit gemaakt en heeft de fundamentele architectuur geschreven die elk kenmerk in de toepassing vandaag nog aandraagt.</value>
-  </data>
-  <data name="DonatePage_Bartosz_Role" xml:space="preserve">
-    <value>Originele maker</value>
-  </data>
-  <data name="DonatePage_BottomMessage" xml:space="preserve">
-    <value>Zelfs als je niet kunt doneren, gebruik het gewoon gebruiken, delen en staren van het project op GitHub gaat heel ver. Elke vorm van ondersteuning wordt echt gewaardeerd.</value>
-  </data>
-  <data name="DonatePage_DrSkinner_Description" xml:space="preserve">
-    <value>Verantwoordelijk voor kernfuncties ontwikkeling, kwaliteitsgarantie, UI/UX ontwerp en de algemene projectrichting als de huidige projectleiding.</value>
-  </data>
-  <data name="DonatePage_DrSkinner_Role" xml:space="preserve">
-    <value>Kernontwikkelaar &amp; projectleider</value>
-  </data>
-  <data name="DonatePage_Kaguya_Description" xml:space="preserve">
-    <value>Specialiseert in hardware-onderzoek en omgekeerde techniek, met bijdragen aan kernfuncties ontwikkeling en integratie van systeem laag niveau.</value>
-  </data>
-  <data name="DonatePage_Kaguya_Role" xml:space="preserve">
-    <value>Kern Ontwikkelaar &amp; Reverser</value>
-  </data>
-  <data name="DonatePage_Message" xml:space="preserve">
-    <value>Ontwikkeling en onderhoud van Lenovo Legioen Toolkit kost veel tijd en inspanning. Als het gebruik van deze software u bevalt, kunt u de toekomst ervan ondersteunen door de auteurs te sponsoren die het mogelijk maken.
-
-Bedankt voor uw steun!</value>
-  </data>
-  <data name="DonatePage_Sponsor" xml:space="preserve">
-    <value>Sponsor</value>
-  </data>
-  <data name="DonatePage_Title" xml:space="preserve">
-    <value>Doneer</value>
-  </data>
   <data name="DpiScaleAutomationStepControl_Message" xml:space="preserve">
     <value>Schalen van het ingebouwde scherm wijzigen.</value>
   </data>
@@ -1150,7 +1118,7 @@ Bedankt voor uw steun!</value>
     <value>Vink vernieuwingsfrequenties uit die u niet wilt gebruiken wanneer de snelkoppeling Fn+R wordt gebruikt.</value>
   </data>
   <data name="ExcludeRefreshRatesWindow_NoRefreshRatesFound_Message" xml:space="preserve">
-    <value>Zorg ervoor dat het beeldscherm van de laptop is ingeschakeld. Lenovo Legion Toolkit kan geen verversingsfrequenties laden voor een beeldscherm dat niet is ingeschakeld.</value>
+    <value>Zorg ervoor dat het beeldscherm van de laptop is ingeschakeld. Project Legion kan geen verversingsfrequenties laden voor een beeldscherm dat niet is ingeschakeld.</value>
   </data>
   <data name="ExcludeRefreshRatesWindow_NoRefreshRatesFound_Title" xml:space="preserve">
     <value>Geen verversingsnelheiden gevonden</value>
@@ -1742,7 +1710,7 @@ Klik Ja om het uit te schakelen en nee om het te negeren.</value>
     <value>Macro</value>
   </data>
   <data name="MacroPage_Enable_Subtitle" xml:space="preserve">
-    <value>Lenovo Legion Toolkit moet actief zijn om macro's uit te voeren.</value>
+    <value>Project Legion moet actief zijn om macro's uit te voeren.</value>
   </data>
   <data name="MacroPage_Enable_Title" xml:space="preserve">
     <value>Schakel in</value>
@@ -1826,7 +1794,7 @@ Klik Ja om het uit te schakelen en nee om het te negeren.</value>
     <value>Dashboard</value>
   </data>
   <data name="MainWindow_NavigationItem_Donate" xml:space="preserve">
-    <value>Doneer</value>
+    <value>Credits &amp; legal</value>
   </data>
   <data name="MainWindow_NavigationItem_Keyboard" xml:space="preserve">
     <value>Toetsenbord</value>
@@ -3757,7 +3725,7 @@ Logboekregistratie wordt automatisch ingeschakeld als u ervoor kiest om door te 
     <value>Machine Type</value>
   </data>
   <data name="UnsupportedWindow_Message" xml:space="preserve">
-    <value>Lenovo Legion Toolkit is niet getest met uw apparaat.</value>
+    <value>Project Legion is niet getest met uw apparaat.</value>
   </data>
   <data name="UnsupportedWindow_Model" xml:space="preserve">
     <value>Model</value>

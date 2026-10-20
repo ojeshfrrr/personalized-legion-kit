@@ -121,7 +121,7 @@
     <value>應用程式資料夾</value>
   </data>
   <data name="AboutPage_AppName" xml:space="preserve">
-    <value>Lenovo Legion 工具套件</value>
+    <value>Project Legion</value>
   </data>
   <data name="AboutPage_Build" xml:space="preserve">
     <value>構建</value>
@@ -335,7 +335,7 @@
     <value>套用 &amp; 關閉</value>
   </data>
   <data name="AppName" xml:space="preserve">
-    <value>Lenovo Legion 工具套件</value>
+    <value>Project Legion</value>
   </data>
   <data name="ArgumentWindow_Category_Debugging" xml:space="preserve">
     <value>偵錯</value>
@@ -1040,38 +1040,6 @@
   </data>
   <data name="Displays" xml:space="preserve">
     <value>顯示器</value>
-  </data>
-  <data name="DonatePage_Bartosz_Description" xml:space="preserve">
-    <value>Bartosz created Lenovo Legion Toolkit and authored the foundational architecture that powers every feature in the application today.</value>
-  </data>
-  <data name="DonatePage_Bartosz_Role" xml:space="preserve">
-    <value>Original Creator</value>
-  </data>
-  <data name="DonatePage_BottomMessage" xml:space="preserve">
-    <value>Even if you can't donate, simply using, sharing, and starring the project on GitHub goes a long way. Every bit of support is genuinely appreciated</value>
-  </data>
-  <data name="DonatePage_DrSkinner_Description" xml:space="preserve">
-    <value>Responsible for core feature development, quality assurance, UI/UX design, and overall project direction as the current project lead.</value>
-  </data>
-  <data name="DonatePage_DrSkinner_Role" xml:space="preserve">
-    <value>Core Developer &amp; Project Lead</value>
-  </data>
-  <data name="DonatePage_Kaguya_Description" xml:space="preserve">
-    <value>Specializes in hardware research and reverse engineering, with contributions spanning core feature development and low-level system integration.</value>
-  </data>
-  <data name="DonatePage_Kaguya_Role" xml:space="preserve">
-    <value>Core Developer &amp; Reverser</value>
-  </data>
-  <data name="DonatePage_Message" xml:space="preserve">
-    <value>Lenovo Legion 工具套件的開發和維護需要花費大量時間和精力。如果您喜歡使用這款軟體，可以透過贊助開發人員來應援它的未來發展。
-
-感謝您的應援！</value>
-  </data>
-  <data name="DonatePage_Sponsor" xml:space="preserve">
-    <value>贊助</value>
-  </data>
-  <data name="DonatePage_Title" xml:space="preserve">
-    <value>贊助</value>
   </data>
   <data name="DpiScaleAutomationStepControl_Message" xml:space="preserve">
     <value>Change scaling of the built-in display.</value>
@@ -1826,7 +1794,7 @@
     <value>控制面板</value>
   </data>
   <data name="MainWindow_NavigationItem_Donate" xml:space="preserve">
-    <value>贊助</value>
+    <value>Credits &amp; legal</value>
   </data>
   <data name="MainWindow_NavigationItem_Keyboard" xml:space="preserve">
     <value>鍵盤</value>

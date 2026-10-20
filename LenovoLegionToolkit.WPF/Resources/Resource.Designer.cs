@@ -70,7 +70,7 @@ namespace LenovoLegionToolkit.WPF.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Lenovo Legion Toolkit.
+        ///   Looks up a localized string similar to Project Legion.
         /// </summary>
         public static string AboutPage_AppName {
             get {
@@ -709,7 +709,7 @@ namespace LenovoLegionToolkit.WPF.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Lenovo Legion Toolkit.
+        ///   Looks up a localized string similar to Project Legion.
         /// </summary>
         public static string AppName {
             get {
@@ -1016,7 +1016,7 @@ namespace LenovoLegionToolkit.WPF.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Lenovo Legion Toolkit must be running for automatic actions to work..
+        ///   Looks up a localized string similar to Project Legion must be running for automatic actions to work..
         /// </summary>
         public static string AutomationPage_ActionsEnable_Message {
             get {
@@ -2088,7 +2088,7 @@ namespace LenovoLegionToolkit.WPF.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Close the Lenovo Legion Toolkit.
+        ///   Looks up a localized string similar to Close the Project Legion.
         /// </summary>
         public static string CloseAppAutomationStepControl_Message {
             get {
@@ -3162,7 +3162,7 @@ namespace LenovoLegionToolkit.WPF.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Make sure that laptop display is on. Lenovo Legion Toolkit can&apos;t load refresh rates for a display that is not on..
+        ///   Looks up a localized string similar to Make sure that laptop display is on. Project Legion can&apos;t load refresh rates for a display that is not on..
         /// </summary>
         public static string ExcludeRefreshRatesWindow_NoRefreshRatesFound_Message {
             get {
@@ -4936,7 +4936,7 @@ namespace LenovoLegionToolkit.WPF.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Lenovo Legion Toolkit must be running for macros to work..
+        ///   Looks up a localized string similar to Project Legion must be running for macros to work..
         /// </summary>
         public static string MacroPage_Enable_Subtitle {
             get {
@@ -5159,6 +5159,15 @@ namespace LenovoLegionToolkit.WPF.Resources {
                 return ResourceManager.GetString("MainWindow_NavigationItem_Actions", resourceCulture);
             }
         }
+
+        /// <summary>
+        ///   Looks up a localized string similar to Automation.
+        /// </summary>
+        public static string MainWindow_NavigationItem_Automation {
+            get {
+                return ResourceManager.GetString("MainWindow_NavigationItem_Automation", resourceCulture);
+            }
+        }
         
         /// <summary>
         ///   Looks up a localized string similar to Battery.
@@ -5186,6 +5195,24 @@ namespace LenovoLegionToolkit.WPF.Resources {
                 return ResourceManager.GetString("MainWindow_NavigationItem_Donate", resourceCulture);
             }
         }
+
+        /// <summary>
+        ///   Looks up a localized string similar to Graphics.
+        /// </summary>
+        public static string MainWindow_NavigationItem_Graphics {
+            get {
+                return ResourceManager.GetString("MainWindow_NavigationItem_Graphics", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to Home.
+        /// </summary>
+        public static string MainWindow_NavigationItem_Home {
+            get {
+                return ResourceManager.GetString("MainWindow_NavigationItem_Home", resourceCulture);
+            }
+        }
         
         /// <summary>
         ///   Looks up a localized string similar to Keyboard.
@@ -5193,6 +5220,15 @@ namespace LenovoLegionToolkit.WPF.Resources {
         public static string MainWindow_NavigationItem_Keyboard {
             get {
                 return ResourceManager.GetString("MainWindow_NavigationItem_Keyboard", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to Keyboard RGB.
+        /// </summary>
+        public static string MainWindow_NavigationItem_KeyboardRgb {
+            get {
+                return ResourceManager.GetString("MainWindow_NavigationItem_KeyboardRgb", resourceCulture);
             }
         }
         
@@ -5213,6 +5249,15 @@ namespace LenovoLegionToolkit.WPF.Resources {
                 return ResourceManager.GetString("MainWindow_NavigationItem_Packages", resourceCulture);
             }
         }
+
+        /// <summary>
+        ///   Looks up a localized string similar to Performance.
+        /// </summary>
+        public static string MainWindow_NavigationItem_Performance {
+            get {
+                return ResourceManager.GetString("MainWindow_NavigationItem_Performance", resourceCulture);
+            }
+        }
         
         /// <summary>
         ///   Looks up a localized string similar to Settings.
@@ -5220,6 +5265,15 @@ namespace LenovoLegionToolkit.WPF.Resources {
         public static string MainWindow_NavigationItem_Settings {
             get {
                 return ResourceManager.GetString("MainWindow_NavigationItem_Settings", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to Thermals.
+        /// </summary>
+        public static string MainWindow_NavigationItem_Thermals {
+            get {
+                return ResourceManager.GetString("MainWindow_NavigationItem_Thermals", resourceCulture);
             }
         }
         
@@ -9993,7 +10047,7 @@ namespace LenovoLegionToolkit.WPF.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Show the Lenovo Legion Toolkit.
+        ///   Looks up a localized string similar to Show Project Legion.
         /// </summary>
         public static string ShowAppAutomationStepControl_Message {
             get {
@@ -11025,7 +11079,7 @@ namespace LenovoLegionToolkit.WPF.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Lenovo Legion Toolkit has not been tested with your device..
+        ///   Looks up a localized string similar to Project Legion has not been tested with your device..
         /// </summary>
         public static string UnsupportedWindow_Message {
             get {

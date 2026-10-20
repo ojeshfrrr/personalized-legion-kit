@@ -121,7 +121,7 @@
     <value>مجلدات التطبيقات</value>
   </data>
   <data name="AboutPage_AppName" xml:space="preserve">
-    <value>Lenovo Legion Toolkit</value>
+    <value>Project Legion</value>
   </data>
   <data name="AboutPage_Build" xml:space="preserve">
     <value>نسخة</value>
@@ -335,7 +335,7 @@
     <value>تطبيق وإغلاق</value>
   </data>
   <data name="AppName" xml:space="preserve">
-    <value>Lenovo Legion Toolkit</value>
+    <value>Project Legion</value>
   </data>
   <data name="ArgumentWindow_Category_Debugging" xml:space="preserve">
     <value>تسجيل الأخطاء</value>
@@ -1040,38 +1040,6 @@
   </data>
   <data name="Displays" xml:space="preserve">
     <value>عرض</value>
-  </data>
-  <data name="DonatePage_Bartosz_Description" xml:space="preserve">
-    <value>أنشأ بارتوسز مجموعة أدوات لينوفو وألف الهيكل التأسيسي الذي يقوي كل سمة من سمات التطبيق اليوم.</value>
-  </data>
-  <data name="DonatePage_Bartosz_Role" xml:space="preserve">
-    <value>المنشئ الأصلي</value>
-  </data>
-  <data name="DonatePage_BottomMessage" xml:space="preserve">
-    <value>حتى لو كنت لا تستطيع التبرع ، ببساطة إستخدام، مشاركة، وبدء المشروع على GitHub يذهب إلى طريق طويل. كل جزء من الدعم يحظى بتقدير حقيقي</value>
-  </data>
-  <data name="DonatePage_DrSkinner_Description" xml:space="preserve">
-    <value>مسؤول عن تطوير المعالم الأساسية، وضمان الجودة، وتصميم UI/UX، والتوجيه العام للمشروع بوصفه الرائد الحالي للمشروع.</value>
-  </data>
-  <data name="DonatePage_DrSkinner_Role" xml:space="preserve">
-    <value>المطور الأساسي و رائد المشروع</value>
-  </data>
-  <data name="DonatePage_Kaguya_Description" xml:space="preserve">
-    <value>التخصص في بحوث المعدات والهندسة العكسية، مع مساهمات تشمل تطوير السمات الأساسية وتكامل النظم على مستوى منخفض.</value>
-  </data>
-  <data name="DonatePage_Kaguya_Role" xml:space="preserve">
-    <value>المطور والمتراجع الأساسي</value>
-  </data>
-  <data name="DonatePage_Message" xml:space="preserve">
-    <value>Development and maintenance of Lenovo Legion Toolkit takes a lot of time and effort. If you enjoy using this software, you can support its future by sponsoring the authors who make it possible.
-
-Thank you for your support!</value>
-  </data>
-  <data name="DonatePage_Sponsor" xml:space="preserve">
-    <value>الراعي</value>
-  </data>
-  <data name="DonatePage_Title" xml:space="preserve">
-    <value>دعم المشروع</value>
   </data>
   <data name="DpiScaleAutomationStepControl_Message" xml:space="preserve">
     <value>تغيير حجم العرض المدمج.</value>
@@ -1826,7 +1794,7 @@ Click Yes to disable and No to ignore.</value>
     <value>لوحة التحكم أو اللوحة الرئيسة</value>
   </data>
   <data name="MainWindow_NavigationItem_Donate" xml:space="preserve">
-    <value>دعم المشروع</value>
+    <value>Credits &amp; legal</value>
   </data>
   <data name="MainWindow_NavigationItem_Keyboard" xml:space="preserve">
     <value>لوحة المفاتيح</value>
