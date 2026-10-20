@@ -30,19 +30,18 @@ public partial class SettingsAppearanceControl
     public SettingsAppearanceControl()
     {
         InitializeComponent();
-        _themeManager.ThemeApplied += ThemeManager_ThemeApplied;
+        Loaded += SettingsAppearanceControl_Loaded;
+        Unloaded += SettingsAppearanceControl_Unloaded;
     }
+
+    private void SettingsAppearanceControl_Loaded(object sender, RoutedEventArgs e) => _themeManager.ThemeApplied += ThemeManager_ThemeApplied;
+
+    private void SettingsAppearanceControl_Unloaded(object sender, RoutedEventArgs e) => _themeManager.ThemeApplied -= ThemeManager_ThemeApplied;
 
     private void ThemeManager_ThemeApplied(object? sender, EventArgs e)
     {
-        if (_isRefreshing)
-            return;
-
-        UpdateAccentColorPicker();
-
-        _isRefreshing = true;
-        _themeComboBox.SelectItem(_settings.Store.Theme);
-        _isRefreshing = false;
+        if (!_isRefreshing)
+            UpdateAccentColorPicker();
     }
 
     public async Task RefreshAsync()
@@ -61,8 +60,6 @@ public partial class SettingsAppearanceControl
             _langCardControl.Visibility = Visibility.Collapsed;
         }
 
-        _themeComboBox.SetItems(Enum.GetValues<Theme>(), _settings.Store.Theme, t => t.GetDisplayName());
-
         UpdateAccentColorPicker();
         _accentColorSourceComboBox.SetItems(Enum.GetValues<AccentColorSource>(), _settings.Store.AccentColorSource, t => t.GetDisplayName());
 
@@ -71,7 +68,6 @@ public partial class SettingsAppearanceControl
         _backgroundImageBlurSlider.Value = _settings.Store.BackgroundImageBlur;
         _backgroundImageBlurValueText.Text = FormatBlurValue(_settings.Store.BackgroundImageBlur);
 
-        _themeComboBox.Visibility = Visibility.Visible;
         _selectBackgroundImageButton.Visibility = Visibility.Visible;
         _clearBackgroundImageButton.Visibility = Visibility.Visible;
         UpdateImageControlsVisibility();
@@ -115,20 +111,6 @@ public partial class SettingsAppearanceControl
         LocalizationHelper.SetLanguageAsync(cultureInfo).ContinueWith(_ =>
             Dispatcher.Invoke(() => App.Current.RestartMainWindow()),
             TaskScheduler.Default);
-    }
-
-    private void ThemeComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
-    {
-        if (_isRefreshing)
-            return;
-
-        if (!_themeComboBox.TryGetSelectedItem(out Theme state))
-            return;
-
-        _settings.Store.Theme = state;
-        _settings.SynchronizeStore();
-
-        _themeManager.Apply();
     }
 
     private void AccentColorPicker_Changed(object sender, EventArgs e)
