@@ -38,6 +38,10 @@ public class AppFlags
         set { _debug = value; Save(); }
     }
 
+    public bool UiPreview { get; private set; }
+    public bool ReadOnly { get; private set; }
+    public int QaExitAfterSeconds { get; private set; }
+
     private bool _disableTrayTooltip;
     public bool DisableTrayTooltip
     {
@@ -138,7 +142,9 @@ public class AppFlags
 
     public static void Initialize(IEnumerable<string>? startupArgs)
     {
-        _instance = new AppFlags(startupArgs);
+        var args = startupArgs?.ToArray() ?? [];
+        Folders.ConfigureReadOnlyProfile(args);
+        _instance = new AppFlags(args);
     }
 
     private AppFlags(IEnumerable<string>? startupArgs)
@@ -150,7 +156,7 @@ public class AppFlags
             argsList.AddRange(startupArgs);
         }
 
-        var externalArgs = LoadExternalArgs();
+        var externalArgs = Folders.IsIsolatedProfile ? [] : LoadExternalArgs();
         if (externalArgs is { Length: > 0 })
         {
             argsList.AddRange(externalArgs);
@@ -167,6 +173,14 @@ public class AppFlags
         _minimized = BoolValue(args, "--minimized");
         _skipCompatibilityCheck = BoolValue(args, "--skip-compat-check");
         _debug = BoolValue(args, "--debug");
+        UiPreview = BoolValue(args, "--ui-preview");
+        ReadOnly = BoolValue(args, "--read-only");
+        if (int.TryParse(StringValue(args, "--qa-exit-after-seconds"), out var qaSeconds))
+        {
+            if (!ReadOnly || !Folders.IsIsolatedProfile || qaSeconds is < 15 or > 600)
+                throw new ArgumentException("Timed QA requires an isolated read-only profile and 15–600 seconds.");
+            QaExitAfterSeconds = qaSeconds;
+        }
         _disableTrayTooltip = BoolValue(args, "--disable-tray-tooltip");
         _allowAllPowerModesOnBattery = BoolValue(args, "--allow-all-power-modes-on-battery");
         _forceDisableRgbKeyboardSupport = BoolValue(args, "--force-disable-rgbkb");
@@ -186,6 +200,9 @@ public class AppFlags
 
     private void Save()
     {
+        if (Folders.IsReadOnlySession)
+            return;
+
         try
         {
             var args = new List<string>();
@@ -245,6 +262,8 @@ public class AppFlags
         $" {nameof(Minimized)}: {Minimized}," +
         $" {nameof(SkipCompatibilityCheck)}: {SkipCompatibilityCheck}," +
         $" {nameof(Debug)}: {Debug}," +
+        $" {nameof(UiPreview)}: {UiPreview}," +
+        $" {nameof(ReadOnly)}: {ReadOnly}," +
         $" {nameof(DisableTrayTooltip)}: {DisableTrayTooltip}," +
         $" {nameof(AllowAllPowerModesOnBattery)}: {AllowAllPowerModesOnBattery}," +
         $" {nameof(ForceDisableRgbKeyboardSupport)}: {ForceDisableRgbKeyboardSupport}," +
