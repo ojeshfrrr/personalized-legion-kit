@@ -20,7 +20,7 @@ public static class HardwareRuntime
 
     public static void RequireControls()
     {
-        if (!ControlsEnabled)
+        if (AppFlags.Instance.ReadOnly || AppFlags.Instance.UiPreview || !ControlsEnabled)
             throw new InvalidOperationException("Enable hardware controls for this session before changing settings.");
     }
 }

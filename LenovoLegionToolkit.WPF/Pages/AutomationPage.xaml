@@ -47,6 +47,15 @@
                     Grid.Row="1"
                     ContentVisibilityWhileLoading="Collapsed">
                     <StackPanel>
+                        <custom:CardControl Margin="0,0,0,12">
+                            <StackPanel Margin="14">
+                                <TextBlock Text="AC-aware profiles" Style="{StaticResource ProjectLegionSectionTitleStyle}" />
+                                <TextBlock Margin="0,6,0,0" TextWrapping="Wrap" Text="Configure Power mode in the existing AC connected/disconnected rules below. Remove the battery rule if no battery action is wanted. Rules stay off until enabled for this session; enabling does not apply a profile. Normal-AC rules exclude low-wattage AC. Existing conditions and exclusive-rule order still apply." />
+                                <TextBlock x:Name="_acPowerStatus" Margin="0,8,0,0" TextWrapping="Wrap" />
+                                <TextBlock x:Name="_acConfiguredActions" Margin="0,4,0,0" TextWrapping="Wrap" />
+                                <TextBlock x:Name="_automationLastResult" Margin="0,4,0,0" TextWrapping="Wrap" Foreground="{DynamicResource ProjectLegionSecondaryTextBrush}" />
+                            </StackPanel>
+                        </custom:CardControl>
 
                         <custom:CardControl Margin="0,0,0,12">
                             <custom:CardControl.Header>

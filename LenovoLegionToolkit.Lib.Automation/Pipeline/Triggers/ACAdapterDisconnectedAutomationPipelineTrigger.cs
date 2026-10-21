@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Threading.Tasks;
 using LenovoLegionToolkit.Lib.Automation.Resources;
 using LenovoLegionToolkit.Lib.System;
@@ -16,13 +16,14 @@ public class ACAdapterDisconnectedAutomationPipelineTrigger : IPowerStateAutomat
         if (automationEvent is not (PowerStateAutomationEvent { PowerStateEvent: PowerStateEvent.StatusChange, PowerAdapterStateChanged: true } or StartupAutomationEvent))
             return false;
 
-        var status = await Power.IsPowerAdapterConnectedAsync().ConfigureAwait(false);
+        var status = automationEvent is PowerStateAutomationEvent { HasSource: true } power
+            ? power.Source : await Power.TryGetPowerAdapterStatusAsync().ConfigureAwait(false);
         return status == PowerAdapterStatus.Disconnected;
     }
 
     public async Task<bool> IsMatchingState()
     {
-        var status = await Power.IsPowerAdapterConnectedAsync().ConfigureAwait(false);
+        var status = await Power.TryGetPowerAdapterStatusAsync().ConfigureAwait(false);
         return status == PowerAdapterStatus.Disconnected;
     }
 

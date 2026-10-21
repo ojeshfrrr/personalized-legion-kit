@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using LenovoLegionToolkit.Lib.AutoListeners;
+using LenovoLegionToolkit.Lib.System;
 using LenovoLegionToolkit.Lib.Automation.Pipeline;
 using LenovoLegionToolkit.Lib.Automation.Pipeline.Triggers;
 using LenovoLegionToolkit.Lib.Automation.Utils;
@@ -36,6 +37,24 @@ public class AutomationProcessor(
     private CancellationTokenSource? _cts;
     private bool _listenersInitialized;
     private volatile bool _activeThisSession;
+
+    private int _generation;
+    private readonly PowerSourceTransitions _powerTransitions = new();
+    private readonly object _statusGate = new();
+    private AutomationRunStatus _status = new(null, "No automatic rule has run this session.");
+    public sealed record AutomationRunStatus(PowerAdapterStatus? Source, string Result);
+    public AutomationRunStatus Status { get { lock (_statusGate) return _status; } }
+    public event EventHandler? StatusChanged;
+    private void UpdateStatus(string result, PowerAdapterStatus? source = null, bool updateSource = false)
+    {
+        lock (_statusGate) _status = new(updateSource ? source : _status.Source, result);
+        StatusChanged?.Invoke(this, EventArgs.Empty);
+    }
+    public async Task ReadPowerSourceAsync()
+    {
+        var source = await Power.TryGetPowerAdapterStatusAsync().ConfigureAwait(false);
+        UpdateStatus(Status.Result, source, updateSource: true);
+    }
 
     public bool IsEnabled => _activeThisSession && settings.Store.IsEnabled;
 
@@ -79,22 +98,32 @@ public class AutomationProcessor(
         using (await _ioLock.LockAsync().ConfigureAwait(false))
         {
             InitializeListeners();
+            Interlocked.Increment(ref _generation);
+            if (_cts is not null) await _cts.CancelAsync().ConfigureAwait(false);
+            var source = await Power.TryGetPowerAdapterStatusAsync().ConfigureAwait(false);
+            _powerTransitions.Prime(source, Volatile.Read(ref _generation)); // Enabling establishes a baseline; it never applies a profile.
             _activeThisSession = enabled;
             settings.Store.IsEnabled = enabled;
+            UpdateStatus(enabled ? "Enabled for future power transitions; no startup action applied." : "Automatic rules disabled.", source, true);
             settings.SynchronizeStore();
 
             await UpdateListenersAsync().ConfigureAwait(false);
         }
+        if (!enabled) { using (await _runLock.LockAsync().ConfigureAwait(false)) { } }
     }
 
     public async Task ReloadPipelinesAsync(List<AutomationPipeline> pipelines)
     {
+        HardwareRuntime.RequireControls();
         Log.Instance.Trace($"Pipelines reload pending...");
 
         using (await _ioLock.LockAsync().ConfigureAwait(false))
         {
             Log.Instance.Trace($"Pipelines reloading...");
 
+            Interlocked.Increment(ref _generation);
+            if (_cts is not null) await _cts.CancelAsync().ConfigureAwait(false);
+            _powerTransitions.Prime(await Power.TryGetPowerAdapterStatusAsync().ConfigureAwait(false), Volatile.Read(ref _generation));
             _pipelines = pipelines.Select(p => p.DeepCopy()).ToList();
 
             settings.Store.Pipelines = pipelines;
@@ -104,8 +133,10 @@ public class AutomationProcessor(
 
             await UpdateListenersAsync().ConfigureAwait(false);
 
+            UpdateStatus("Rules saved; waiting for a future transition. No profile applied by saving.");
             Log.Instance.Trace($"Pipelines reloaded.");
         }
+        using (await _runLock.LockAsync().ConfigureAwait(false)) { }
     }
 
     public async Task<List<AutomationPipeline>> GetPipelinesAsync()
@@ -188,12 +219,12 @@ public class AutomationProcessor(
         await RunNowAsync(pipeline).ConfigureAwait(false);
     }
 
-    private async Task RunAsync(IAutomationEvent automationEvent)
+    private async Task RunAsync(IAutomationEvent automationEvent, int generation)
     {
-        await Task.Run(() => RunCoreAsync(automationEvent)).ConfigureAwait(false);
+        await Task.Run(() => RunCoreAsync(automationEvent, generation)).ConfigureAwait(false);
     }
 
-    private async Task RunCoreAsync(IAutomationEvent automationEvent)
+    private async Task RunCoreAsync(IAutomationEvent automationEvent, int generation)
     {
         Log.Instance.Trace($"Run pending...");
 
@@ -204,8 +235,14 @@ public class AutomationProcessor(
             if (_cts is not null)
                 await _cts.CancelAsync().ConfigureAwait(false);
 
-            if (!IsEnabled)
+            if (!IsEnabled || generation != Volatile.Read(ref _generation))
                 return;
+            if (automationEvent is PowerStateAutomationEvent { HasSource: true } power &&
+                (power.Source is null || await Power.TryGetPowerAdapterStatusAsync().ConfigureAwait(false) != power.Source))
+            {
+                UpdateStatus("Skipped a stale or unavailable power transition; no profile applied.");
+                return;
+            }
 
             List<AutomationPipeline> pipelines;
             using (await _ioLock.LockAsync().ConfigureAwait(false))
@@ -216,7 +253,7 @@ public class AutomationProcessor(
 
             foreach (var pipeline in pipelines)
             {
-                if (ct.IsCancellationRequested)
+                if (ct.IsCancellationRequested || !IsEnabled || generation != Volatile.Read(ref _generation))
                 {
                     Log.Instance.Trace($"Run interrupted.");
                     break;
@@ -238,15 +275,25 @@ public class AutomationProcessor(
                         continue;
                     }
 
+                    HardwareRuntime.RequireControls();
+                    UpdateStatus($"Running: {pipeline.Name ?? pipeline.Trigger.GetType().Name}");
                     Log.Instance.Trace($"Running pipeline... [name={pipeline.Name}, trigger={pipeline.Trigger}, steps.Count={pipeline.Steps.Count}]");
 
                     var otherPipelines = pipelines.Where(p => p.Id != pipeline.Id).ToList();
                     await pipeline.RunAsync(otherPipelines, ct).ConfigureAwait(false);
+                    ct.ThrowIfCancellationRequested();
+                    UpdateStatus($"Completed: {pipeline.Name ?? pipeline.Trigger.GetType().Name}. Feature changes were read back.");
 
                     Log.Instance.Trace($"Pipeline completed successfully. [name={pipeline.Name}, trigger={pipeline.Trigger}]");
                 }
+                catch (OperationCanceledException) when (ct.IsCancellationRequested)
+                {
+                    UpdateStatus("Cancelled; no further automation steps will run. An in-flight write is drained without retry.");
+                    break;
+                }
                 catch (Exception ex)
                 {
+                    UpdateStatus($"Failed / not confirmed: {pipeline.Name ?? pipeline.Trigger?.GetType().Name}. {ex.Message}");
                     Log.Instance.Trace($"Pipeline run failed. [name={pipeline.Name}, trigger={pipeline.Trigger}]", ex);
                 }
 
@@ -279,8 +326,27 @@ public class AutomationProcessor(
 
     private async void PowerStateListener_Changed(object? sender, PowerStateListener.ChangedEventArgs args)
     {
-        var e = new PowerStateAutomationEvent(args.PowerStateEvent, args.PowerAdapterStateChanged);
-        await ProcessEvent(e).ConfigureAwait(false);
+        var generation = Volatile.Read(ref _generation);
+        try
+        {
+            var source = await Power.TryGetPowerAdapterStatusAsync().ConfigureAwait(false);
+            UpdateStatus(Status.Result, source, true);
+            if (generation != Volatile.Read(ref _generation)) return;
+            if (args.PowerStateEvent == PowerStateEvent.StatusChange && args.PowerAdapterStateChanged)
+            {
+                if (source is null)
+                {
+                    UpdateStatus("Power source unavailable; no automatic profile applied.");
+                    return;
+                }
+                if (!_powerTransitions.Accept(source, generation)) return;
+                // Retire work for the old source immediately; a native write still drains.
+                if (IsEnabled && _cts is { } previous) await previous.CancelAsync().ConfigureAwait(false);
+            }
+            var e = new PowerStateAutomationEvent(args.PowerStateEvent, args.PowerAdapterStateChanged, source, hasSource: true);
+            await ProcessEvent(e, generation).ConfigureAwait(false);
+        }
+        catch (Exception ex) { UpdateStatus($"Power event unavailable: {ex.Message}"); }
     }
 
     private async void PowerModeListener_Changed(object? sender, PowerModeListener.ChangedEventArgs args)
@@ -341,8 +407,10 @@ public class AutomationProcessor(
 
     #region Event processing
 
-    private async Task ProcessEvent(IAutomationEvent e)
+    private async Task ProcessEvent(IAutomationEvent e, int? eventGeneration = null)
     {
+        var generation = eventGeneration ?? Volatile.Read(ref _generation);
+        if (!IsEnabled || generation != Volatile.Read(ref _generation)) return;
         var triggerMatches = await Task.WhenAll(_pipelines.SelectMany(p => p.AllTriggers)
                 .Select(async t => await t.IsMatchingEvent(e).ConfigureAwait(false)))
             .ConfigureAwait(false);
@@ -354,7 +422,7 @@ public class AutomationProcessor(
 
         Log.Instance.Trace($"Processing event {e}... [type={e.GetType().Name}]");
 
-        await RunAsync(e).ConfigureAwait(false);
+        await RunAsync(e, generation).ConfigureAwait(false);
     }
 
     #endregion
@@ -366,11 +434,12 @@ public class AutomationProcessor(
         using (await _ioLock.LockAsync().ConfigureAwait(false))
         {
             _activeThisSession = false;
+            Interlocked.Increment(ref _generation);
             if (_cts is not null)
                 await _cts.CancelAsync().ConfigureAwait(false);
             await UpdateListenersAsync().ConfigureAwait(false);
-            if (!_listenersInitialized)
-                return;
+            if (_listenersInitialized)
+            {
             displayConfigurationListener.Changed -= DisplayConfigurationListener_Changed;
             nativeWindowsMessageListener.Changed -= NativeWindowsMessageListener_Changed;
             powerStateListener.Changed -= PowerStateListener_Changed;
@@ -378,7 +447,10 @@ public class AutomationProcessor(
             godModeController.PresetChanged -= GodModeController_PresetChanged;
             sessionLockUnlockListener.Changed -= SessionLockUnlockListener_Changed;
             _listenersInitialized = false;
+            }
         }
+        // Release _ioLock before draining work that may itself need that lock.
+        using (await _runLock.LockAsync().ConfigureAwait(false)) { }
     }
 
     private async Task UpdateListenersAsync()

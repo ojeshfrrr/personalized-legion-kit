@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
@@ -82,16 +82,19 @@ public class AutomationPipeline
             {
                 await step.RunAsync(context, environment, token).ConfigureAwait(false);
             }
+            catch (OperationCanceledException) when (token.IsCancellationRequested) { throw; }
             catch (Exception ex)
             {
                 Log.Instance.Trace($"Step run failed. [name={step.GetType().Name}]", ex);
 
                 stepExceptions.Add(ex);
+                break; // Never continue changing hardware after an unconfirmed step.
             }
 
             Log.Instance.Trace($"Step completed successfully. [type={step.GetType().Name}]");
         }
 
+        token.ThrowIfCancellationRequested();
         if (stepExceptions.Count != 0)
             throw new AggregateException(stepExceptions);
     }

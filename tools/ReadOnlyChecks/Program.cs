@@ -225,6 +225,7 @@ if (args.Length >= 2 && args[0] == "--measure-polling-lifecycle")
 }
 
 await FeatureStateConfirmationChecks.RunAsync(Check);
+await AcAutomationChecks.RunAsync(Check);
 await GamingWorkloadChecks.RunAsync(Check);
 await DeathAdderProtocolChecks.RunAsync(Check);
 await DpiConfigurationChecks.RunAsync(Check);

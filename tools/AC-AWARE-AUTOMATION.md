@@ -1,0 +1,22 @@
+# AC-aware performance automation
+
+This improves the existing rules, not a second profile engine. AutomationSettings already supplies disabled-by-default AC-connected Balance and AC-disconnected Quiet examples. The existing rule/step editors list the actual supported PowerModeFeature states. Choose a mode in each rule; delete the battery rule if no battery action is desired. Existing trigger conditions, ordering and IsExclusive behavior remain in use. Conflicting nonexclusive user rules should not be configured to request different profiles for the same event.
+
+## Behavior
+
+- The Automation page shows detected source, configured direct performance actions and the last execution result. Events update status without a timer; entering the page performs a safe source read. Quick-action indirection/other step types remain visible in the existing editor rather than being guessed by the compact summary.
+- Rules remain inactive when the app opens, regardless of saved IsEnabled. Explicit session enablement is required after configuring them. Enabling/saving establishes a power baseline but invokes no profile setter. Default rules do not run on startup.
+- The current Windows power API is reused through TryGetPowerAdapterStatusAsync. Failed/unknown AC-line status is unavailable, never inferred as AC. Normal AC and battery triggers use the event snapshot consistently; low-wattage AC is displayed separately and does not match the normal-AC rule.
+- PowerSourceTransitions suppresses duplicate events, including after failures. Older configuration generations cannot reset the new baseline or run queued work. A newer genuine source transition retires older automatic work; stale queued source events are checked against current source before execution.
+- Feature automation shares the original desktop command serialization, now located in Library HardwareCommandGate with the WPF HardwareCommandRunner forwarding to it. No competing mutation service was added. Read-only/preview and explicit session permission are checked centrally, including just before delegate execution.
+- Supported hardware/state validation precedes writes. A fresh getter must match the requested state before a FeatureStateMessage is published. Initial read failure, unsupported state, failed write or mismatch reports failure without retrying the setter. The pipeline stops at the first failed/unconfirmed step instead of silently proceeding with more settings.
+- Disable, rule save and shutdown cancel pending automatic work and drain the run lock after releasing the settings lock. Cancellation never abandons an in-flight firmware write: it drains and reads back, then reports cancellation without publishing success or running later steps. There is no automatic rollback.
+- Rule saving now requires the same centralized session permission as enabling/running. Protected configuration persistence remains guarded by existing AbstractSettings read-only checks.
+
+## Verification scope
+
+Offline tests use captured simulated AC/battery/unknown/low-wattage events and injected FakeFeature instances; no Windows input, driver access or physical setting change is performed. Tests cover duplicate concurrent events, enable/save baselines, stale generations, supported states, getter/write/readback failures, no repeated setters for an already confirmed target, real shared-gate contention, read-only rejection, pre-cancellation, draining a simulated in-flight write and aborting later steps. Processor shutdown/generation integration and pre-mutation configuration guards also have source assertions; the actual Windows listener/processor shutdown has not been exercised in a live session.
+
+No app/elevated launch, driver installation, startup automation activation or physical laptop/mouse write was performed. Existing source changes and Release ZIPs are preserved; this does not republish the application. Hardware/OS-event validation remains for a later explicitly approved session.
+
+Validation: Library/Automation/WPF Release build succeeded with zero warnings/errors. All 426 assertions passed (37 new AC-automation checks). Existing lifecycle checks passed: 25 active callbacks, zero inactive callbacks, one read for 50 requests, one duplicate-load callback. Four detached Mouse layouts, eight detached telemetry layouts and 32 hit-region checks passed. These checks do not constitute a live OS-event or physical profile-switch test.

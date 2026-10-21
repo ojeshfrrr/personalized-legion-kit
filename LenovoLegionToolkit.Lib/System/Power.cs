@@ -1,4 +1,4 @@
-﻿using System.Threading.Tasks;
+using System.Threading.Tasks;
 using Windows.Win32;
 using LenovoLegionToolkit.Lib.System.Management;
 using LenovoLegionToolkit.Lib.Utils;
@@ -12,7 +12,19 @@ public static class Power
         if (!PInvoke.GetSystemPowerStatus(out var sps))
             return PowerAdapterStatus.Connected;
 
-        var adapterConnected = sps.ACLineStatus == 1;
+        return await GetAdapterStatusAsync(sps.ACLineStatus == 1).ConfigureAwait(false);
+    }
+
+    // Automation must never interpret a failed/unknown Windows query as AC power.
+    public static async Task<PowerAdapterStatus?> TryGetPowerAdapterStatusAsync()
+    {
+        if (!PInvoke.GetSystemPowerStatus(out var sps) || sps.ACLineStatus is not (0 or 1))
+            return null;
+        return await GetAdapterStatusAsync(sps.ACLineStatus == 1).ConfigureAwait(false);
+    }
+
+    private static async Task<PowerAdapterStatus> GetAdapterStatusAsync(bool adapterConnected)
+    {
         var acFitForOc = await IsAcFitForOc().ConfigureAwait(false) ?? true;
         var chargingNormally = await IsChargingNormally().ConfigureAwait(false) ?? true;
 

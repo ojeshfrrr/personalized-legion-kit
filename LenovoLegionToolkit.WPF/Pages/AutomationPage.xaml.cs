@@ -37,6 +37,26 @@ public partial class AutomationPage
         Initialized += AutomationPage_Initialized;
 
         InitializeComponent();
+        Loaded += (_, _) => { _automationProcessor.StatusChanged -= AutomationStatusChanged; _automationProcessor.StatusChanged += AutomationStatusChanged; UpdateAutomationStatus(); };
+        Unloaded += (_, _) => _automationProcessor.StatusChanged -= AutomationStatusChanged;
+    }
+
+    private void AutomationStatusChanged(object? sender, EventArgs e)
+    {
+        if (!Dispatcher.HasShutdownStarted) Dispatcher.BeginInvoke(new Action(() => { if (IsLoaded) UpdateAutomationStatus(); }));
+    }
+
+    private void UpdateAutomationStatus()
+    {
+        var status = _automationProcessor.Status;
+        _acPowerStatus.Text = "Detected power: " + (status.Source switch
+        {
+            PowerAdapterStatus.Connected => "AC",
+            PowerAdapterStatus.ConnectedLowWattage => "AC (low wattage; high-performance modes may be unavailable)",
+            PowerAdapterStatus.Disconnected => "Battery",
+            _ => "Unavailable — no automatic switch is inferred"
+        });
+        _automationLastResult.Text = "Last result: " + status.Result;
     }
 
     private async void AutomationPage_Initialized(object? sender, EventArgs e)
@@ -50,7 +70,10 @@ public partial class AutomationPage
         var isChecked = _enableAutomaticPipelinesToggle.IsChecked;
         if (isChecked.HasValue)
         {
-            await _automationProcessor.SetEnabledAsync(isChecked.Value);
+            try { await _automationProcessor.SetEnabledAsync(isChecked.Value); }
+            catch (Exception ex) { SnackbarHelper.Show("Automation unchanged", ex.Message, SnackbarType.Error); }
+            _enableAutomaticPipelinesToggle.IsChecked = _automationProcessor.IsEnabled;
+            UpdateAutomationStatus();
         }
     }
 
@@ -130,6 +153,16 @@ public partial class AutomationPage
         _manualPipelinesStackPanel.Children.Clear();
 
         var pipelines = await _automationProcessor.GetPipelinesAsync();
+        await _automationProcessor.ReadPowerSourceAsync();
+        UpdateAutomationStatus();
+        var acRules = pipelines.Where(p => p.AllTriggers.Any(t => t is ACAdapterConnectedAutomationPipelineTrigger or ACAdapterDisconnectedAutomationPipelineTrigger));
+        var configured = acRules.Select(p =>
+        {
+            var modes = p.Steps.OfType<PowerModeAutomationStep>().Select(step => step.State.GetDisplayName()).ToArray();
+            var source = p.AllTriggers.Any(t => t is ACAdapterConnectedAutomationPipelineTrigger) ? "AC" : "Battery";
+            return $"{source}: " + (modes.Length == 0 ? "No direct performance-mode action (other steps may run)" : string.Join(", ", modes));
+        }).ToArray();
+        _acConfiguredActions.Text = "Configured AC/battery actions: " + (configured.Length == 0 ? "None" : string.Join("; ", configured));
 
         if (_supportedAutomationSteps.IsEmpty())
             _supportedAutomationSteps = await GetSupportedAutomationStepsAsync();

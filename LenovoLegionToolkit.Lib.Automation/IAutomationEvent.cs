@@ -17,11 +17,13 @@ public readonly struct NativeWindowsMessageEvent(NativeWindowsMessage message, o
 
 public struct StartupAutomationEvent : IAutomationEvent;
 
-public readonly struct PowerStateAutomationEvent(PowerStateEvent powerStateEvent, bool powerAdapterStateChanged)
+public readonly struct PowerStateAutomationEvent(PowerStateEvent powerStateEvent, bool powerAdapterStateChanged, PowerAdapterStatus? source = null, bool hasSource = false)
     : IAutomationEvent
 {
     public PowerStateEvent PowerStateEvent { get; } = powerStateEvent;
     public bool PowerAdapterStateChanged { get; } = powerAdapterStateChanged;
+    public PowerAdapterStatus? Source { get; } = source;
+    public bool HasSource { get; } = hasSource;
 }
 
 public readonly struct ITSModeAutomationEvent(ITSMode powerModeState) : IAutomationEvent
