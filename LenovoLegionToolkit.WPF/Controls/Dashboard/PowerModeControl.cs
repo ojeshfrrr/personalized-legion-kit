@@ -104,9 +104,24 @@ public class PowerModeControl : AbstractComboBoxFeatureCardControl<PowerModeStat
 
     private void UpdateModeSummary()
     {
-        if (!UseModeTiles || !TryGetSelectedItem(out var state)) return;
+        if (!UseModeTiles) return;
+        if (Confirmation.LastConfirmed is not { } state)
+        {
+            Subtitle = "Active mode has not been read from the device.";
+            return;
+        }
         Title = state.GetDisplayName();
-        Subtitle = state switch
+        if (Confirmation.IsPending)
+        {
+            Subtitle = $"Applying {Confirmation.Requested?.GetDisplayName()}… Last confirmed: {state.GetDisplayName()}.";
+            return;
+        }
+        if (Confirmation.Error is not null)
+        {
+            Subtitle = $"Change not verified. Last confirmed: {state.GetDisplayName()}.";
+            return;
+        }
+        Subtitle = "Device-reported mode. " + (state switch
         {
             PowerModeState.Quiet => "Lower power and quieter cooling.",
             PowerModeState.Balance => "A balance of performance and acoustics.",
@@ -114,8 +129,10 @@ public class PowerModeControl : AbstractComboBoxFeatureCardControl<PowerModeStat
             PowerModeState.Extreme => "The device's highest performance mode. Availability depends on AC power.",
             PowerModeState.GodMode => "Open settings to adjust the cooling and power options supported by this device.",
             _ => Resource.PowerModeControl_Message
-        };
+        });
     }
+
+    protected override void OnConfirmationChanged() => UpdateModeSummary();
 
     private async void ThermalModeListener_Changed(object? sender, ThermalModeListener.ChangedEventArgs e) => await _throttleDispatcher.DispatchAsync(async () =>
     {
@@ -159,7 +176,7 @@ public class PowerModeControl : AbstractComboBoxFeatureCardControl<PowerModeStat
     {
         await base.OnStateChangeAsync(comboBox, feature, newValue, oldValue);
 
-        if (newValue is null)
+        if (Confirmation.LastConfirmed is not { } confirmedState)
         {
             return;
         }
@@ -169,7 +186,7 @@ public class PowerModeControl : AbstractComboBoxFeatureCardControl<PowerModeStat
 
         bool isAdapterConnected = adapterStatus != PowerAdapterStatus.Disconnected;
 
-        bool shouldShowButton = newValue switch
+        bool shouldShowButton = confirmedState switch
         {
             PowerModeState.Balance when mi.Properties.SupportsAIMode => true,
             PowerModeState.GodMode when mi.Properties.SupportsGodMode => true,

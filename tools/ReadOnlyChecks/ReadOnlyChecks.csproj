@@ -8,5 +8,6 @@
     <ProjectReference Include="..\..\LenovoLegionToolkit.Lib\LenovoLegionToolkit.Lib.csproj" />
     <Compile Include="..\..\LenovoLegionToolkit.WPF\Presentation\MousePageSession.cs" Link="Production\MousePageSession.cs" />
     <Compile Include="..\..\LenovoLegionToolkit.WPF\Presentation\MouseButtonsSession.cs" Link="Production\MouseButtonsSession.cs" />
+    <Compile Include="..\..\LenovoLegionToolkit.WPF\Utils\HardwareCommandRunner.cs" Link="Production\HardwareCommandRunner.cs" />
   </ItemGroup>
 </Project>

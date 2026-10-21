@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Automation;
@@ -26,6 +26,8 @@ public abstract class AbstractComboBoxFeatureCardControl<T> : AbstractRefreshing
     protected override string StatusTitle => Title;
 
     protected readonly ComboBox _comboBox = new();
+    protected FeatureStateConfirmation<T> Confirmation { get; } = new();
+    protected virtual void OnConfirmationChanged() { }
 
     protected SymbolRegular Icon
     {
@@ -97,7 +99,9 @@ public abstract class AbstractComboBoxFeatureCardControl<T> : AbstractRefreshing
         var items = await Feature.GetAllStatesAsync();
         var selectedItem = await Feature.GetStateAsync();
 
+        Confirmation.Observe(selectedItem);
         _comboBox.SetItems(items, selectedItem, ComboBoxItemDisplayName);
+        OnConfirmationChanged();
         _comboBox.IsEnabled = items.Length != 0;
         _comboBox.Visibility = Visibility.Visible;
     }
@@ -117,12 +121,14 @@ public abstract class AbstractComboBoxFeatureCardControl<T> : AbstractRefreshing
 
     protected virtual async Task OnStateChangeAsync(ComboBox comboBox, IFeature<T> feature, T? newValue, T? oldValue)
     {
+        // Population/selection reconciliation is presentation only, never a command.
+        if (IsRefreshing || Confirmation.IsPending || oldValue is null)
+            return;
+
         var exceptionOccurred = false;
 
         try
         {
-            if (IsRefreshing)
-                return;
 
             _comboBox.IsEnabled = false;
 
@@ -132,22 +138,38 @@ public abstract class AbstractComboBoxFeatureCardControl<T> : AbstractRefreshing
             if (!comboBox.TryGetSelectedItem(out T selectedState))
                 return;
 
-            var currentState = await feature.GetStateAsync();
+            HardwareRuntime.RequireControls();
+            Confirmation.Begin(selectedState);
+            OnConfirmationChanged();
 
+            if (!await feature.IsSupportedAsync() ||
+                Array.IndexOf(await feature.GetAllStatesAsync(), selectedState) < 0)
+                throw new NotSupportedException("The requested setting is not supported by this device.");
+
+            var currentState = await feature.GetStateAsync();
+            Confirmation.Observe(currentState);
             if (selectedState.Equals(currentState))
+            {
+                Confirmation.Complete(currentState);
+                OnConfirmationChanged();
                 return;
+            }
 
             await HardwareCommandRunner.RunAsync(async () =>
             {
                 await feature.SetStateAsync(selectedState);
                 var observed = await feature.GetStateAsync();
-                if (!observed.Equals(selectedState))
+                var confirmed = Confirmation.Complete(observed);
+                OnConfirmationChanged();
+                if (!confirmed)
                     throw new InvalidOperationException("The device did not confirm the requested setting. Read the current value before retrying.");
             });
         }
         catch (Exception ex)
         {
             exceptionOccurred = true;
+            Confirmation.Fail(ex.Message);
+            OnConfirmationChanged();
 
             Log.Instance.Trace($"Failed to change state. [feature={GetType().Name}]", ex);
 
