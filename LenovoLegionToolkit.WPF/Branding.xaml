@@ -3,6 +3,9 @@
                     xmlns:custom="clr-namespace:LenovoLegionToolkit.WPF.Controls.Custom"
                     xmlns:controls="clr-namespace:LenovoLegionToolkit.WPF.Controls"
                     xmlns:lib="clr-namespace:LenovoLegionToolkit.Lib;assembly=LenovoLegionToolkit.Lib">
+    <ResourceDictionary.MergedDictionaries>
+        <ResourceDictionary Source="Assets/Branding/Identity.xaml"/>
+    </ResourceDictionary.MergedDictionaries>
     <!-- Project Legion design tokens. Keep the palette here so it can be replaced as one set. -->
     <Color x:Key="ProjectLegionBackgroundColor">#000000</Color>
     <Color x:Key="ProjectLegionContentColor">#07080A</Color>

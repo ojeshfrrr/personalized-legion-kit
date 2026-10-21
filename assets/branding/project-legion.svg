@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-labelledby="title" color="#ECEFF4">
+  <title id="title">Project Legion split-blade emblem</title>
+  <path fill="#59616D" fill-rule="evenodd" d="M6 8 L29 19 L29 35 L18 29 L23 44 L30 49 L30 59 L16 49 Z"/>
+  <path fill="#A6AFBD" fill-rule="evenodd" d="M35 19 L58 8 L48 49 L34 59 L34 49 L42 43 L46 28 L35 34 Z"/>
+  <path fill="#FF334F" fill-rule="evenodd" d="M6 8 L12 11 L21 46 L30 53 L30 59 L16 49 Z"/>
+  <path fill="#FF334F" fill-rule="evenodd" d="M58 8 L53 13 L44 47 L34 54 L34 59 L48 49 Z"/>
+  <path fill="#A6AFBD" fill-rule="evenodd" d="M12 11 L29 19 L29 23 L14 16 Z"/>
+</svg>

@@ -1,4 +1,6 @@
-﻿using System.Windows;
+using System;
+using System.Windows.Media.Imaging;
+using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
 using LenovoLegionToolkit.Lib;
@@ -11,8 +13,18 @@ namespace LenovoLegionToolkit.WPF.Windows;
 
 public class BaseWindow : UiWindow
 {
+    private static readonly ImageSource ApplicationIcon = LoadApplicationIcon();
+
+    private static ImageSource LoadApplicationIcon()
+    {
+        var image = BitmapFrame.Create(new Uri("pack://application:,,,/Project%20Legion;component/Assets/ProjectLegion.ico", UriKind.Absolute));
+        image.Freeze();
+        return image;
+    }
+
     protected BaseWindow()
     {
+        Icon = ApplicationIcon;
         SnapsToDevicePixels = true;
         ExtendsContentIntoTitleBar = true;
 

@@ -108,4 +108,10 @@
 		<EmbeddedResource Update="Resources\Resource.*.resx" />
 	</ItemGroup>
 
+    <!-- Ship editable/portable branding alongside the compiled native WPF/EXE resources. -->
+    <ItemGroup>
+        <Content Include="..\assets\branding\**\*.svg;..\assets\branding\**\*.png;..\assets\branding\*.ico;..\assets\branding\README.md"
+                 Link="Branding\%(RecursiveDir)%(Filename)%(Extension)"
+                 CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" />
+    </ItemGroup>
 </Project>

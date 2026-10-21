@@ -8,6 +8,7 @@ import zipfile
 from datetime import datetime, timezone
 from pathlib import Path
 from shutil import copy2
+from verify_branding import verify as verify_branding
 
 ROOT = Path(__file__).resolve().parents[1]
 BUILD = ROOT / "BuildProjectLegion/bin/x64/Release/net9.0-windows10.0.26100.0/win-x64"
@@ -85,6 +86,9 @@ def main():
         require(not file.name.startswith("ProjectLegion."), f"Diagnostic artifact in application: {file}")
         require(file.suffix != ".json" or file.name.endswith((".deps.json", ".runtimeconfig.json")),
                 f"Unexpected configuration in application payload: {file}")
+    for name in ("project-legion.svg", "wordmark.svg", "wordmark.png", "project-legion.ico", "sidebar.svg", "titlebar.svg", "monochrome.svg", "README.md"):
+        require((app / "Branding" / name).is_file(), f"Missing branding deliverable: {name}")
+    verify_branding(app)
     deps = json.loads((app / "Project Legion.deps.json").read_text(encoding="utf-8-sig"))
     target = deps["targets"][deps["runtimeTarget"]["name"]]
     declared = []
@@ -113,8 +117,8 @@ def main():
         "Selection never applies settings. Apply confirms the request, uses verified sequential backend operations and stops "
         "on the first failure/ambiguity. A partial batch does not automatically roll back. Read-only sessions block mutations. "
         "These are PC-local presets, not onboard profiles. Existing DPI, polling and remapping protocols are preserved.\n\n"
-        "The preceding milestone passed 281 safety/targeted assertions, lifecycle checks and four offline Mouse layouts "
-        "with 32 scaled hit-region checks. This packaging operation does not rerun or claim runtime/hardware tests. "
+        "The package includes the Project Legion branding kit, native multi-size executable icon and license notices. "
+        "Consult the matching validation evidence for executed checks. Packaging does not claim runtime/hardware tests. "
         "No application launch, installation, profile change or physical hardware operation occurs during packaging.\n\n"
         "Private candidate only: unsigned, not a signed installer, not clean-machine smoke-tested. "
         "Preset batch hardware validation, keyboard-remapping physical validation, onboard persistence and "

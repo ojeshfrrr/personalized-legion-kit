@@ -55,7 +55,9 @@
                 <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
 
-            <TextBlock
+            <Image Grid.Column="0" Width="16" Height="16" HorizontalAlignment="Left" VerticalAlignment="Center"
+                Source="{StaticResource ProjectLegionTitlebarEmblem}" IsHitTestVisible="False" AutomationProperties.Name="Project Legion emblem"/>
+            <TextBlock Margin="24,0,0,0"
                 x:Name="_title"
                 Grid.Column="0"
                 HorizontalAlignment="Left"
@@ -111,13 +113,11 @@
                             Height="26"
                             Margin="0,0,8,0"
                             RenderOptions.BitmapScalingMode="HighQuality"
-                            Source="/Assets/ProjectLegion.png" />
-                        <TextBlock
-                            x:Name="_brandName"
-                            VerticalAlignment="Center"
-                            FontSize="13"
-                            FontWeight="SemiBold"
-                            Text="{x:Static resources:Resource.AppName}" />
+                            Source="{StaticResource ProjectLegionSidebarEmblem}"
+                            AutomationProperties.Name="Project Legion emblem" />
+                        <Image x:Name="_brandName" Width="88" Height="28" VerticalAlignment="Center"
+                            Stretch="Uniform" HorizontalAlignment="Left" Source="{StaticResource ProjectLegionSidebarWordmark}"
+                            AutomationProperties.Name="{x:Static resources:Resource.AppName}"/>
                     </StackPanel>
 
                     <wpfui:NavigationStore

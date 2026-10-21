@@ -15,12 +15,11 @@
             Style="{StaticResource ProjectLegionPageTitleStyle}"
             Text="{x:Static resources:Resource.AboutPage_Title}" />
 
-        <TextBlock
-            Padding="0,0,0,8"
-            Focusable="True"
-            FontSize="24"
-            FontWeight="SemiBold"
-            Text="{x:Static resources:Resource.AboutPage_AppName}" />
+        <Image
+            Width="240" Height="64" Margin="0,0,0,8"
+            HorizontalAlignment="Left" Stretch="Uniform"
+            Source="{StaticResource ProjectLegionWordmark}"
+            AutomationProperties.Name="{x:Static resources:Resource.AboutPage_AppName}" />
         <TextBlock
             x:Name="_version" Style="{StaticResource ProjectLegionTechnicalTextStyle}"
             Padding="0,0,0,8"

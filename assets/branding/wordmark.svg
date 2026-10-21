@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 450 120" role="img" aria-labelledby="title" color="#ECEFF4">
+  <title id="title">Project Legion</title>
+  <path fill="#59616D" fill-rule="evenodd" d="M6 8 L29 19 L29 35 L18 29 L23 44 L30 49 L30 59 L16 49 Z" transform="matrix(1.65 0 0 1.65 0 7)"/>
+  <path fill="#A6AFBD" fill-rule="evenodd" d="M35 19 L58 8 L48 49 L34 59 L34 49 L42 43 L46 28 L35 34 Z" transform="matrix(1.65 0 0 1.65 0 7)"/>
+  <path fill="#FF334F" fill-rule="evenodd" d="M6 8 L12 11 L21 46 L30 53 L30 59 L16 49 Z" transform="matrix(1.65 0 0 1.65 0 7)"/>
+  <path fill="#FF334F" fill-rule="evenodd" d="M58 8 L53 13 L44 47 L34 54 L34 59 L48 49 Z" transform="matrix(1.65 0 0 1.65 0 7)"/>
+  <path fill="#A6AFBD" fill-rule="evenodd" d="M12 11 L29 19 L29 23 L14 16 Z" transform="matrix(1.65 0 0 1.65 0 7)"/>
+  <path fill="#A6AFBD" fill-rule="evenodd" d="M0 0 L8 0 L10 2 L10 6 L8 8 L2 8 L2 14 L0 14 Z M2 2 L2 6 L7 6 L8 5 L8 3 L7 2 Z" transform="matrix(1.25 0 0 1.25 131 8)"/>
+  <path fill="#A6AFBD" fill-rule="evenodd" d="M0 0 L8 0 L10 2 L10 6 L8 8 L6 8 L10 14 L7.5 14 L3.5 8 L2 8 L2 14 L0 14 Z M2 2 L2 6 L7 6 L8 5 L8 3 L7 2 Z" transform="matrix(1.25 0 0 1.25 148.5 8)"/>
+  <path fill="#A6AFBD" fill-rule="evenodd" d="M2 0 L8 0 L10 2 L10 12 L8 14 L2 14 L0 12 L0 2 Z M3 2 L2 3 L2 11 L3 12 L7 12 L8 11 L8 3 L7 2 Z" transform="matrix(1.25 0 0 1.25 166.0 8)"/>
+  <path fill="#A6AFBD" fill-rule="evenodd" d="M0 0 L9 0 L9 12 L7 14 L2 14 L0 12 L0 9 L2 9 L2 11 L3 12 L6 12 L7 11 L7 2 L0 2 Z" transform="matrix(1.25 0 0 1.25 183.5 8)"/>
+  <path fill="#A6AFBD" fill-rule="evenodd" d="M0 0 L9 0 L9 2 L2 2 L2 6 L8 6 L8 8 L2 8 L2 12 L9 12 L9 14 L0 14 Z" transform="matrix(1.25 0 0 1.25 199.75 8)"/>
+  <path fill="#A6AFBD" fill-rule="evenodd" d="M2 0 L10 0 L10 2 L3 2 L2 3 L2 11 L3 12 L10 12 L10 14 L2 14 L0 12 L0 2 Z" transform="matrix(1.25 0 0 1.25 216.0 8)"/>
+  <path fill="#A6AFBD" fill-rule="evenodd" d="M0 0 L10 0 L10 2 L6 2 L6 14 L4 14 L4 2 L0 2 Z" transform="matrix(1.25 0 0 1.25 233.5 8)"/>
+  <path fill="#ECEFF4" fill-rule="evenodd" d="M0 0 L2 0 L2 12 L9 12 L9 14 L0 14 Z" transform="matrix(5 0 0 5 131 40)"/>
+  <path fill="#ECEFF4" fill-rule="evenodd" d="M0 0 L9 0 L9 2 L2 2 L2 6 L8 6 L8 8 L2 8 L2 12 L9 12 L9 14 L0 14 Z" transform="matrix(5 0 0 5 186 40)"/>
+  <path fill="#ECEFF4" fill-rule="evenodd" d="M2 0 L10 0 L10 2 L3 2 L2 3 L2 11 L3 12 L8 12 L8 8 L5 8 L5 6 L10 6 L10 12 L8 14 L2 14 L0 12 L0 2 Z" transform="matrix(5 0 0 5 241 40)"/>
+  <path fill="#ECEFF4" fill-rule="evenodd" d="M0 0 L2 0 L2 14 L0 14 Z" transform="matrix(5 0 0 5 301 40)"/>
+  <path fill="#ECEFF4" fill-rule="evenodd" d="M2 0 L8 0 L10 2 L10 12 L8 14 L2 14 L0 12 L0 2 Z M3 2 L2 3 L2 11 L3 12 L7 12 L8 11 L8 3 L7 2 Z" transform="matrix(5 0 0 5 321 40)"/>
+  <path fill="#ECEFF4" fill-rule="evenodd" d="M0 14 L0 0 L2 0 L8 10 L8 0 L10 0 L10 14 L8 14 L2 4 L2 14 Z" transform="matrix(5 0 0 5 381 40)"/>
+</svg>
