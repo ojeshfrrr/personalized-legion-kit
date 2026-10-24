@@ -109,22 +109,19 @@ def main():
     for name in ("LICENSE", "NOTICE"):
         copy2(ROOT / name, app / name)
     (app / "RELEASE-NOTES.md").write_text(
-        "# Project Legion - private Windows x64 Release candidate\n\n"
+        "# Project Legion - Windows x64 preview\n\n"
         "Extract the complete folder before opening Project Legion.exe. This is a framework-dependent package; "
-        "a compatible Microsoft Windows Desktop Runtime is required (runtimeconfig requests .NET 9 with Major roll-forward). "
-        "The runtime is not bundled. Production administrator approval remains required.\n\n"
-        "Local software presets now include named selection, inspection, Save confirmed, Rename, Delete and explicit Apply. "
-        "Selection never applies settings. Apply confirms the request, uses verified sequential backend operations and stops "
-        "on the first failure/ambiguity. A partial batch does not automatically roll back. Read-only sessions block mutations. "
-        "These are PC-local presets, not onboard profiles. Existing DPI, polling and remapping protocols are preserved.\n\n"
-        "The package includes the Project Legion branding kit, native multi-size executable icon and license notices. "
-        "Consult the matching validation evidence for executed checks. Packaging does not claim runtime/hardware tests. "
-        "No application launch, installation, profile change or physical hardware operation occurs during packaging.\n\n"
-        "Private candidate only: unsigned, not a signed installer, not clean-machine smoke-tested. "
-        "Preset batch hardware validation, keyboard-remapping physical validation, onboard persistence and "
-        "independence from the existing Razer stack remain unverified. Public distribution requires transitive "
-        "license/source review. Keep the corresponding-source archive and existing LICENSE/NOTICE. "
-        "Project Legion is independent and has no official Lenovo or Razer affiliation.\n", encoding="utf-8")
+        "the .NET 9 Windows Desktop Runtime is required and is not bundled. The production manifest requests "
+        "administrator approval for supported hardware integrations.\n\n"
+        "The package contains the current Project Legion app, branding assets, LICENSE and NOTICE. "
+        "The matching source archive is distributed beside the application archive. This build is unsigned; "
+        "Windows may identify the publisher as unknown.\n\n"
+        "Project Legion is an unofficial independent derivative of Lenovo Legion Toolkit. It is not affiliated "
+        "with or endorsed by Lenovo or the original maintainers. It is distributed under GPL-3.0; retain the "
+        "corresponding source and license notices when redistributing.\n\n"
+        "Use --read-only to inspect the interface while hardware controls and configuration writes are locked. "
+        "Normal mode may execute explicit hardware actions and configured automations. Review the displayed "
+        "confirmation and Windows UAC prompt before enabling or applying changes.\n", encoding="utf-8")
     require(all(sha(Path(p)) == digest for p, digest in input_hashes.items()), "Source changed during packaging")
     (candidate / "artifact-manifest.json").write_text(json.dumps({
         "publishCommand": command, "buildOutput": str(BUILD),
@@ -135,7 +132,7 @@ def main():
     source = candidate / "ProjectLegion-corresponding-source.zip"
     zip_verified(binary, sorted(p for p in app.rglob("*") if p.is_file()), app)
     zip_verified(source, inputs, ROOT)
-    summary = {"status": "Private unsigned framework-dependent candidate; no runtime smoke test",
+    summary = {"status": "Unsigned framework-dependent preview candidate; use the published validation scope",
                "executable": describe(app / "Project Legion.exe", candidate),
                "assemblies": [describe(app / name, candidate) for name in ("Project Legion.dll", "LenovoLegionToolkit.Lib.dll")],
                "binaryArchive": describe(binary, candidate), "sourceArchive": describe(source, candidate),
