@@ -25,7 +25,8 @@ The LampArray MSIX project has a Project Legion package identity and signing is 
 
 ## Project-specific settings
 
-- Edit product name and the optional GitHub update owner/repository and expected signer thumbprint in `LenovoLegionToolkit.Lib/ProjectBranding.cs`. Updates stay disabled until all three values are configured.
+- The update feed is configured in `LenovoLegionToolkit.Lib/ProjectBranding.cs` for this repository. Open **Updater** in the sidebar to check versions, choose **Preview + stable** or **Stable**, view the last result, and download an available update. New profiles default to Preview; existing preferences are preserved. Updating software does not require enabling laptop hardware controls.
+- Checking for updates shows newer versions and release notes. **Download update ZIP** verifies the exact Windows x64 asset's size and SHA-256 against GitHub release metadata, then offers **Open download folder**. Close the app, extract the ZIP into a new folder, and launch the new executable. Settings remain under `%LOCALAPPDATA%\ProjectLegion`. ZIPs are unsigned; a matching checksum does not establish a trusted publisher. There is no silent installation, file replacement or restart. Installer execution still requires a separately configured trusted signer. Read-only and preview sessions cannot download updates or change update preferences.
 - Edit the charcoal shell background in `LenovoLegionToolkit.WPF/Branding.xaml` and the default ice-blue accent in `LenovoLegionToolkit.WPF/Utils/ThemeManager.cs`.
 - Replace the generated image assets with your own when ready. The app's data is stored under `%LOCALAPPDATA%\ProjectLegion`; on first launch, top-level JSON settings are copied from the upstream folder without overwriting or deleting the original data.
 
