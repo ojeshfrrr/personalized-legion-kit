@@ -36,6 +36,14 @@ public class HttpClientFactory
 
     public HttpClient Create() => new(CreateHandler(), true);
 
+    public HttpClient CreateForUpdates()
+    {
+        var handler = CreateHandler();
+        // Update metadata and packages must never use the optional proxy TLS bypass.
+        handler.ServerCertificateCustomValidationCallback = null;
+        return new HttpClient(handler, true);
+    }
+
     public void SetProxy(Uri? url, string? username, string? password, bool allowAllCerts)
     {
         _url = url;
