@@ -537,48 +537,41 @@ public partial class MainWindow
         });
     }
 
-    public void CheckForUpdates(bool manualCheck = false)
+    private bool _checkingForUpdates;
+    public void CheckForUpdates(bool manualCheck = false) => _ = CheckForUpdatesAsync(manualCheck);
+
+    public async Task CheckForUpdatesAsync(bool manualCheck = false)
     {
-        UpdateSettings _updateSettings = IoCContainer.Resolve<UpdateSettings>();
-        if (_updateSettings.Store.UpdateCheckFrequency != UpdateCheckFrequency.Never || manualCheck)
+        var settings = IoCContainer.Resolve<UpdateSettings>();
+        if (_checkingForUpdates || _updateChecker.Disable ||
+            (!manualCheck && settings.Store.UpdateCheckFrequency == UpdateCheckFrequency.Never)) return;
+        _checkingForUpdates = true;
+        try
         {
-            Task.Run(() => _updateChecker.CheckAsync(manualCheck))
-                        .ContinueWith(async updatesAvailable =>
-                        {
-                            var result = updatesAvailable.Result;
-                            if (result is null)
-                            {
-                                _updateIndicator.Visibility = Visibility.Collapsed;
-
-                                if (manualCheck && IsVisibleToUser)
-                                {
-                                    switch (_updateChecker.Status)
-                                    {
-                                        case UpdateCheckStatus.Success:
-                                            await SnackbarHelper.ShowAsync(Resource.MainWindow_CheckForUpdates_Success_Title);
-                                            break;
-                                        case UpdateCheckStatus.RateLimitReached:
-                                            await SnackbarHelper.ShowAsync(Resource.MainWindow_CheckForUpdates_Error_Title, Resource.MainWindow_CheckForUpdates_Error_ReachedRateLimit_Message, SnackbarType.Error);
-                                            break;
-                                        case UpdateCheckStatus.Error:
-                                            await SnackbarHelper.ShowAsync(Resource.MainWindow_CheckForUpdates_Error_Title, Resource.MainWindow_CheckForUpdates_Error_Unknown_Message, SnackbarType.Error);
-                                            break;
-                                    }
-                                }
-                            }
-                            else
-                            {
-                                var versionNumber = result.ToString();
-
-                                _updateIndicatorText.Text =
-                                    string.Format(Resource.MainWindow_UpdateAvailableWithVersion, versionNumber);
-                                _updateIndicator.Visibility = Visibility.Visible;
-
-                                if (!IsVisibleToUser)
-                                    MessagingCenter.Publish(new NotificationMessage(NotificationType.UpdateAvailable, versionNumber));
-                            }
-                        }, TaskScheduler.FromCurrentSynchronizationContext());
+            var result = await _updateChecker.CheckAsync(manualCheck);
+            if (Dispatcher.HasShutdownStarted) return;
+            _updateIndicator.Visibility = result is null ? Visibility.Collapsed : Visibility.Visible;
+            if (result is not null)
+            {
+                _updateIndicatorText.Text = string.Format(Resource.MainWindow_UpdateAvailableWithVersion, result);
+                if (manualCheck && IsVisibleToUser) ShowUpdateWindow();
+                else if (!IsVisibleToUser) MessagingCenter.Publish(new NotificationMessage(NotificationType.UpdateAvailable, result.ToString()));
+            }
+            else if (manualCheck && IsVisibleToUser)
+            {
+                switch (_updateChecker.Status)
+                {
+                    case UpdateCheckStatus.Success:
+                        await SnackbarHelper.ShowAsync(Resource.MainWindow_CheckForUpdates_Success_Title); break;
+                    case UpdateCheckStatus.RateLimitReached:
+                        await SnackbarHelper.ShowAsync(Resource.MainWindow_CheckForUpdates_Error_Title, Resource.MainWindow_CheckForUpdates_Error_ReachedRateLimit_Message, SnackbarType.Error); break;
+                    default:
+                        await SnackbarHelper.ShowAsync(Resource.MainWindow_CheckForUpdates_Error_Title, Resource.MainWindow_CheckForUpdates_Error_Unknown_Message, SnackbarType.Error); break;
+                }
+            }
         }
+        catch (Exception ex) { Log.Instance.Trace($"Update check failed.", ex); }
+        finally { _checkingForUpdates = false; }
     }
 
     private void RestoreSize()
