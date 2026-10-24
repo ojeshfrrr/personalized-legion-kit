@@ -128,6 +128,8 @@ public partial class MainWindow
         {
             if (element is MousePage mousePage && mousePage.IsReadOnlyQuerySource(source as DependencyObject))
                 return true;
+            if (element is UpdaterPage updaterPage && updaterPage.IsUpdaterInputSource(source as DependencyObject))
+                return true;
             if (element is System.Windows.Controls.Primitives.ButtonBase { Tag: "ReadOnlyRefresh" })
                 return true;
             if (element is System.Windows.Controls.Primitives.ScrollBar ||
@@ -460,14 +462,14 @@ public partial class MainWindow
         ShowDeviceInfoWindow();
     }
 
-    private void UpdateIndicator_Click(object sender, RoutedEventArgs e) => ShowUpdateWindow();
+    private void UpdateIndicator_Click(object sender, RoutedEventArgs e) => _navigationStore.Navigate("updater");
 
     private void UpdateIndicator_KeyDown(object sender, KeyEventArgs e)
     {
         if (e.Key is not Key.Enter and not Key.Space)
             return;
 
-        ShowUpdateWindow();
+        _navigationStore.Navigate("updater");
     }
 
     private async void LoadDeviceInfo()

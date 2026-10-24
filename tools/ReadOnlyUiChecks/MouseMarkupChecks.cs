@@ -155,6 +155,7 @@ internal static class MouseMarkupChecks
         Console.WriteLine("PASS: four detached Mouse layouts, native DPI slider/text/link/keyboard/read-only interactions, aligned logarithmic guide marks, 32 scaled vector hit checks and empty-canvas checks; no collapsed regions or horizontal overflow. No hardware or profile access.");
         DemandSnapshotMarkupChecks.Run(directory);
         UpdateMarkupChecks.Run(directory);
+        UpdaterPageMarkupChecks.Run(directory);
         app.Shutdown();
     }
     private static void TextBlockForeground(this Grid root, Brush brush) => TextElement.SetForeground(root, brush);

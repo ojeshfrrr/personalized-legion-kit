@@ -22,6 +22,7 @@ public partial class SettingsUpdateControl
 
     private bool _isRefreshing;
     private bool _checking;
+    public event EventHandler? CheckCompleted;
 
     public SettingsUpdateControl()
     {
@@ -73,6 +74,7 @@ public partial class SettingsUpdateControl
         {
             await SnackbarHelper.ShowAsync(Resource.SettingsPage_CheckUpdates_Started_Title, type: SnackbarType.Info);
             await mainWindow.CheckForUpdatesAsync(true);
+            CheckCompleted?.Invoke(this, EventArgs.Empty);
         }
         finally
         {

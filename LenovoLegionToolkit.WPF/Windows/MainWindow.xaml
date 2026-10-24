@@ -194,6 +194,11 @@
 
                         <wpfui:NavigationStore.Footer>
                             <custom:NavigationItem
+                                Content="Updater"
+                                Icon="ArrowDownload24"
+                                PageTag="updater"
+                                PageType="{x:Type pages:UpdaterPage}" />
+                            <custom:NavigationItem
                                 Content="{x:Static resources:Resource.MainWindow_NavigationItem_Settings}"
                                 Icon="Settings24"
                                 PageTag="settings"
