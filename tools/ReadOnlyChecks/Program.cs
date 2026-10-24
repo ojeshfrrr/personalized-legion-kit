@@ -226,6 +226,7 @@ if (args.Length >= 2 && args[0] == "--measure-polling-lifecycle")
 
 await DemandReadChecks.RunAsync(Check);
 UpdateTransportChecks.Run(Check);
+UpdateFeedChecks.Run(Check);
 await TelemetryRefreshChecks.RunAsync(Check);
 await FeatureStateConfirmationChecks.RunAsync(Check);
 await AcAutomationChecks.RunAsync(Check);
