@@ -20,6 +20,9 @@
     <StackPanel Margin="0,0,12,12">
         <TextBlock Style="{StaticResource ProjectLegionPageTitleStyle}" Focusable="True" Text="{x:Static resources:Resource.BatteryPage_Title}"/>
         <TextBlock Style="{StaticResource ProjectLegionPageSubtitleStyle}" Text="Charge, capacity and battery care."/>
+        <WrapPanel Margin="0,0,0,12">
+            <TextBlock x:Name="_batteryReadStatus" VerticalAlignment="Center" Foreground="{DynamicResource ProjectLegionSecondaryTextBrush}" Text="Reading snapshot…"/>
+        </WrapPanel>
         <Border Style="{StaticResource ProjectLegionInstrumentPanelStyle}" Margin="0,0,0,18">
             <Grid>
                 <Grid.ColumnDefinitions>

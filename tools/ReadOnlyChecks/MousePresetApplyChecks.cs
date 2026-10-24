@@ -132,7 +132,7 @@ internal static class MousePresetApplyChecks
             source.Contains("!Folders.IsReadOnlySession && !AppFlags.Instance.ReadOnly && !AppFlags.Instance.UiPreview", StringComparison.Ordinal),
             "query routing never exempts hardware Apply and local mutations respect all read-only/preview guards");
         var load = File.ReadAllText(Path.Combine(Environment.CurrentDirectory, "LenovoLegionToolkit.WPF", "Pages", "MousePage.xaml.cs"));
-        var startup = load[load.IndexOf("private async void Page_Loaded", StringComparison.Ordinal)..load.IndexOf("private void Page_Unloaded", StringComparison.Ordinal)];
+        var startup = load[load.IndexOf("private async Task ActivateQueriesAsync", StringComparison.Ordinal)..load.IndexOf("private void Page_Unloaded", StringComparison.Ordinal)];
         check(!startup.Contains("ApplyPreset", StringComparison.Ordinal) && startup.Contains("await _presetApplyTask", StringComparison.Ordinal) && startup.Contains("LoadPresetsAsync", StringComparison.Ordinal),
             "navigation drains a retiring batch and loads local intent without applying it");
     }

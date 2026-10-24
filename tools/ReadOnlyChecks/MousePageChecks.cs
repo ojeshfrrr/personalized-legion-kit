@@ -108,7 +108,7 @@ internal static class MousePageChecks
         check(source.Contains("await _presetApplyTask;", StringComparison.Ordinal) &&
               source.Contains("await _session.ActivateAsync();", StringComparison.Ordinal) &&
               source.Contains("await LoadPresetsAsync();", StringComparison.Ordinal) &&
-              source.Contains("Draft_Changed(object sender, System.Windows.Controls.TextChangedEventArgs e) => RefreshControlAccess();", StringComparison.Ordinal) &&
+              source.Contains("new MouseDpiDraftEditor(this, () => _session.CanEditDpi && !PresetBusy, RefreshControlAccess)", StringComparison.Ordinal) &&
               source.Contains("PollingSelection_Changed(object sender, System.Windows.Controls.SelectionChangedEventArgs e) => RefreshControlAccess();", StringComparison.Ordinal) &&
               xaml.Contains("Click=\"ApplyPolling_Click\"", StringComparison.Ordinal) && xaml.Contains("Click=\"Apply_Click\"", StringComparison.Ordinal),
             "Mouse XAML routes writes only through explicit Apply; draft and selector changes only refresh control access");

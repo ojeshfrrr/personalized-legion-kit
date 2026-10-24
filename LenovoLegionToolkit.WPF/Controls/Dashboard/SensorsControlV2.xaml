@@ -60,6 +60,7 @@
     </UserControl.Resources>
 
     <Grid>
+        <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
         <WrapPanel x:Name="_cardWrapPanel" behaviors:DragDropBehavior.IsEnabled="True">
                         <Border x:Name="_cpuCard" Style="{StaticResource SensorCardStyle}">
                             <StackPanel Margin="12,10">
@@ -595,5 +596,8 @@
                             </StackPanel>
                         </Border>
         </WrapPanel>
+        <DockPanel Grid.Row="1" Margin="0,6,0,0">
+            <TextBlock x:Name="_snapshotReadStatus" Text="Reading snapshot…" TextWrapping="Wrap" VerticalAlignment="Center" Foreground="{DynamicResource ProjectLegionSecondaryTextBrush}"/>
+        </DockPanel>
     </Grid>
 </UserControl>

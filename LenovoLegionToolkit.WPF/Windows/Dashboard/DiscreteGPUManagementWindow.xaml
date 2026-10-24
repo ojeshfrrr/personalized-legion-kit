@@ -98,7 +98,12 @@
             ShowMinimize="False"
             UseSnapLayout="False" />
 
-        <TabControl Grid.Row="1" Margin="16,0,16,16">
+        <DockPanel Grid.Row="1">
+        <DockPanel DockPanel.Dock="Top" Margin="16,4,16,4">
+            <wpfui:Button DockPanel.Dock="Right" Content="Refresh" Tag="ReadOnlyRefresh" Click="ReadRefresh_Click"/>
+            <TextBlock x:Name="_gpuReadStatus" VerticalAlignment="Center" Text="Reading snapshot…" Foreground="{DynamicResource ProjectLegionSecondaryTextBrush}"/>
+        </DockPanel>
+        <TabControl Margin="16,0,16,16">
             <TabItem Header="{x:Static resources:Resource.DiscreteGPUControl_GraphicsPreferencesTabLabel}">
 
                 <ListBox 
@@ -199,7 +204,7 @@
                                     Info="{x:Static resources:Resource.DiscreteGPUControl_PStateLockInfo}" />
                             </custom:CardControl.Header>
                             <ComboBox 
-                                x:Name="_pStateComboBox" 
+                                x:Name="_pStateComboBox" ToolTip="A fixed P-state explicitly enables GPU monitoring and enforcement for this session. Saved locks are not resumed at startup."
                                 Width="160" 
                                 VerticalAlignment="Center" 
                                 SelectionChanged="PStateComboBox_SelectionChanged" />
@@ -266,6 +271,7 @@
                 </ScrollViewer>
             </TabItem>
         </TabControl>
+        </DockPanel>
 
         <Border Grid.Row="2" Background="{DynamicResource ControlFillColorDefaultBrush}" BorderBrush="{DynamicResource ControlStrokeColorDefaultBrush}" BorderThickness="0,1,0,0" Padding="16">
             <Grid>

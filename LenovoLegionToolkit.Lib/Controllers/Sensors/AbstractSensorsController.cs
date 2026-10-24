@@ -247,11 +247,8 @@ public abstract class AbstractSensorsController(GPUController gpuController) : I
             return GPUInfo.Empty;
         }
 
-        if (gpuController.IsSupported())
-            await gpuController.StartAsync().ConfigureAwait(false);
-
-        if (await gpuController.GetLastKnownStateAsync().ConfigureAwait(false) is GPUState.PoweredOff)
-            return GPUInfo.Empty;
+        // Do not use an old UI snapshot as current GPU power state.
+        var lastKnownState = await gpuController.GetLastKnownStateAsync().ConfigureAwait(false);
 
         try
         {
@@ -260,6 +257,12 @@ public abstract class AbstractSensorsController(GPUController gpuController) : I
             var gpu = NVAPI.GetGPU();
             if (gpu is null)
                 return GPUInfo.Empty;
+
+            var power = NVAPI.GetCoprocInfo(gpu);
+            if (power?.PowerState is NvAPIWrapper.Native.GPU.CoprocPowerState.Gc6 or NvAPIWrapper.Native.GPU.CoprocPowerState.GcOff)
+                return GPUInfo.Empty;
+
+            if (power is null && lastKnownState is GPUState.PoweredOff) return GPUInfo.Empty;
 
             var utilization = Math.Min(100, Math.Max(gpu.UsageInformation.GPU.Percentage, gpu.UsageInformation.VideoEngine.Percentage));
 

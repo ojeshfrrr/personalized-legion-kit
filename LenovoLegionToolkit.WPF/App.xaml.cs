@@ -291,23 +291,10 @@ public partial class App
         Log.Instance.Trace($"InitializeHardwareAndFeatures completed [elapsed={totalSw.ElapsedMilliseconds}ms]");
     }
 
-    private async Task StartBackgroundServicesAsync()
+    private Task StartBackgroundServicesAsync()
     {
-        if (AppFlags.Instance.Debug)
-        {
-            Console.WriteLine(@"[Startup] Starting background services...");
-        }
-
-        await Task.Run(async () =>
-        {
-            if (AppFlags.Instance.Debug)
-            {
-                Console.WriteLine(@"[AsyncWorker] Starting background services...");
-            }
-
-            await SafeInitAsync(InitHWiNFOAsync, "HWiNFO Integration");
-            // Autorun changes, macro hooks, AI, extensions and command IPC require session opt-in.
-        });
+        // Integrations must be explicitly enabled this session, never resumed from saved settings.
+        return Task.CompletedTask;
     }
 
     private Task InitializeUIAsync()
@@ -595,6 +582,7 @@ public partial class App
             SnackbarHelper.Show("Window could not be refreshed", ex.Message, SnackbarType.Error);
         }
 
+        var restoreOsd = OsdWindow?.IsVisible == true;
         if (OsdWindow != null)
         {
             OsdWindow.Hide();
@@ -604,7 +592,7 @@ public partial class App
 
         var settingsStore = IoCContainer.Resolve<OsdSettings>().Store;
 
-        if (!settingsStore.ShowOsd || !IoCContainer.Resolve<ApplicationSettings>().Store.EnableHardwareSensors)
+        if (!restoreOsd || !HardwareRuntime.ControlsEnabled || !IoCContainer.Resolve<ApplicationSettings>().Store.EnableHardwareSensors)
         {
             return;
         }
@@ -1071,13 +1059,8 @@ public partial class App
             });
         });
 
-        var OsdSettings = IoCContainer.Resolve<OsdSettings>();
-        var settings = IoCContainer.Resolve<ApplicationSettings>();
-
-        if (OsdSettings.Store.ShowOsd && settings.Store.EnableHardwareSensors)
-        {
-            HandleOsdCommand(ToggleState.On);
-        }
+        // A saved overlay preference is not session consent for continuous reads.
+        // The existing OSD toggle/hotkey remains the explicit opt-in.
     }
 
     private void InitAppMessages()
@@ -1106,6 +1089,8 @@ public partial class App
             ToggleState.Toggle => !(OsdWindow?.IsVisible ?? false),
             _ => throw new ArgumentOutOfRangeException(nameof(command), command, null)
         };
+
+        if (show && !HardwareRuntime.ControlsEnabled) return;
 
         if (show)
         {

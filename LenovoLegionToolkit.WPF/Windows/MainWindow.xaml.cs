@@ -128,6 +128,8 @@ public partial class MainWindow
         {
             if (element is MousePage mousePage && mousePage.IsReadOnlyQuerySource(source as DependencyObject))
                 return true;
+            if (element is System.Windows.Controls.Primitives.ButtonBase { Tag: "ReadOnlyRefresh" })
+                return true;
             if (element is System.Windows.Controls.Primitives.ScrollBar ||
                 element is ListBox { Name: "_navigationListBox" })
                 return true;
@@ -222,6 +224,19 @@ public partial class MainWindow
                 await _specialKeyListener.StartAsync();
                 await _driverKeyListener.StartAsync();
                 await IoCContainer.Resolve<ITSModeListener>().StartAsync();
+                await IoCContainer.Resolve<DisplayBrightnessListener>().StartAsync();
+                await IoCContainer.Resolve<DisplayConfigurationListener>().StartAsync();
+                await IoCContainer.Resolve<LightingChangeListener>().StartAsync();
+                await IoCContainer.Resolve<NativeWindowsMessageListener>().StartAsync();
+                await IoCContainer.Resolve<PowerModeListener>().StartAsync();
+                await IoCContainer.Resolve<PowerStateListener>().StartAsync();
+                await IoCContainer.Resolve<PowerListener>().StartAsync();
+                await IoCContainer.Resolve<RGBKeyboardBacklightListener>().StartAsync();
+                await IoCContainer.Resolve<SessionLockUnlockListener>().StartAsync();
+                await IoCContainer.Resolve<ThermalModeListener>().StartAsync();
+                await IoCContainer.Resolve<WinKeyListener>().StartAsync();
+                await IoCContainer.Resolve<VolumeListener>().StartAsync();
+
             });
         }
         catch (Exception ex)

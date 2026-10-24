@@ -30,7 +30,7 @@ public partial class SettingsIntegrationsControl
     {
         _isRefreshing = true;
 
-        _hwinfoIntegrationToggle.IsChecked = _integrationsSettings.Store.HWiNFO;
+        _hwinfoIntegrationToggle.IsChecked = _hwinfoIntegration.IsRunning;
         _cliInterfaceToggle.IsChecked = _integrationsSettings.Store.CLI;
         _cliPathToggle.IsChecked = SystemPath.HasCLI();
 

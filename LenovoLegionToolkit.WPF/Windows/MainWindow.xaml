@@ -258,7 +258,7 @@
                                        Text="Read-only. Hardware changes have not been verified on this device."
                                        TextWrapping="Wrap" FontSize="12" Foreground="{DynamicResource ProjectLegionTextBrush}" />
                             <Button x:Name="_enableControlsButton" Grid.Column="2" Content="Enable controls"
-                                    Click="EnableControls_Click" />
+                                    ToolTip="Enables hardware controls, hotkeys and hardware event listeners for this session. Automatic pipelines, live OSD and HWiNFO require separate explicit activation." Click="EnableControls_Click" />
                         </Grid>
                     </Border>
                     <Frame Name="_rootFrame" Grid.Row="1" Margin="14,10,14,10" />

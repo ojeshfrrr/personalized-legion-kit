@@ -1,8 +1,6 @@
 using System;
-using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Threading;
 using Humanizer;
 using LenovoLegionToolkit.Lib;
 using LenovoLegionToolkit.Lib.Settings;
@@ -18,81 +16,36 @@ public partial class BatteryPage
 {
     private readonly ApplicationSettings _settings = IoCContainer.Resolve<ApplicationSettings>();
 
-    private CancellationTokenSource? _cts;
-    private Task? _refreshTask;
+    private readonly DemandReadSession<(BatteryInformation Battery, PowerAdapterStatus Adapter, DateTime? Since)> _reads;
     private readonly OptionalUiActivity _activity;
 
     public BatteryPage()
     {
         InitializeComponent();
-
-        _activity = new OptionalUiActivity(this, SetActivityAsync);
-    }
-
-    private async Task SetActivityAsync(bool active)
-    {
-        if (active)
+        _reads = new(async token =>
         {
-            Refresh();
-            return;
-        }
-
-        var cts = _cts;
-        var refreshTask = _refreshTask;
-        _cts = null;
-        _refreshTask = null;
-        if (cts is not null)
-            await cts.CancelAsync();
-        if (refreshTask is not null)
-            await refreshTask;
-        cts?.Dispose();
-    }
-
-    private void Refresh()
-    {
-        _cts?.Cancel();
-        _cts = new CancellationTokenSource();
-
-        var token = _cts.Token;
-
-        _refreshTask = Task.Run(async () =>
+            token.ThrowIfCancellationRequested();
+            var battery = Battery.GetBatteryInformation();
+            token.ThrowIfCancellationRequested();
+            var adapter = await Power.IsPowerAdapterConnectedAsync();
+            token.ThrowIfCancellationRequested();
+            var since = Battery.GetOnBatterySince();
+            token.ThrowIfCancellationRequested();
+            return (battery, adapter, since);
+        }, (data, time) =>
         {
-            Log.Instance.Trace($"Battery information refresh started...");
-
-            while (!token.IsCancellationRequested)
-            {
-                try
-                {
-                    if (GamingActivityMonitor.Instance.OptionalWorkPaused) break;
-                    var batteryInfo = Battery.GetBatteryInformation();
-                    token.ThrowIfCancellationRequested();
-                    var powerAdapterStatus = await Power.IsPowerAdapterConnectedAsync();
-                    token.ThrowIfCancellationRequested();
-                    var onBatterySince = Battery.GetOnBatterySince();
-                    await Dispatcher.InvokeAsync(() =>
-                    {
-                        if (!token.IsCancellationRequested && IsVisible && !GamingActivityMonitor.Instance.OptionalWorkPaused)
-                            Set(batteryInfo, powerAdapterStatus, onBatterySince);
-                    }, DispatcherPriority.Background, token);
-
-                }
-                catch (OperationCanceledException) { break; }
-                catch (Exception ex)
-                {
-                    Log.Instance.Trace($"Battery information refresh failed.", ex);
-                    await Dispatcher.InvokeAsync(() =>
-                    {
-                        if (token.IsCancellationRequested || !IsVisible) return;
-                        _percentRemaining.Text = "—";
-                        _batteryChargeBar.Value = 0;
-                        _status.Text = "Battery information is temporarily unavailable.";
-                    });
-                }
-                try { await Task.Delay(TimeSpan.FromSeconds(2), token); }
-                catch (OperationCanceledException) { break; }
-            }
-
-            Log.Instance.Trace($"Battery information refresh stopped.");
+            Set(data.Battery, data.Adapter, data.Since);
+            _batteryReadStatus.Text = $"Read {time:HH:mm:ss}";
+        }, ex =>
+        {
+            _batteryReadStatus.Text = "Reading unavailable";
+            Log.Instance.Trace($"Battery snapshot unavailable.", ex);
+        }, refreshInterval: TimeSpan.FromSeconds(5));
+        _activity = new OptionalUiActivity(this, active =>
+        {
+            if (active) _ = _reads.ActivateAsync();
+            else _ = _reads.DeactivateAsync();
+            return Task.CompletedTask;
         });
     }
 

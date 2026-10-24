@@ -13,6 +13,7 @@ public partial class MousePage
 {
     private MouseButtonsSession? _buttons;
     private MouseProfileBanks? _displayedBanks;
+    private MouseButtonBank? _displayedAssignmentBank;
     private bool _renderingButtons;
     private enum ButtonDraftType { Basic, Keyboard }
     private sealed record DraftTypeChoice(ButtonDraftType Type, string Label);
@@ -29,8 +30,6 @@ public partial class MousePage
         _buttonDraftKind.ItemsSource = new[] { new DraftTypeChoice(ButtonDraftType.Basic, "Mouse / DPI action"), new DraftTypeChoice(ButtonDraftType.Keyboard, "Keyboard key") };
         _buttonDraftKind.SelectedIndex = 0;
         _buttons.Changed += RenderButtons;
-        Loaded += (_, _) => _buttons.Activate();
-        Unloaded += (_, _) => _buttons.Deactivate();
         RenderButtons();
     }
     private void RenderButtons()
@@ -45,8 +44,12 @@ public partial class MousePage
                 _buttonProfileSelector.ItemsSource = _buttons.Banks?.Ids.Select(id => new BankChoice(id)).ToArray();
                 _buttonProfileSelector.SelectedItem = _buttonProfileSelector.Items.Cast<BankChoice>().FirstOrDefault(p => p.Id == _buttons.SelectedBank);
             }
-            _buttonLayout.ItemsSource = DeathAdderV3ButtonProtocol.Buttons.Select(b => new ButtonRow(b.Id, $"{b.Name} · ID {b.Id}",
-                _buttons.Current?.Assignments.SingleOrDefault(a => a.Button == b.Id)?.Description ?? "Unavailable · read assignments")).ToArray();
+            if (_buttonLayout.ItemsSource is null || !ReferenceEquals(_displayedAssignmentBank, _buttons.Current))
+            {
+                _displayedAssignmentBank = _buttons.Current;
+                _buttonLayout.ItemsSource = DeathAdderV3ButtonProtocol.Buttons.Select(b => new ButtonRow(b.Id, $"{b.Name} · ID {b.Id}",
+                    _buttons.Current?.Assignments.SingleOrDefault(a => a.Button == b.Id)?.Description ?? "Unavailable · read assignments")).ToArray();
+            }
             _buttonStatus.Text = _buttons.Status;
             _buttonLastConfirmed.Text = _buttons.LastReadAt is { } time && _buttons.LastConfirmed is { } bank
                 ? $"Last full bank read: bank {bank.Profile} · {time:HH:mm:ss}. Historical when current readings are unavailable."

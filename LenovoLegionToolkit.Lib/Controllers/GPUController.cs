@@ -68,12 +68,15 @@ public class GPUController
 
     private void GamingActivityChanged(object? sender, EventArgs e) => UpdatePollingPolicy();
 
+    private volatile bool _pStateEnforcementEnabled;
+    public bool IsPStateEnforcementEnabled => _pStateEnforcementEnabled;
+
     private void UpdatePollingPolicy()
     {
         lock (_pollingPolicyLock)
         {
             var required = Volatile.Read(ref _requiredMonitoringOwners) > 0 ||
-                (HardwareRuntime.ControlsEnabled && IoCContainer.Resolve<ApplicationSettings>().Store.LockedPStateId >= 0);
+                (HardwareRuntime.ControlsEnabled && _pStateEnforcementEnabled);
             _backgroundWork.SetPaused(!required && (_gamingActivity.OptionalWorkPaused || Volatile.Read(ref _optionalMonitoringOwners) == 0));
         }
     }
@@ -102,19 +105,21 @@ public class GPUController
         }
     }
 
-    public async Task<GPUStatus> RefreshNowAsync()
+    public async Task<GPUStatus> RefreshNowAsync(CancellationToken token = default)
     {
-        await _refreshGate.WaitAsync().ConfigureAwait(false);
+        await _refreshGate.WaitAsync(token).ConfigureAwait(false);
         try
         {
-            await DoRefreshAsync(CancellationToken.None).ConfigureAwait(false);
+            token.ThrowIfCancellationRequested();
+            NVAPI.Initialize();
+            await DoRefreshAsync(token).ConfigureAwait(false);
         }
         finally
         {
             _refreshGate.Release();
         }
 
-        using (await _stateLock.LockAsync().ConfigureAwait(false))
+        using (await _stateLock.LockAsync(token).ConfigureAwait(false))
         {
             return new GPUStatus(_state, _performanceState, _processes, _sleepBlockerReason);
         }
@@ -243,12 +248,6 @@ public class GPUController
 
             Log.Instance.Trace($"Initialized NVAPI");
 
-            var settings = IoCContainer.Resolve<ApplicationSettings>();
-            if (HardwareRuntime.ControlsEnabled && settings.Store.LockedPStateId >= 0)
-            {
-                await ApplyPStateAsync(settings.Store.LockedPStateId).ConfigureAwait(false);
-            }
-
             await Task.Delay(delay, token).ConfigureAwait(false);
 
             while (true)
@@ -261,7 +260,7 @@ public class GPUController
                 try
                 {
                     if (_backgroundWork.IsPaused) continue;
-                    await DoRefreshAsync(token).ConfigureAwait(false);
+                    await DoRefreshAsync(token, enforcePState: _pStateEnforcementEnabled).ConfigureAwait(false);
 
                     using (await _stateLock.LockAsync(token).ConfigureAwait(false))
                     {
@@ -285,7 +284,7 @@ public class GPUController
         catch (OperationCanceledException) { }
     }
 
-    private async Task DoRefreshAsync(CancellationToken token)
+    private async Task DoRefreshAsync(CancellationToken token, bool enforcePState = false)
     {
         var hybridModeFeature = IoCContainer.Resolve<HybridModeFeature>();
         if (hybridModeFeature.ShouldKeepDGPUAsleep())
@@ -455,13 +454,13 @@ public class GPUController
             _sleepBlockerReason = newSleepBlockerReason;
         }
 
-        if (HardwareRuntime.ControlsEnabled && (oldState is GPUState.PoweredOff or GPUState.Unknown or GPUState.NvidiaGpuNotFound) &&
+        if (enforcePState && HardwareRuntime.ControlsEnabled && (oldState is GPUState.PoweredOff or GPUState.Unknown or GPUState.NvidiaGpuNotFound) &&
             (newState is GPUState.Active or GPUState.Inactive or GPUState.MonitorConnected))
         {
             var lockedPState = IoCContainer.Resolve<ApplicationSettings>().Store.LockedPStateId;
             if (lockedPState >= 0)
             {
-                _ = ApplyPStateAsync(lockedPState);
+                await ApplyPStateAsync(lockedPState).ConfigureAwait(false);
             }
         }
     }
@@ -574,11 +573,15 @@ public class GPUController
     {
         HardwareRuntime.RequireControls();
         var settings = IoCContainer.Resolve<ApplicationSettings>();
+        var applied = await ApplyPStateAsync(pStateId).ConfigureAwait(false);
+        if (!applied) return false;
         settings.Store.LockedPStateId = pStateId;
-        UpdatePollingPolicy();
         settings.SynchronizeStore();
-
-        return await ApplyPStateAsync(pStateId).ConfigureAwait(false);
+        // Only an explicit successful request opts this session into enforcement.
+        _pStateEnforcementEnabled = pStateId >= 0;
+        UpdatePollingPolicy();
+        if (_pStateEnforcementEnabled) await StartAsync(interval: settings.Store.GPUMonitoringInterval).ConfigureAwait(false);
+        return applied;
     }
 
     public Task<bool> ApplyPStateAsync(int pStateId)

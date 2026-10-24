@@ -77,9 +77,11 @@ internal static class MouseMarkupChecks
                 ((TextBlock)root.FindName("_presetStored")).Text = "Offline stored-intent fixture. Not current device state or an onboard profile.";
                 ((TextBlock)root.FindName("_presetResult")).Text = "Offline result layout fixture: DPI confirmed; polling uncertain; later buttons not attempted. No operation executed.";
                 ((Expander)root.FindName("_presetInspector")).IsExpanded = keyboard;
+                MouseDpiSliderMarkupChecks.Exercise(root, keyboard);
                 root.Measure(new Size(width, double.PositiveInfinity));
                 root.Arrange(new Rect(0, 0, width, root.DesiredSize.Height));
                 root.UpdateLayout();
+                MouseDpiSliderMarkupChecks.VerifyGeometry(root, keyboard);
                 var stored = (TextBlock)root.FindName("_presetStored");
                 var ledger = (TextBlock)root.FindName("_presetResult");
                 var inspector = (Expander)root.FindName("_presetInspector");
@@ -144,13 +146,14 @@ internal static class MouseMarkupChecks
                 var nameSuffix = $"mouse-{size.Item1}x{size.Item2}-{(keyboard ? "keyboard" : "basic")}";
                 using (var stream = File.Create(Path.Combine(directory, nameSuffix + ".png"))) encoder.Save(stream);
                 results.Add(new { WindowWidth = size.Item1, WindowHeight = size.Item2, ContentWidth = width,
-                    ContentHeight = root.ActualHeight, KeyboardExpanded = keyboard, PresetInspectorExpanded = keyboard, HorizontalOverflow = problems,
+                    ContentHeight = root.ActualHeight, KeyboardExpanded = keyboard, IndependentDpiSliders = keyboard, PresetInspectorExpanded = keyboard, HorizontalOverflow = problems,
                     AlignedVectorHitRegions = hitCases.Length, EmptyCanvasDoesNotSelect = true,
-                    Note = "Detached unavailable-state production markup, full scroll content; not runtime navigation or device validation." });
+                    Note = "Detached production markup with synthetic requested-input fixtures; confirmed readbacks remain unavailable. Full scroll content, not runtime navigation or device validation." });
             }
         }
         File.WriteAllText(Path.Combine(directory, "layout-results.json"), JsonConvert.SerializeObject(results, Formatting.Indented));
-        Console.WriteLine("PASS: four detached Mouse layouts, 32 scaled vector hit checks and empty-canvas checks; no collapsed regions or horizontal overflow. No hardware or profile access.");
+        Console.WriteLine("PASS: four detached Mouse layouts, native DPI slider/text/link/keyboard/read-only interactions, aligned logarithmic guide marks, 32 scaled vector hit checks and empty-canvas checks; no collapsed regions or horizontal overflow. No hardware or profile access.");
+        DemandSnapshotMarkupChecks.Run(directory);
         app.Shutdown();
     }
     private static void TextBlockForeground(this Grid root, Brush brush) => TextElement.SetForeground(root, brush);

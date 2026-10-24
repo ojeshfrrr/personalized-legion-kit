@@ -224,6 +224,8 @@ if (args.Length >= 2 && args[0] == "--measure-polling-lifecycle")
     }
 }
 
+await DemandReadChecks.RunAsync(Check);
+await TelemetryRefreshChecks.RunAsync(Check);
 await FeatureStateConfirmationChecks.RunAsync(Check);
 await AcAutomationChecks.RunAsync(Check);
 await GamingWorkloadChecks.RunAsync(Check);
@@ -231,6 +233,7 @@ await DeathAdderProtocolChecks.RunAsync(Check);
 await DpiConfigurationChecks.RunAsync(Check);
 await PollingConfigurationChecks.RunAsync(Check);
 await MousePageChecks.RunAsync(Check);
+MouseDpiSliderChecks.Run(Check);
 await ButtonConfigurationChecks.RunAsync(Check);
 await KeyboardAssignmentChecks.RunAsync(Check);
 MouseSoftwareProfileChecks.Run(Check);

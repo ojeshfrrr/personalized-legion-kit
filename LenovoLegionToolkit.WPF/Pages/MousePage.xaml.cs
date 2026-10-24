@@ -1,5 +1,4 @@
 using System;
-using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
@@ -15,6 +14,8 @@ namespace LenovoLegionToolkit.WPF.Pages;
 public partial class MousePage
 {
     private readonly MousePageSession _session;
+    private readonly MouseDpiDraftEditor _dpiEditor;
+    private readonly OptionalUiActivity _readActivity;
     private ConfirmedMouseValue<MouseDpi>? _displayedDpi;
     private ConfirmedMouseValue<MousePollingRate>? _displayedPolling;
 
@@ -24,9 +25,16 @@ public partial class MousePage
         _session = new MousePageSession(mouseService, CanChangeIndividual);
         _presetApplier = new MousePresetApplier(mouseService, mouseService, CanWrite);
         InitializeComponent();
+        _dpiEditor = new MouseDpiDraftEditor(this, () => _session.CanEditDpi && !PresetBusy, RefreshControlAccess);
         _pollingSelector.ItemsSource = DeathAdderV3PollingProtocol.SupportedRates.Select(rate => new PollingChoice(rate)).ToArray();
         _session.Changed += Render;
         InitializeButtonUi(mouseService);
+        _readActivity = new OptionalUiActivity(this, active =>
+        {
+            if (active) _ = ActivateQueriesAsync();
+            else DeactivateQueries();
+            return Task.CompletedTask;
+        }, requireForeground: false, suspendForGaming: false);
     }
 
     private static bool CanWrite() => HardwareRuntime.ControlsEnabled && !AppFlags.Instance.ReadOnly &&
@@ -62,19 +70,30 @@ public partial class MousePage
         Find<System.Windows.Controls.StackPanel>("_schematicSurface").Margin = stackMapping ? new Thickness(0, 0, 0, 16) : new Thickness(0, 0, 18, 0);
         Find<System.Windows.Controls.Viewbox>("_schematicView").Height = compact ? 360 : 440;
     }
-    private async void Page_Loaded(object sender, RoutedEventArgs e)
+    private void Page_Loaded(object sender, RoutedEventArgs e) { }
+    private async Task ActivateQueriesAsync()
     {
         var lifetime = ActivatePresets();
         await _presetApplyTask; // Drain a retired batch before reactivating reads.
         await _presetStorageTask; // A retired file read must finish before reloading this activation.
         if (!IsPresetCurrent(lifetime)) return;
+        _buttons?.Activate();
         await _session.ActivateAsync();
+        if (!IsPresetCurrent(lifetime)) return;
+        if (_buttons is not null)
+        {
+            await _buttons.ReadProfilesAsync();
+            if (!IsPresetCurrent(lifetime)) return;
+            await _buttons.ReadAssignmentsAsync();
+        }
         if (IsPresetCurrent(lifetime)) await LoadPresetsAsync();
     }
-    private void Page_Unloaded(object sender, RoutedEventArgs e)
+    private void Page_Unloaded(object sender, RoutedEventArgs e) => DeactivateQueries();
+    private void DeactivateQueries()
     {
         DeactivatePresets();
         _session.Deactivate();
+        _buttons?.Deactivate();
     }
 
     private void Render()
@@ -88,8 +107,7 @@ public partial class MousePage
             : _session.IsBusy ? "Reading device…" : "Current device state unavailable";
         if (dpi is not null && !ReferenceEquals(dpi, _displayedDpi))
         {
-            _dpiX.Text = dpi.Value.X.ToString(CultureInfo.InvariantCulture);
-            _dpiY.Text = dpi.Value.Y.ToString(CultureInfo.InvariantCulture);
+            _dpiEditor.SetConfirmed(dpi.Value);
         }
         if (polling is not null && !ReferenceEquals(polling, _displayedPolling))
             _pollingSelector.SelectedItem = _pollingSelector.Items.Cast<PollingChoice>().Single(choice => choice.Rate == polling.Value);
@@ -134,23 +152,19 @@ public partial class MousePage
             _pollingSelector.IsEnabled = false;
             if (_pollingApplyButton is not null) _pollingApplyButton.IsEnabled = false;
         }
+        _dpiEditor?.UpdateAccess();
     }
 
     private bool TryDraft(out MouseDpi? dpi)
     {
         dpi = null;
-        if (!int.TryParse(_dpiX.Text, NumberStyles.None, CultureInfo.InvariantCulture, out var x) ||
-            !int.TryParse(_dpiY.Text, NumberStyles.None, CultureInfo.InvariantCulture, out var y)) return false;
-        try { dpi = DeathAdderV3Protocol.ValidateDpi(x, y); return true; }
-        catch (ArgumentOutOfRangeException) { return false; }
+        return _dpiEditor is not null && _dpiEditor.TryGet(out dpi);
     }
-    private void Draft_Changed(object sender, System.Windows.Controls.TextChangedEventArgs e) => RefreshControlAccess();
     private void PollingSelection_Changed(object sender, System.Windows.Controls.SelectionChangedEventArgs e) => RefreshControlAccess();
     private void Reset_Click(object sender, RoutedEventArgs e)
     {
-        if (_session.Dpi.Current is not { } current) return;
-        _dpiX.Text = current.Value.X.ToString(CultureInfo.InvariantCulture);
-        _dpiY.Text = current.Value.Y.ToString(CultureInfo.InvariantCulture);
+        if (!_session.CanEditDpi || PresetBusy || _session.Dpi.Current is not { } current) return;
+        _dpiEditor.SetConfirmed(current.Value);
     }
     private async void Refresh_Click(object sender, RoutedEventArgs e)
     {

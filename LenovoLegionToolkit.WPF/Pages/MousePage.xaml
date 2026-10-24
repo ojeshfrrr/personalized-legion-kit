@@ -19,6 +19,61 @@
         <Style x:Key="MouseSurface" TargetType="Border" BasedOn="{StaticResource ProjectLegionInstrumentPanelStyle}">
             <Setter Property="Padding" Value="18" /><Setter Property="Background" Value="#090A0C" />
         </Style>
+        <Style x:Key="MouseDpiLink" TargetType="ToggleButton">
+            <Setter Property="Foreground" Value="#BAC0CA" />
+            <Setter Property="Background" Value="#111318" />
+            <Setter Property="BorderBrush" Value="#292D35" />
+            <Setter Property="Padding" Value="10,6" />
+            <Setter Property="MinHeight" Value="32" />
+            <Setter Property="Template"><Setter.Value>
+                <ControlTemplate TargetType="ToggleButton">
+                    <Border x:Name="LinkBorder" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="1" CornerRadius="6" Padding="{TemplateBinding Padding}">
+                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsChecked" Value="True"><Setter Property="Background" Value="#261017" /><Setter Property="Foreground" Value="#FF334F" /></Trigger>
+                        <Trigger Property="IsKeyboardFocused" Value="True"><Setter TargetName="LinkBorder" Property="BorderBrush" Value="#FF334F" /></Trigger>
+                        <Trigger Property="IsEnabled" Value="False"><Setter TargetName="LinkBorder" Property="Opacity" Value="0.5" /></Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value></Setter>
+        </Style>
+        <Style x:Key="MouseDpiSlider" TargetType="Slider">
+            <Setter Property="FlowDirection" Value="LeftToRight" />
+            <Setter Property="Minimum" Value="0" /><Setter Property="Maximum" Value="1" />
+            <Setter Property="SmallChange" Value="0.001" /><Setter Property="LargeChange" Value="0.05" />
+            <Setter Property="IsMoveToPointEnabled" Value="True" />
+            <Setter Property="Height" Value="32" /><Setter Property="FocusVisualStyle" Value="{x:Null}" />
+            <Setter Property="Template"><Setter.Value>
+                <ControlTemplate TargetType="Slider">
+                    <Grid Background="Transparent">
+                        <Border x:Name="DpiFocus" BorderBrush="Transparent" BorderThickness="1" CornerRadius="5" />
+                        <Border Height="4" Margin="8,0" Background="#292D35" CornerRadius="2" />
+                        <Track x:Name="PART_Track" Minimum="{TemplateBinding Minimum}" Maximum="{TemplateBinding Maximum}" Value="{TemplateBinding Value}" IsDirectionReversed="False">
+                            <Track.DecreaseRepeatButton>
+                                <RepeatButton Command="Slider.DecreaseLarge" Focusable="False" IsTabStop="False">
+                                    <RepeatButton.Template><ControlTemplate TargetType="RepeatButton"><Border Height="4" Margin="8,0,-8,0" Background="#FF334F" CornerRadius="2" /></ControlTemplate></RepeatButton.Template>
+                                </RepeatButton>
+                            </Track.DecreaseRepeatButton>
+                            <Track.Thumb>
+                                <Thumb Width="16" Height="16">
+                                    <Thumb.Template><ControlTemplate TargetType="Thumb"><Ellipse Fill="#FF334F" Stroke="#FFCDD5" StrokeThickness="2" /></ControlTemplate></Thumb.Template>
+                                </Thumb>
+                            </Track.Thumb>
+                            <Track.IncreaseRepeatButton>
+                                <RepeatButton Command="Slider.IncreaseLarge" Focusable="False" IsTabStop="False">
+                                    <RepeatButton.Template><ControlTemplate TargetType="RepeatButton"><Border Background="Transparent" /></ControlTemplate></RepeatButton.Template>
+                                </RepeatButton>
+                            </Track.IncreaseRepeatButton>
+                        </Track>
+                    </Grid>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsKeyboardFocusWithin" Value="True"><Setter TargetName="DpiFocus" Property="BorderBrush" Value="#FF334F" /></Trigger>
+                        <Trigger Property="IsEnabled" Value="False"><Setter TargetName="PART_Track" Property="Opacity" Value="0.35" /></Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value></Setter>
+        </Style>
         <Style x:Key="MousePresetInspector" TargetType="Expander">
             <Setter Property="HorizontalContentAlignment" Value="Stretch" />
             <Setter Property="Template"><Setter.Value>
@@ -98,16 +153,30 @@
             <Grid.RowDefinitions><RowDefinition Height="Auto" /><RowDefinition Height="Auto" /></Grid.RowDefinitions>
             <Border x:Name="_dpiSurface" Style="{StaticResource MouseSurface}" Margin="0,0,12,0">
                 <StackPanel>
-                    <TextBlock Text="Sensitivity" Style="{StaticResource MouseSection}" />
+                    <DockPanel Margin="0,0,0,12">
+                        <ToggleButton x:Name="_dpiLink" DockPanel.Dock="Right" HorizontalAlignment="Right" Style="{StaticResource MouseDpiLink}" Content="X / Y linked" IsEnabled="False" AutomationProperties.Name="Link requested X and Y DPI" ToolTip="Link using requested X, or valid Y if X is incomplete. This never applies settings." />
+                        <TextBlock Text="Sensitivity" Style="{StaticResource MouseSection}" Margin="0" VerticalAlignment="Center" />
+                    </DockPanel>
                     <TextBlock Text="Confirmed X / Y DPI" Style="{StaticResource MouseLabel}" />
                     <TextBlock x:Name="_currentDpiText" Text="Unavailable" FontSize="26" FontWeight="SemiBold" Typography.NumeralAlignment="Tabular" Margin="0,0,0,4" />
                     <TextBlock x:Name="_lastDpiText" Text="No confirmed DPI reading yet." Style="{StaticResource ProjectLegionTechnicalTextStyle}" Margin="0,0,0,18" />
+                    <TextBlock x:Name="_requestedDpiText" Text="Requested DPI unavailable" Foreground="#FF334F" FontSize="18" FontWeight="SemiBold" TextWrapping="Wrap" Margin="0,0,0,2" />
+                    <TextBlock Text="Unapplied inputs. Only Apply DPI changes the mouse." Style="{StaticResource ProjectLegionTechnicalTextStyle}" Margin="0,0,0,10" />
+                    <TextBlock x:Name="_dpiXSliderLabel" Text="Requested X + Y" Style="{StaticResource MouseLabel}" />
+                    <Slider x:Name="_dpiXSlider" Style="{StaticResource MouseDpiSlider}" IsEnabled="False" AutomationProperties.Name="Requested X axis DPI slider" />
+                    <Canvas x:Name="_dpiXScale" Height="25" FlowDirection="LeftToRight" IsHitTestVisible="False" />
+                    <StackPanel x:Name="_dpiYSliderPanel" Visibility="Collapsed" Margin="0,6,0,0">
+                        <TextBlock Text="Requested Y" Style="{StaticResource MouseLabel}" />
+                        <Slider x:Name="_dpiYSlider" Style="{StaticResource MouseDpiSlider}" IsEnabled="False" AutomationProperties.Name="Requested Y axis DPI slider" />
+                        <Canvas x:Name="_dpiYScale" Height="25" FlowDirection="LeftToRight" IsHitTestVisible="False" />
+                    </StackPanel>
+                    <TextBlock Text="Log scale · guide marks, not saved DPI stages" Style="{StaticResource ProjectLegionTechnicalTextStyle}" Margin="0,4,0,12" />
                     <Grid>
                         <Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="12" /><ColumnDefinition Width="*" /></Grid.ColumnDefinitions>
                         <StackPanel><Label Content="Requested X" Target="{Binding ElementName=_dpiX}" Padding="0,0,0,6" />
-                            <wpfui:TextBox x:Name="_dpiX" MinHeight="36" ClearButtonEnabled="False" IsEnabled="False" TextChanged="Draft_Changed" AutomationProperties.Name="Requested X axis DPI" /></StackPanel>
+                            <wpfui:TextBox x:Name="_dpiX" MinHeight="36" ClearButtonEnabled="False" IsEnabled="False" AutomationProperties.Name="Requested X axis DPI" /></StackPanel>
                         <StackPanel Grid.Column="2"><Label Content="Requested Y" Target="{Binding ElementName=_dpiY}" Padding="0,0,0,6" />
-                            <wpfui:TextBox x:Name="_dpiY" MinHeight="36" ClearButtonEnabled="False" IsEnabled="False" TextChanged="Draft_Changed" AutomationProperties.Name="Requested Y axis DPI" /></StackPanel>
+                            <wpfui:TextBox x:Name="_dpiY" MinHeight="36" ClearButtonEnabled="False" IsEnabled="False" AutomationProperties.Name="Requested Y axis DPI" /></StackPanel>
                     </Grid>
                     <TextBlock Text="100–30,000 · steps of 50 · active override only" Style="{StaticResource ProjectLegionTechnicalTextStyle}" Margin="0,8,0,10" />
                     <TextBlock x:Name="_dpiValidationText" Style="{StaticResource MouseValidation}" AutomationProperties.LiveSetting="Polite" />

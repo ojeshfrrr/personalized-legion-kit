@@ -14,16 +14,38 @@ public partial class MacroPage
 {
     private readonly MacroController _controller = IoCContainer.Resolve<MacroController>();
 
+    private bool _subscribed;
+
     public MacroPage()
     {
         Initialized += MacroPage_Initialized;
 
         InitializeComponent();
+        Loaded += (_, _) =>
+        {
+            if (_subscribed) return;
+            _subscribed = true;
+            _controller.StateChanged += Controller_StateChanged;
+            _enableMacroToggle.IsChecked = _controller.IsEnabled && _controller.IsListening;
+        };
+        Unloaded += (_, _) =>
+        {
+            _subscribed = false;
+            _controller.StateChanged -= Controller_StateChanged;
+        };
+    }
+
+    private void Controller_StateChanged(object? sender, EventArgs e)
+    {
+        if (!_subscribed || Dispatcher.HasShutdownStarted) return;
+        Dispatcher.BeginInvoke(new Action(() =>
+        {
+            if (_subscribed) _enableMacroToggle.IsChecked = _controller.IsEnabled && _controller.IsListening;
+        }));
     }
 
     private void MacroPage_Initialized(object? sender, EventArgs e)
     {
-        _controller.StateChanged += (_, _) => Dispatcher.Invoke(() => _enableMacroToggle.IsChecked = _controller.IsEnabled && _controller.IsListening);
 
         _enableMacroToggle.IsChecked = _controller.IsEnabled && _controller.IsListening;
 

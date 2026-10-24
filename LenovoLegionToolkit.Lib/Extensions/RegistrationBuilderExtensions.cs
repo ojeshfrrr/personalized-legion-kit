@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using Autofac;
 using Autofac.Builder;
 using LenovoLegionToolkit.Lib.Listeners;
@@ -15,8 +15,8 @@ public static class RegistrationBuilderExtensions
             // Diagnostic sessions poll explicit getters only. No hardware listener is started.
             if (AppFlags.Instance.ReadOnly || AppFlags.Instance.UiPreview)
                 return;
-            // Input listeners can execute commands; observation listeners remain available.
-            if (!HardwareRuntime.ControlsEnabled && e.Instance is DriverKeyListener or SpecialKeyListener or ITSModeListener)
+            // Listeners may query hardware on OS notifications. Start only after explicit session opt-in.
+            if (!HardwareRuntime.ControlsEnabled)
                 return;
             e.Instance.StartAsync().AsValueTask();
         }).AutoActivate();

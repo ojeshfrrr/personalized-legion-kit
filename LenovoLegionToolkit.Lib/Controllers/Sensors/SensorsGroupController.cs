@@ -214,6 +214,19 @@ public class SensorsGroupController : IDisposable
         return new LambdaDisposable(() => Stop(key));
     }
 
+    public async Task<HardwareSensorSnapshot> ReadSnapshotAsync(IEnumerable<SensorItem> items, CancellationToken token)
+    {
+        token.ThrowIfCancellationRequested();
+        if (!IsLibreHardwareMonitorInitialized()) throw new InvalidOperationException("Sensor provider is not initialized.");
+        var scope = ComputeScopeFromSensorItems(items);
+        if (scope == HardwareUpdateScope.None) return new HardwareSensorSnapshot();
+        var previous = Snapshot;
+        await UpdateAsync(true, scope).ConfigureAwait(false);
+        token.ThrowIfCancellationRequested();
+        if (ReferenceEquals(previous, Snapshot)) throw new InvalidOperationException("No fresh sensor snapshot was produced.");
+        return Snapshot;
+    }
+
     private HardwareUpdateScope ComputeScopeFromSensorItems(IEnumerable<SensorItem> items)
     {
         var set = items as HashSet<SensorItem> ?? new HashSet<SensorItem>(items);
@@ -425,27 +438,33 @@ public class SensorsGroupController : IDisposable
     #region Update
 
     private Task? _activeUpdateTask;
+    private HardwareUpdateScope _activeUpdateScope;
     private readonly Lock _updateTaskLock = new();
 
     public async Task UpdateAsync(bool force = false, HardwareUpdateScope scope = HardwareUpdateScope.All)
     {
-        if (_isResetting || !IsLibreHardwareMonitorInitialized()) return;
+        if (_isResetting || !IsLibreHardwareMonitorInitialized() || scope == HardwareUpdateScope.None) return;
 
         var now = Environment.TickCount64;
         if (!force && now - _lastUpdateTick < MIN_UPDATE_INTERVAL_MS) return;
 
         Task? updateTask;
+        bool needsAdditionalScope;
         lock (_updateTaskLock)
         {
             if (_activeUpdateTask == null)
             {
+                _activeUpdateScope = scope;
                 _activeUpdateTask = PerformUpdateInternal(scope);
             }
+            needsAdditionalScope = (scope & ~_activeUpdateScope) != HardwareUpdateScope.None;
             updateTask = _activeUpdateTask;
         }
 
         if (updateTask != null)
             await updateTask.ConfigureAwait(false);
+        // A joined narrow OSD update does not satisfy a wider explicit snapshot.
+        if (needsAdditionalScope) await UpdateAsync(true, scope).ConfigureAwait(false);
     }
 
     private async Task PerformUpdateInternal(HardwareUpdateScope scope)

@@ -24,41 +24,46 @@ public class HWiNFOIntegration(SensorsController sensorController, IntegrationsS
 
     private readonly TimeSpan _refreshInterval = TimeSpan.FromSeconds(1);
 
+    private readonly SemaphoreSlim _lifecycle = new(1, 1);
     private CancellationTokenSource? _cts;
     private Task? _refreshTask;
+
+    public bool IsRunning => _refreshTask is { IsCompleted: false };
 
     public async Task StartStopIfNeededAsync()
     {
         if (AppFlags.Instance.ReadOnly || AppFlags.Instance.UiPreview)
             return;
-        await StopAsync().ConfigureAwait(false);
-
-        if (!settings.Store.HWiNFO)
-            return;
-
-        Log.Instance.Trace($"Starting...");
-
-        _cts = new();
-        _refreshTask = RefreshLoopAsync(_cts.Token);
-
-        Log.Instance.Trace($"Started.");
+        await _lifecycle.WaitAsync().ConfigureAwait(false);
+        try
+        {
+            await StopCoreAsync().ConfigureAwait(false);
+            if (!settings.Store.HWiNFO) return;
+            HardwareRuntime.RequireControls();
+            _cts = new();
+            _refreshTask = RefreshLoopAsync(_cts.Token);
+        }
+        finally { _lifecycle.Release(); }
     }
 
     public async Task StopAsync()
     {
-        if (AppFlags.Instance.ReadOnly || AppFlags.Instance.UiPreview)
-            return;
-        Log.Instance.Trace($"Stopping...");
+        if (AppFlags.Instance.ReadOnly || AppFlags.Instance.UiPreview) return;
+        await _lifecycle.WaitAsync().ConfigureAwait(false);
+        try { await StopCoreAsync().ConfigureAwait(false); }
+        finally { _lifecycle.Release(); }
+    }
 
-        if (_cts is not null)
-            await _cts.CancelAsync().ConfigureAwait(false);
-
-        if (_refreshTask is not null)
-            await _refreshTask.ConfigureAwait(false);
-
+    private async Task StopCoreAsync()
+    {
+        // Do not touch registry entries unless this instance owned the worker.
+        if (_cts is null && _refreshTask is null) return;
+        if (_cts is not null) await _cts.CancelAsync().ConfigureAwait(false);
+        if (_refreshTask is not null) await _refreshTask.ConfigureAwait(false);
+        _cts?.Dispose();
+        _cts = null;
+        _refreshTask = null;
         ClearValues();
-
-        Log.Instance.Trace($"Stopped.");
     }
 
     private async Task RefreshLoopAsync(CancellationToken token)

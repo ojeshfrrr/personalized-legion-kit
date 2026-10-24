@@ -13,7 +13,10 @@
         <StackPanel
             x:Name="_content"
             Orientation="Vertical"
-            Visibility="Hidden">
+            Visibility="Visible">
+            <DockPanel Margin="0,0,0,6">
+                <TextBlock x:Name="_gpuReadStatus" Text="Reading snapshot…" TextWrapping="Wrap" VerticalAlignment="Center" Foreground="{DynamicResource ProjectLegionSecondaryTextBrush}"/>
+            </DockPanel>
             <Grid HorizontalAlignment="Right">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*" />

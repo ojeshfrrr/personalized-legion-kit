@@ -1,20 +1,14 @@
 using System;
-using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
-using System.Windows.Threading;
-using Humanizer;
 using LenovoLegionToolkit.Lib;
-using LenovoLegionToolkit.Lib.Controllers;
 using LenovoLegionToolkit.Lib.Controllers.Sensors;
 using LenovoLegionToolkit.Lib.Settings;
 using LenovoLegionToolkit.Lib.Utils;
 using LenovoLegionToolkit.WPF.Resources;
-using LenovoLegionToolkit.WPF.Settings;
 using LenovoLegionToolkit.WPF.Utils;
-using Wpf.Ui.Common;
 using MenuItem = Wpf.Ui.Controls.MenuItem;
 
 namespace LenovoLegionToolkit.WPF.Controls.Dashboard;
@@ -23,155 +17,55 @@ public partial class SensorsControl
 {
     private readonly ISensorsController _controller = IoCContainer.Resolve<ISensorsController>();
     private readonly ApplicationSettings _applicationSettings = IoCContainer.Resolve<ApplicationSettings>();
-    private readonly DashboardSettings _dashboardSettings = IoCContainer.Resolve<DashboardSettings>();
 
-    private CancellationTokenSource? _cts;
-    private Task? _refreshTask;
+    private readonly DemandReadSession<SensorsData> _reads;
     private readonly OptionalUiActivity _activity;
-    private IDisposable? _gpuMonitoringLease;
+    private bool _prepared;
 
     public SensorsControl()
     {
         InitializeComponent();
-        InitializeContextMenu();
-
-        _activity = new OptionalUiActivity(this, SetActivityAsync);
-    }
-
-    private void InitializeContextMenu()
-    {
-        ContextMenu = new ContextMenu();
-        ContextMenu.Items.Add(new MenuItem { Header = Resource.SensorsControl_RefreshInterval, IsEnabled = false });
-
-        foreach (var interval in new double[] { 0.5, 1, 2, 3, 4, 5 })
+        _reads = new DemandReadSession<SensorsData>(async token =>
         {
-            var item = new MenuItem
+            token.ThrowIfCancellationRequested();
+            if (!_prepared)
             {
-                SymbolIcon = _dashboardSettings.Store.SensorsRefreshIntervalSeconds == interval ? SymbolRegular.Checkmark24 : SymbolRegular.Empty,
-                Header = TimeSpan.FromSeconds(interval).Humanize(culture: Resource.Culture)
-            };
-            item.Click += (_, _) =>
-            {
-                _dashboardSettings.Store.SensorsRefreshIntervalSeconds = interval;
-                _dashboardSettings.SynchronizeStore();
-                InitializeContextMenu();
-            };
-            ContextMenu.Items.Add(item);
-        }
-    }
-
-    private async Task SetActivityAsync(bool active)
-    {
-        if (active)
-        {
-            _gpuMonitoringLease ??= IoCContainer.Resolve<GPUController>().AcquireOptionalMonitoring();
-            Refresh();
-            return;
-        }
-
-        var cts = _cts;
-        var refreshTask = _refreshTask;
-        _cts = null;
-        _refreshTask = null;
-        if (cts is not null)
-            await cts.CancelAsync();
-        if (refreshTask is not null)
-            await refreshTask;
-        cts?.Dispose();
-        _gpuMonitoringLease?.Dispose();
-        _gpuMonitoringLease = null;
-        // A rapid return to this page may already have started a new refresh.
-        if (!_activity.IsActive)
-        {
-            UpdateValues(SensorsData.Empty);
-            _readStatusText.Text = "Monitoring paused while gaming or the window is hidden.";
-        }
-    }
-
-    private void Refresh()
-    {
-        _cts?.Cancel();
-        _cts = new CancellationTokenSource();
-
-        var token = _cts.Token;
-
-        _refreshTask = Task.Run(async () =>
-        {
-            Log.Instance.Trace($"Sensors refresh started...");
-
-            try
-            {
-                token.ThrowIfCancellationRequested();
-                if (!await _controller.IsSupportedAsync())
-                {
-                    Log.Instance.Trace($"Sensors not supported.");
-
-                    await Dispatcher.InvokeAsync(() =>
-                    {
-                        if (token.IsCancellationRequested || !IsVisible) return;
-                        UpdateValues(SensorsData.Empty);
-                        _readStatusText.Text = "Sensor readings are unsupported or unavailable on this device.";
-                    }, DispatcherPriority.Background, token);
-                    return;
-                }
-
+                if (!await _controller.IsSupportedAsync()) throw new NotSupportedException();
                 token.ThrowIfCancellationRequested();
                 await _controller.PrepareAsync();
                 token.ThrowIfCancellationRequested();
+                _prepared = true;
             }
-            catch (OperationCanceledException) when (token.IsCancellationRequested) { return; }
-            catch (Exception ex)
-            {
-                Log.Instance.Trace($"Sensors initialization failed.", ex);
-                await Dispatcher.InvokeAsync(() =>
-                {
-                    if (token.IsCancellationRequested || !IsVisible) return;
-                    UpdateValues(SensorsData.Empty);
-                    _readStatusText.Text = "Sensor initialization failed. See the application log for details.";
-                });
-                return;
-            }
-
-            var firstSample = true;
-            while (!token.IsCancellationRequested)
-            {
-                try
-                {
-                    if (GamingActivityMonitor.Instance.OptionalWorkPaused) break;
-                    var data = await _controller.GetDataAsync();
-                    token.ThrowIfCancellationRequested();
-                    if (firstSample)
-                    {
-                        Log.Instance.Trace($"First sensor sample: CPU={data.CPU.Temperature}C, GPU={data.GPU.Temperature}C, CPUFan={data.CPU.FanSpeed}RPM, GPUFan={data.GPU.FanSpeed}RPM.");
-                        firstSample = false;
-                        ReadOnlyQaSession.Mark("FirstSensorSample");
-                    }
-                    await Dispatcher.InvokeAsync(() =>
-                    {
-                        if (token.IsCancellationRequested || !IsVisible || GamingActivityMonitor.Instance.OptionalWorkPaused) return;
-                        UpdateValues(data);
-                        _readStatusText.Text = "Live device readings";
-                    }, DispatcherPriority.Background, token);
-                }
-                catch (OperationCanceledException) { break; }
-                catch (Exception ex)
-                {
-                    Log.Instance.Trace($"Sensors refresh failed.", ex);
-
-                    await Dispatcher.InvokeAsync(() =>
-                    {
-                        if (token.IsCancellationRequested || !IsVisible) return;
-                        UpdateValues(SensorsData.Empty);
-                        _readStatusText.Text = "Sensor readings are temporarily unavailable.";
-                    });
-                }
-                try { await Task.Delay(TimeSpan.FromSeconds(_dashboardSettings.Store.SensorsRefreshIntervalSeconds), token); }
-                catch (OperationCanceledException) { break; }
-            }
-
-            Log.Instance.Trace($"Sensors refresh stopped.");
+            token.ThrowIfCancellationRequested();
+            var data = await _controller.GetDataAsync();
+            token.ThrowIfCancellationRequested();
+            return data;
+        }, (data, time) =>
+        {
+            UpdateValues(data);
+            _readStatusText.Text = $"Read {time:HH:mm:ss}";
+            ReadOnlyQaSession.Mark("FirstSensorSample");
+        }, ex =>
+        {
+            UpdateValues(SensorsData.Empty);
+            _readStatusText.Text = "Readings unavailable; monitoring resumes while this page is active.";
+            Log.Instance.Trace($"Sensor snapshot unavailable.", ex);
+        }, refreshInterval: TimeSpan.FromSeconds(1));
+        _activity = new OptionalUiActivity(this, active =>
+        {
+            // The session owns/drains the task; do not block visibility cancellation.
+            if (active) { _prepared = false; _ = _reads.ActivateAsync(); }
+            else _ = _reads.DeactivateAsync();
+            return Task.CompletedTask;
         });
+        ContextMenu = new ContextMenu();
+        var refresh = new MenuItem { Header = "Refresh readings", Tag = "ReadOnlyRefresh" };
+        refresh.Click += ReadRefresh_Click;
+        ContextMenu.Items.Add(refresh);
+        ContextMenu.Items.Add(new MenuItem { Header = "Live while this window is active · 1 second", IsEnabled = false });
     }
+
+    private async void ReadRefresh_Click(object sender, RoutedEventArgs e) => await _reads.RefreshAsync();
 
     private void UpdateValues(SensorsData data)
     {

@@ -6,10 +6,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
-using System.Windows.Threading;
-using Humanizer;
 using LenovoLegionToolkit.Lib;
-using LenovoLegionToolkit.Lib.Controllers;
 using LenovoLegionToolkit.Lib.Controllers.Sensors;
 using LenovoLegionToolkit.Lib.Messaging;
 using LenovoLegionToolkit.Lib.Messaging.Messages;
@@ -33,26 +30,35 @@ public partial class SensorsControlV2
     private readonly HardwareSensorSettings _hardwareSensorSettings = IoCContainer.Resolve<HardwareSensorSettings>();
     private readonly ApplicationSettings _applicationSettings = IoCContainer.Resolve<ApplicationSettings>();
     private readonly Lock _updateLock = new();
-    private IDisposable? _sensorSubscription;
-    private readonly Task<string> _cpuNameTask;
+    private bool _machineLabelsInitialized;
+    private Task<string>? _cpuNameTask;
+    private readonly DemandReadSession<SensorRead> _reads;
+    private sealed record SensorRead(SensorsData Data, HardwareSensorSnapshot Snapshot, BatteryInformation? Battery);
     private Task<string>? _gpuNameTask;
     private readonly HashSet<SensorItem> _activeSensorItems = [];
-    private static readonly double[] AvailableRefreshIntervals = [0.5, 1, 2, 3, 4, 5];
     private readonly Dictionary<SensorItem, FrameworkElement> _sensorItemToControlMap;
     private readonly Dictionary<SensorCardType, FrameworkElement> _cardTypeMap;
     private int _lastVisibleCardCount = -1;
     private double _lastAdjustedWidth = -1;
-    private volatile bool _acceptSensorUpdates;
-    private int _sensorUpdateVersion;
-    private int _supplementalQueries;
-    private int _snapshotUpdateBusy;
     private readonly OptionalUiActivity _activity;
-    private IDisposable? _gpuMonitoringLease;
 
     public SensorsControlV2()
     {
         InitializeComponent();
         InitializeContextMenu();
+        _reads = new DemandReadSession<SensorRead>(ReadOnceAsync, (read, time) =>
+        {
+            if (!_machineLabelsInitialized) { _machineLabelsInitialized = true; _ = InitializeMachineDetailsAsync(); }
+            UpdateAllSensorValuesV2(read.Data, read.Snapshot, read.Battery);
+            _snapshotReadStatus.Text = $"Read {time:HH:mm:ss}";
+        }, ex =>
+        {
+            ClearAllSensorValues();
+            _snapshotReadStatus.Text = "Advanced provider unavailable. Use safe device readings or enable the provider explicitly in Settings.";
+            Log.Instance.Trace($"Advanced sensor snapshot unavailable.", ex);
+        }, refreshInterval: TimeSpan.FromSeconds(1));
+        Loaded += (_, _) => SubscribeMessages();
+        Unloaded += (_, _) => MessagingCenter.Unsubscribe(this);
         _activity = new OptionalUiActivity(this, active =>
         {
             SetActivity(active);
@@ -62,7 +68,6 @@ public partial class SensorsControlV2
 
         _sensorsGroupControllers.SelectedGpuIsIgpu = _hardwareSensorSettings.Store.SelectedGpuIsIgpu;
 
-        _cpuNameTask = GetProcessedCpuName();
         _cardTypeMap = new Dictionary<SensorCardType, FrameworkElement>
         {
             { SensorCardType.CPU, _cpuCard },
@@ -95,52 +100,28 @@ public partial class SensorsControlV2
             { SensorItem.Disk2Temperature, _disk2TemperatureGrid! }
         };
 
-        _ = InitializeMachineDetailsAsync();
-
-        MessagingCenter.Subscribe<DashboardElementChangedMessage>(this, message =>
-        {
-            Dispatcher.Invoke(() =>
-            {
-                lock (_updateLock)
-                {
-                    _activeSensorItems.Clear();
-
-                    foreach (var item in message.Items)
-                    {
-                        _activeSensorItems.Add(item);
-                    }
-
-                    UpdateControlsVisibility();
-                    if (_activity.IsActive && _applicationSettings.Store.EnableHardwareSensors)
-                        StartSensorUpdates();
-                }
-            });
-        });
-
-        MessagingCenter.Subscribe<FeatureStateMessage<HardwareSensorsState>>(this, message =>
-        {
-            Dispatcher.Invoke(() =>
-            {
-                if (message.State == HardwareSensorsState.Off)
-                {
-                    _gpuMonitoringLease?.Dispose();
-                    _gpuMonitoringLease = null;
-                    _acceptSensorUpdates = false;
-                    Interlocked.Increment(ref _sensorUpdateVersion);
-                    _sensorSubscription?.Dispose();
-                    _sensorsGroupControllers.SensorsUpdated -= OnSensorsUpdated;
-                    ClearAllSensorValues();
-                }
-                else if (_activity.IsActive)
-                {
-                    StartSensorUpdates();
-                    _sensorsGroupControllers.SensorsUpdated -= OnSensorsUpdated;
-                    _sensorsGroupControllers.SensorsUpdated += OnSensorsUpdated;
-                }
-            });
-        });
-
         _cardWrapPanel.Drop += (s, e) => SaveCardOrder();
+    }
+
+    private void SubscribeMessages()
+    {
+        MessagingCenter.Unsubscribe(this);
+        MessagingCenter.Subscribe<DashboardElementChangedMessage>(this, message => Dispatcher.Invoke(() =>
+        {
+            _reads.InvalidatePendingRead();
+            _activeSensorItems.Clear();
+            foreach (var item in message.Items) _activeSensorItems.Add(item);
+            UpdateControlsVisibility();
+            _snapshotReadStatus.Text = "Selection updated";
+        }));
+        MessagingCenter.Subscribe<FeatureStateMessage<HardwareSensorsState>>(this, message => Dispatcher.Invoke(() =>
+        {
+            _ = _reads.DeactivateAsync();
+            ClearAllSensorValues();
+            _snapshotReadStatus.Text = message.State == HardwareSensorsState.Off
+                ? "Advanced provider disabled" : "Provider ready";
+            if (message.State != HardwareSensorsState.Off && _activity.IsActive) _ = _reads.ActivateAsync();
+        }));
     }
 
     private void UpdateControlsVisibility()
@@ -181,28 +162,10 @@ public partial class SensorsControlV2
     private void InitializeContextMenu()
     {
         ContextMenu = new ContextMenu();
-        ContextMenu.Items.Add(new MenuItem { Header = Resource.SensorsControl_RefreshInterval, IsEnabled = false });
-        foreach (var interval in AvailableRefreshIntervals)
-        {
-            var item = new MenuItem
-            {
-                SymbolIcon = _sensorsControlSettings.Store.SensorsRefreshIntervalSeconds == interval
-                    ? SymbolRegular.Checkmark24
-                    : SymbolRegular.Empty,
-                Header = TimeSpan.FromSeconds(interval).Humanize(culture: Resource.Culture)
-            };
-            item.Click += (_, _) =>
-            {
-                _sensorsControlSettings.Store.SensorsRefreshIntervalSeconds = interval;
-                _sensorsControlSettings.SynchronizeStore();
-                InitializeContextMenu();
-                if (IsVisible)
-                {
-                    StartSensorUpdates(interval);
-                }
-            };
-            ContextMenu.Items.Add(item);
-        }
+        var refresh = new MenuItem { Header = "Refresh readings", Tag = "ReadOnlyRefresh" };
+        refresh.Click += ReadRefresh_Click;
+        ContextMenu.Items.Add(refresh);
+        ContextMenu.Items.Add(new MenuItem { Header = "Live while this window is active · 1 second", IsEnabled = false });
         ContextMenu.Items.Add(new Separator());
         var customizeItem = new MenuItem
         {
@@ -237,23 +200,16 @@ public partial class SensorsControlV2
             RestoreCardOrder();
             UpdateControlsVisibility();
 
-            if (!_applicationSettings.Store.EnableHardwareSensors)
-                return;
+            _ = _reads.ActivateAsync();
+        }
+        else _ = _reads.DeactivateAsync();
+    }
 
-            StartSensorUpdates();
-            _sensorsGroupControllers.SensorsUpdated -= OnSensorsUpdated;
-            _sensorsGroupControllers.SensorsUpdated += OnSensorsUpdated;
-        }
-        else
-        {
-            _gpuMonitoringLease?.Dispose();
-            _gpuMonitoringLease = null;
-            _acceptSensorUpdates = false;
-            Interlocked.Increment(ref _sensorUpdateVersion);
-            _sensorSubscription?.Dispose();
-            _sensorsGroupControllers.SensorsUpdated -= OnSensorsUpdated;
-            if (IsVisible && GamingActivityMonitor.Instance.GameRunning) ClearAllSensorValues();
-        }
+    private async void ReadRefresh_Click(object sender, RoutedEventArgs e)
+    {
+        if (!_activity.IsActive) return;
+        if (!_reads.IsActive) await _reads.ActivateAsync();
+        else await _reads.RefreshAsync();
     }
 
     private void RestoreCardOrder()
@@ -288,70 +244,26 @@ public partial class SensorsControlV2
         _sensorsControlSettings.SynchronizeStore();
     }
 
-    private void StartSensorUpdates(double? intervalSeconds = null)
+    private async Task<SensorRead> ReadOnceAsync(CancellationToken token)
     {
-        _acceptSensorUpdates = false;
-        Interlocked.Increment(ref _sensorUpdateVersion);
-        _sensorSubscription?.Dispose();
-
-        if (!_activity.IsActive || GamingActivityMonitor.Instance.OptionalWorkPaused || !_applicationSettings.Store.EnableHardwareSensors || _activeSensorItems.Count == 0)
-        {
-            _gpuMonitoringLease?.Dispose();
-            _gpuMonitoringLease = null;
-            return;
-        }
-
-        _gpuMonitoringLease ??= IoCContainer.Resolve<GPUController>().AcquireOptionalMonitoring();
-        Volatile.Write(ref _supplementalQueries, (int)SensorQueryRequirements.GetSupplementalQueries(_activeSensorItems));
-        _acceptSensorUpdates = true;
-        _sensorSubscription = _sensorsGroupControllers.Subscribe(TimeSpan.FromSeconds(intervalSeconds ?? _sensorsControlSettings.Store.SensorsRefreshIntervalSeconds), _activeSensorItems);
-    }
-
-    private async void OnSensorsUpdated(HardwareSensorSnapshot snapshot)
-    {
-        if (!_acceptSensorUpdates || GamingActivityMonitor.Instance.OptionalWorkPaused) return;
-        if (Interlocked.CompareExchange(ref _snapshotUpdateBusy, 1, 0) != 0) return;
-        var version = Volatile.Read(ref _sensorUpdateVersion);
-        var queries = (SupplementalSensorQueries)Volatile.Read(ref _supplementalQueries);
-        try
-        {
-            var dataTask = (queries & SupplementalSensorQueries.Lenovo) != 0 ? Task.Run(async () =>
-            {
-                try { return await _controller.GetDataAsync().ConfigureAwait(false); }
-                catch (Exception ex)
-                {
-                    Log.Instance.Trace($"Lenovo fan sensor query failed; values remain unavailable.", ex);
-                    return SensorsData.Empty;
-                }
-            }) : Task.FromResult(SensorsData.Empty);
-
-            var batteryInfoTask = (queries & SupplementalSensorQueries.Battery) != 0
-                ? Task.Run<BatteryInformation?>(() => Battery.GetBatteryInformation())
-                : Task.FromResult<BatteryInformation?>(null);
-            var gpuNameTask = GetProcessedGpuName();
-
-            await Task.WhenAll(dataTask, batteryInfoTask, gpuNameTask, _cpuNameTask).ConfigureAwait(false);
-
-            if (!_acceptSensorUpdates || GamingActivityMonitor.Instance.OptionalWorkPaused || version != Volatile.Read(ref _sensorUpdateVersion)) return;
-            await Dispatcher.BeginInvoke(() =>
-            {
-                if (_acceptSensorUpdates && IsVisible && !GamingActivityMonitor.Instance.OptionalWorkPaused && version == Volatile.Read(ref _sensorUpdateVersion))
-                {
-                    _gpuNameTask = gpuNameTask;
-                    UpdateAllSensorValuesV2(dataTask.Result, snapshot, batteryInfoTask.Result);
-                }
-            }, DispatcherPriority.Background);
-        }
-        catch (Exception ex)
-        {
-            Log.Instance.Trace($"Sensor refresh failed: {ex}");
-            if (_acceptSensorUpdates && version == Volatile.Read(ref _sensorUpdateVersion))
-                await Dispatcher.BeginInvoke(() =>
-                {
-                    if (_acceptSensorUpdates && IsVisible && version == Volatile.Read(ref _sensorUpdateVersion)) ClearAllSensorValues();
-                });
-        }
-        finally { Volatile.Write(ref _snapshotUpdateBusy, 0); }
+        token.ThrowIfCancellationRequested();
+        // Never initialize a low-level provider merely to populate this page.
+        if (!HardwareRuntime.ControlsEnabled || !_applicationSettings.Store.EnableHardwareSensors ||
+            !_sensorsGroupControllers.IsLibreHardwareMonitorInitialized()) throw new NotSupportedException();
+        var items = _sensorsControlSettings.Store.VisibleItems?.ToHashSet() ?? [];
+        var queries = SensorQueryRequirements.GetSupplementalQueries(items);
+        var snapshot = await _sensorsGroupControllers.ReadSnapshotAsync(items, token);
+        token.ThrowIfCancellationRequested();
+        var data = (queries & SupplementalSensorQueries.Lenovo) != 0
+            ? await _controller.GetDataAsync() : SensorsData.Empty;
+        token.ThrowIfCancellationRequested();
+        BatteryInformation? battery = (queries & SupplementalSensorQueries.Battery) != 0
+            ? Battery.GetBatteryInformation() : null;
+        token.ThrowIfCancellationRequested();
+        await (_cpuNameTask ??= GetProcessedCpuName());
+        await (_gpuNameTask = GetProcessedGpuName());
+        token.ThrowIfCancellationRequested();
+        return new SensorRead(data, snapshot, battery);
     }
 
     private void ClearAllSensorValues()
@@ -424,7 +336,7 @@ public partial class SensorsControlV2
                 control.Visibility = _activeSensorItems.Contains(kv.Key) ? Visibility.Visible : Visibility.Collapsed;
             }
 
-            _cpuCardName.Text = _cpuNameTask.Result;
+            _cpuCardName.Text = _cpuNameTask?.Result ?? "Unavailable";
             _gpuCardName.Text = _gpuNameTask?.Result ?? "UNKNOWN";
 
             // --- CPU ---

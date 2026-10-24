@@ -9,6 +9,7 @@
     <ProjectReference Include="..\..\LenovoLegionToolkit.Lib.Automation\LenovoLegionToolkit.Lib.Automation.csproj" />
     <Compile Include="..\..\LenovoLegionToolkit.WPF\Presentation\MousePageSession.cs" Link="Production\MousePageSession.cs" />
     <Compile Include="..\..\LenovoLegionToolkit.WPF\Presentation\MouseButtonsSession.cs" Link="Production\MouseButtonsSession.cs" />
+    <Compile Include="..\..\LenovoLegionToolkit.WPF\Presentation\MouseDpiDraft.cs" Link="Production\MouseDpiDraft.cs" />
     <Compile Include="..\..\LenovoLegionToolkit.WPF\Utils\HardwareCommandRunner.cs" Link="Production\HardwareCommandRunner.cs" />
   </ItemGroup>
 </Project>

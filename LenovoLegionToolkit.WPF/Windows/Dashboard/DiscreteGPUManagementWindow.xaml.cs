@@ -6,6 +6,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -34,7 +35,10 @@ public partial class DiscreteGPUManagementWindow : BaseWindow
     private readonly ObservableCollection<DiscreteGPUAppViewModel> _apps = new();
     private bool _isInitializing = true;
     private readonly OptionalUiActivity _activity;
-    private IDisposable? _gpuMonitoringLease;
+    private readonly DemandReadSession<GPUStatus> _reads;
+    private int _readVersion;
+    private Task _appReadTask = Task.CompletedTask;
+    private CancellationTokenSource? _appReadLifetime;
 
     public DiscreteGPUManagementWindow()
     {
@@ -56,20 +60,34 @@ public partial class DiscreteGPUManagementWindow : BaseWindow
 
         _processListView.ItemsSource = _apps;
 
-        Loaded += DiscreteGPUManagementWindow_Loaded;
-        _gpuController.Refreshed += GpuController_Refreshed;
-        _activity = new OptionalUiActivity(this, async active =>
+        _reads = new DemandReadSession<GPUStatus>(async token =>
         {
+            await _appReadTask.ConfigureAwait(false);
+            token.ThrowIfCancellationRequested();
+            return await _gpuController.RefreshNowAsync(token).ConfigureAwait(false);
+        }, (status, time) =>
+        {
+            _gpuReadStatus.Text = $"Read {time:HH:mm:ss} · snapshot";
+            _appReadTask = RefreshAppListAsync(_appReadLifetime?.Token ?? new CancellationToken(true));
+        }, ex =>
+        {
+            _gpuReadStatus.Text = "Read unavailable · Refresh to try again";
+            Log.Instance.Trace($"GPU management snapshot unavailable.", ex);
+        });
+        _activity = new OptionalUiActivity(this, active =>
+        {
+            _readVersion++;
             if (active)
             {
-                _gpuMonitoringLease ??= _gpuController.AcquireOptionalMonitoring();
-                await _gpuController.StartAsync(interval: _settings.Store.GPUMonitoringInterval);
+                _appReadLifetime = new CancellationTokenSource();
+                _ = _reads.ActivateAsync();
             }
             else
             {
-                _gpuMonitoringLease?.Dispose();
-                _gpuMonitoringLease = null;
+                RetireAppRead();
+                _ = _reads.DeactivateAsync();
             }
+            return Task.CompletedTask;
         });
 
         _isInitializing = false;
@@ -88,7 +106,7 @@ public partial class DiscreteGPUManagementWindow : BaseWindow
             items.Add(new PStateItemViewModel { Id = (int)state, DisplayName = $"P{(uint)state}" });
         }
 
-        var previouslySelectedId = (_pStateComboBox.SelectedItem as PStateItemViewModel)?.Id ?? _settings.Store.LockedPStateId;
+        var previouslySelectedId = (_pStateComboBox.SelectedItem as PStateItemViewModel)?.Id ?? (_gpuController.IsPStateEnforcementEnabled ? _settings.Store.LockedPStateId : -1);
 
         _pStateComboBox.ItemsSource = items;
         _pStateComboBox.DisplayMemberPath = nameof(PStateItemViewModel.DisplayName);
@@ -98,51 +116,44 @@ public partial class DiscreteGPUManagementWindow : BaseWindow
         _pStateComboBox.SelectedItem = selected;
     }
 
-    private void DiscreteGPUManagementWindow_Loaded(object sender, RoutedEventArgs e)
-    {
-        _ = RefreshAppListAsync();
-    }
-
-    private void GpuController_Refreshed(object? sender, GPUStatus e)
-    {
-        if (GamingActivityMonitor.Instance.OptionalWorkPaused) return;
-        Dispatcher.Invoke(() =>
-        {
-            if (!_activity.IsActive || GamingActivityMonitor.Instance.OptionalWorkPaused) return;
-            if (_pStateComboBox.ItemsSource is not List<PStateItemViewModel> items || items.Count <= 1)
-            {
-                var supported = _gpuController.GetSupportedPerformanceStates();
-                if (supported.Count > 0)
-                {
-                    InitializePStateOptions();
-                }
-            }
-            _ = RefreshAppListAsync();
-        });
-    }
+    private async void ReadRefresh_Click(object sender, RoutedEventArgs e) => await _reads.RefreshAsync();
 
     private bool _isRefreshing;
 
-    private async Task RefreshAppListAsync()
+    private void RetireAppRead()
     {
-        if (GamingActivityMonitor.Instance.OptionalWorkPaused) return;
-        if (_isRefreshing) return;
+        var lifetime = _appReadLifetime;
+        _appReadLifetime = null;
+        if (lifetime is null) return;
+        lifetime.Cancel();
+        _ = _appReadTask.ContinueWith(_ => lifetime.Dispose(), TaskScheduler.Default);
+    }
+
+    private async Task RefreshAppListAsync(CancellationToken token)
+    {
+        if (token.IsCancellationRequested || GamingActivityMonitor.Instance.OptionalWorkPaused) return;
+        if (!_activity.IsActive || _isRefreshing) return;
+        var version = _readVersion;
         _isRefreshing = true;
 
         try
         {
             var data = await Task.Run(() =>
             {
+                token.ThrowIfCancellationRequested();
                 var activeProcesses = _gpuController.AllActiveProcesses.ToList();
                 var processInfos = activeProcesses.Select(p =>
                     {
+                        token.ThrowIfCancellationRequested();
                         try { return new { p.Id, Path = p.GetFileName() }; }
                         catch { return null; }
                     })
                     .Where(p => !string.IsNullOrEmpty(p?.Path))
                     .ToList();
 
+                token.ThrowIfCancellationRequested();
                 var hasMultipleGpus = Displays.HasMultipleGpus();
+                token.ThrowIfCancellationRequested();
 
                 var configuredApps = new List<string>();
                 try
@@ -164,8 +175,10 @@ public partial class DiscreteGPUManagementWindow : BaseWindow
 
             var currentProcessPath = Process.GetCurrentProcess().MainModule?.FileName;
 
+            if (token.IsCancellationRequested || !_activity.IsActive || version != _readVersion) return;
             foreach (var path in data.allPaths)
             {
+                token.ThrowIfCancellationRequested();
                 var isLLT = currentProcessPath != null && path.Equals(currentProcessPath, StringComparison.OrdinalIgnoreCase);
 
                 var processIds = data.processInfos.Where(p => p!.Path!.Equals(path, StringComparison.OrdinalIgnoreCase))
@@ -186,6 +199,7 @@ public partial class DiscreteGPUManagementWindow : BaseWindow
                 else
                 {
                     var icon = await Task.Run(() => ExtractIcon(path));
+                    if (token.IsCancellationRequested || !_activity.IsActive || version != _readVersion) return;
                     _apps.Add(new DiscreteGPUAppViewModel
                     {
                         Name = Path.GetFileNameWithoutExtension(path),
@@ -200,10 +214,12 @@ public partial class DiscreteGPUManagementWindow : BaseWindow
                 }
             }
 
+            if (token.IsCancellationRequested || !_activity.IsActive || version != _readVersion) return;
             var toRemove = _apps.Where(a => !data.allPaths.Contains(a.Path, StringComparer.OrdinalIgnoreCase)).ToList();
             foreach (var app in toRemove)
                 _apps.Remove(app);
         }
+        catch (OperationCanceledException) when (token.IsCancellationRequested) { }
         catch (Exception ex)
         {
             Log.Instance.Trace($"Failed to refresh app list.", ex);
@@ -253,19 +269,19 @@ public partial class DiscreteGPUManagementWindow : BaseWindow
         _ = IoCContainer.Resolve<DgpuAwakeManager>().UpdateStateAsync();
     }
 
-    private void PStateComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+    private async void PStateComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
     {
         if (_isInitializing || _pStateComboBox.SelectedItem is not PStateItemViewModel item)
             return;
 
-        if (item.Id == _settings.Store.LockedPStateId)
+        if (item.Id == _settings.Store.LockedPStateId && (item.Id < 0 || _gpuController.IsPStateEnforcementEnabled))
             return;
 
-        _ = _gpuController.SetPStateAsync(item.Id);
+        if (await _gpuController.SetPStateAsync(item.Id)) await _reads.RefreshAsync();
     }
 
 
-    private void PreferenceComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+    private async void PreferenceComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
     {
         if (_isInitializing || _isRefreshing || sender is not ComboBox comboBox || comboBox.DataContext is not DiscreteGPUAppViewModel vm)
             return;
@@ -290,7 +306,7 @@ public partial class DiscreteGPUManagementWindow : BaseWindow
             else
                 SnackbarHelper.Show(Resource.DiscreteGPUControl_Title, Resource.SettingsPage_RestartRequired_Message, SnackbarType.Success);
 
-            _ = RefreshAppListAsync();
+            await _reads.RefreshAsync();
         }
         catch (Exception ex)
         {
@@ -319,7 +335,9 @@ public partial class DiscreteGPUManagementWindow : BaseWindow
 
     protected override void OnClosed(EventArgs e)
     {
-        _gpuController.Refreshed -= GpuController_Refreshed;
+        _readVersion++;
+        RetireAppRead();
+        _ = _reads.DeactivateAsync();
         base.OnClosed(e);
     }
 
