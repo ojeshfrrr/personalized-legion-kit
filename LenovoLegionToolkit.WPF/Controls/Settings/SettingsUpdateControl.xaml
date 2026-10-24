@@ -9,6 +9,7 @@
     <ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
         <StackPanel Margin="0,0,16,12">
             <TextBlock Style="{StaticResource ProjectLegionSectionTitleStyle}" Text="Updates" />
+            <TextBlock x:Name="_updatesNotice" Style="{StaticResource ProjectLegionNoticeStyle}" TextWrapping="Wrap" />
             <custom:CardControl Style="{StaticResource ProjectLegionPreferenceRowStyle}"
                 x:Name="_checkUpdatesCard"
                 Margin="0"
@@ -18,6 +19,9 @@
                 </custom:CardControl.Header>
                 <wpfui:Button
                     x:Name="_checkUpdatesButton"
+                    Background="{DynamicResource ProjectLegionAccentBrush}"
+                    Foreground="Black"
+                    BorderBrush="{DynamicResource ProjectLegionAccentBrush}"
                     MinWidth="160"
                     Margin="0"
                     AutomationProperties.Name="{x:Static resources:Resource.SettingsPage_CheckUpdates_Title}"
@@ -30,10 +34,13 @@
                 Margin="0"
                 Icon="ArrowSort24">
                 <custom:CardControl.Header>
-                    <controls:CardHeaderControl Title="{x:Static resources:Resource.SettingsPage_UpdateChannel_Title}" Subtitle="{x:Static resources:Resource.SettingsPage_UpdateChannel_Message}" />
+                    <controls:CardHeaderControl Title="{x:Static resources:Resource.SettingsPage_UpdateChannel_Title}" Subtitle="Stable releases, or Preview + stable." />
                 </custom:CardControl.Header>
                 <ComboBox
                     x:Name="_updateChannelComboBox"
+                    Background="{DynamicResource ProjectLegionSurfaceBrush}"
+                    Foreground="{DynamicResource ProjectLegionTextBrush}"
+                    BorderBrush="{DynamicResource ProjectLegionBorderBrush}"
                     MinWidth="160"
                     Margin="0"
                     AutomationProperties.Name="{x:Static resources:Resource.SettingsPage_UpdateChannel_Title}"
@@ -50,6 +57,9 @@
                 </custom:CardControl.Header>
                 <ComboBox
                     x:Name="_updateMethodComboBox"
+                    Background="{DynamicResource ProjectLegionSurfaceBrush}"
+                    Foreground="{DynamicResource ProjectLegionTextBrush}"
+                    BorderBrush="{DynamicResource ProjectLegionBorderBrush}"
                     MinWidth="160"
                     Margin="0"
                     AutomationProperties.Name="{x:Static resources:Resource.SettingsPage_UpdateMethod_Title}"
@@ -66,6 +76,9 @@
                 </custom:CardControl.Header>
                 <ComboBox
                     x:Name="_updateCheckFrequencyComboBox"
+                    Background="{DynamicResource ProjectLegionSurfaceBrush}"
+                    Foreground="{DynamicResource ProjectLegionTextBrush}"
+                    BorderBrush="{DynamicResource ProjectLegionBorderBrush}"
                     MinWidth="160"
                     Margin="0"
                     AutomationProperties.Name="{x:Static resources:Resource.SettingsPage_UpdateCheckFrequency_Title}"
