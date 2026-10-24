@@ -17,7 +17,7 @@ public class UpdateSettings() : AbstractSettings<UpdateSettingsStore>("update_se
     {
         LastUpdateCheckDateTime = null,
         UpdateCheckFrequency = UpdateCheckFrequency.PerDay,
-        UpdateChannel = UpdateChannel.Stable,
+        UpdateChannel = UpdateChannel.Beta,
         UpdateMethod = UpdateMethod.GitHub
     };
 }
