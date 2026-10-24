@@ -228,6 +228,7 @@ await DemandReadChecks.RunAsync(Check);
 UpdateTransportChecks.Run(Check);
 UpdateFeedChecks.Run(Check);
 await UpdateDownloadChecks.RunAsync(Check);
+await UpdateServiceChecks.RunAsync(Check);
 await TelemetryRefreshChecks.RunAsync(Check);
 await FeatureStateConfirmationChecks.RunAsync(Check);
 await AcAutomationChecks.RunAsync(Check);

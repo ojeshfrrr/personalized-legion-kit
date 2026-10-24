@@ -12,7 +12,11 @@ public static class ProjectBranding
 
     public static bool HasUpdateFeed =>
         !string.IsNullOrWhiteSpace(UpdateGitHubOwner) &&
-        !string.IsNullOrWhiteSpace(UpdateGitHubRepository) &&
+        !string.IsNullOrWhiteSpace(UpdateGitHubRepository);
+
+    // Portable ZIP verification does not imply a trusted Authenticode publisher.
+    // Automatic installer execution remains disabled without an explicitly pinned signer.
+    public static bool HasSignedInstallerFeed => HasUpdateFeed &&
         !string.IsNullOrWhiteSpace(UpdateTrustedSignerThumbprint);
     public static string ReleasesUrl => $"https://github.com/{UpdateGitHubOwner}/{UpdateGitHubRepository}/releases";
 }

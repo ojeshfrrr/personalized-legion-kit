@@ -363,7 +363,8 @@ public partial class App
         IoCContainer.Resolve<PortsBacklightFeature>().ForceDisable = AppFlags.Instance.ForceDisableLenovoLighting;
         IoCContainer.Resolve<IGPUModeFeature>().ExperimentalGPUWorkingMode = AppFlags.Instance.ExperimentalGPUWorkingMode;
         IoCContainer.Resolve<DGPUNotify>().ExperimentalGPUWorkingMode = AppFlags.Instance.ExperimentalGPUWorkingMode;
-        IoCContainer.Resolve<UpdateChecker>().Disable = AppFlags.Instance.DisableUpdateChecker || !ProjectBranding.HasUpdateFeed;
+        IoCContainer.Resolve<UpdateChecker>().Disable = AppFlags.Instance.DisableUpdateChecker ||
+            Folders.IsReadOnlySession || !ProjectBranding.HasUpdateFeed;
     }
 
     private void HandleCriticalStartupError(Exception ex)
