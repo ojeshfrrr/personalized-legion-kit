@@ -8,16 +8,17 @@
     xmlns:utils="clr-namespace:LenovoLegionToolkit.WPF.Utils"
     xmlns:wpfui="http://schemas.lepo.co/wpfui/2022/xaml"
     Title="{x:Static resources:Resource.UpdateWindow_Title}"
-    MinWidth="800"
-    MinHeight="600"
-    MaxWidth="800"
-    MaxHeight="600"
+    Width="760"
+    Height="600"
+    MinWidth="620"
+    MinHeight="480"
     Closing="UpdateWindow_Closing"
     ExtendsContentIntoTitleBar="True"
     FlowDirection="{x:Static utils:LocalizationHelper.Direction}"
     Loaded="UpdateWindow_Loaded"
-    ResizeMode="NoResize"
+    ResizeMode="CanResize"
     ShowInTaskbar="False"
+    Background="{DynamicResource ProjectLegionBackgroundBrush}"
     WindowStartupLocation="CenterOwner">
 
     <local:BaseWindow.CommandBindings>
@@ -28,6 +29,44 @@
 
     <local:BaseWindow.Resources>
         <ResourceDictionary>
+            <Style x:Key="UpdateActionStyle" TargetType="Button">
+                <Setter Property="Background" Value="{DynamicResource ProjectLegionSurfaceBrush}" />
+                <Setter Property="Foreground" Value="{DynamicResource ProjectLegionTextBrush}" />
+                <Setter Property="BorderBrush" Value="{DynamicResource ProjectLegionBorderBrush}" />
+                <Setter Property="BorderThickness" Value="1" />
+                <Setter Property="Padding" Value="12,7" />
+                <Setter Property="MinWidth" Value="140" />
+                <Setter Property="Height" Value="36" />
+                <Setter Property="FocusVisualStyle" Value="{x:Null}" />
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="Button">
+                            <Border x:Name="ActionBorder" Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}"
+                                CornerRadius="4" Padding="{TemplateBinding Padding}">
+                                <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" RecognizesAccessKey="True" />
+                            </Border>
+                            <ControlTemplate.Triggers>
+                                <Trigger Property="IsMouseOver" Value="True">
+                                    <Setter TargetName="ActionBorder" Property="BorderBrush" Value="{DynamicResource ProjectLegionAccentBrush}" />
+                                </Trigger>
+                                <Trigger Property="IsKeyboardFocused" Value="True">
+                                    <Setter TargetName="ActionBorder" Property="BorderBrush" Value="{DynamicResource ProjectLegionAccentBrush}" />
+                                    <Setter TargetName="ActionBorder" Property="BorderThickness" Value="2" />
+                                </Trigger>
+                                <Trigger Property="IsEnabled" Value="False">
+                                    <Setter TargetName="ActionBorder" Property="Opacity" Value="0.45" />
+                                </Trigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+            <Style x:Key="UpdatePrimaryStyle" TargetType="Button" BasedOn="{StaticResource UpdateActionStyle}">
+                <Setter Property="Background" Value="{DynamicResource ProjectLegionAccentBrush}" />
+                <Setter Property="Foreground" Value="Black" />
+                <Setter Property="FontWeight" Value="SemiBold" />
+            </Style>
             <Style TargetType="{x:Type Paragraph}">
                 <Setter Property="Margin" Value="0,0,0,12" />
                 <Setter Property="LineHeight" Value="24" />
@@ -44,7 +83,7 @@
 
             <Style TargetType="{x:Type Bold}">
                 <Setter Property="FontWeight" Value="SemiBold" />
-                <Setter Property="Foreground" Value="{DynamicResource TextFillColorPrimaryBrush}" />
+                <Setter Property="Foreground" Value="{DynamicResource ProjectLegionTextBrush}" />
             </Style>
 
             <Style TargetType="{x:Type Run}">
@@ -52,12 +91,12 @@
             </Style>
 
             <Style TargetType="{x:Type markdig:MarkdownViewer}">
-                <Setter Property="Foreground" Value="{DynamicResource TextFillColorSecondaryBrush}" />
+                <Setter Property="Foreground" Value="{DynamicResource ProjectLegionSecondaryTextBrush}" />
                 <Setter Property="FontSize" Value="14" />
             </Style>
 
             <Style x:Key="{x:Static markdig:Styles.HyperlinkStyleKey}" TargetType="{x:Type Hyperlink}">
-                <Setter Property="Foreground" Value="{DynamicResource AccentTextFillColorPrimaryBrush}" />
+                <Setter Property="Foreground" Value="{DynamicResource ProjectLegionAccentBrush}" />
                 <Setter Property="TextDecorations" Value="None" />
                 <Style.Triggers>
                     <Trigger Property="IsMouseOver" Value="True">
@@ -70,7 +109,7 @@
                 <Setter Property="Margin" Value="0,16,0,16" />
                 <Setter Property="FontSize" Value="24" />
                 <Setter Property="FontWeight" Value="SemiBold" />
-                <Setter Property="Foreground" Value="{DynamicResource TextFillColorPrimaryBrush}" />
+                <Setter Property="Foreground" Value="{DynamicResource ProjectLegionTextBrush}" />
                 <Setter Property="FontFamily" Value="Segoe UI, Microsoft YaHei" />
             </Style>
 
@@ -78,7 +117,7 @@
                 <Setter Property="Margin" Value="0,14,0,14" />
                 <Setter Property="FontSize" Value="20" />
                 <Setter Property="FontWeight" Value="SemiBold" />
-                <Setter Property="Foreground" Value="{DynamicResource TextFillColorPrimaryBrush}" />
+                <Setter Property="Foreground" Value="{DynamicResource ProjectLegionTextBrush}" />
                 <Setter Property="FontFamily" Value="Segoe UI, Microsoft YaHei" />
             </Style>
 
@@ -86,7 +125,7 @@
                 <Setter Property="Margin" Value="0,12,0,12" />
                 <Setter Property="FontSize" Value="18" />
                 <Setter Property="FontWeight" Value="SemiBold" />
-                <Setter Property="Foreground" Value="{DynamicResource TextFillColorPrimaryBrush}" />
+                <Setter Property="Foreground" Value="{DynamicResource ProjectLegionTextBrush}" />
                 <Setter Property="FontFamily" Value="Segoe UI, Microsoft YaHei" />
             </Style>
 
@@ -94,7 +133,7 @@
                 <Setter Property="Margin" Value="0,10,0,10" />
                 <Setter Property="FontSize" Value="16" />
                 <Setter Property="FontWeight" Value="SemiBold" />
-                <Setter Property="Foreground" Value="{DynamicResource TextFillColorPrimaryBrush}" />
+                <Setter Property="Foreground" Value="{DynamicResource ProjectLegionTextBrush}" />
                 <Setter Property="FontFamily" Value="Segoe UI, Microsoft YaHei" />
             </Style>
         </ResourceDictionary>
@@ -121,7 +160,7 @@
                 VerticalAlignment="Center"
                 Focusable="True"
                 FontSize="12"
-                Foreground="{DynamicResource TextFillColorTertiaryBrush}"
+                Foreground="{DynamicResource ProjectLegionSecondaryTextBrush}"
                 IsHitTestVisible="False"
                 Text="{x:Static resources:Resource.UpdateWindow_Title}" />
         </Grid>
@@ -141,7 +180,7 @@
                     Focusable="True"
                     FontSize="28"
                     FontWeight="Bold"
-                    Foreground="{DynamicResource TextFillColorPrimaryBrush}"
+                    Foreground="{DynamicResource ProjectLegionTextBrush}"
                     Text="{x:Static resources:Resource.UpdateWindow_WhatsNew}" />
 
                 <markdig:MarkdownViewer
@@ -162,19 +201,20 @@
                     Visibility="Hidden" />
 
                 <StackPanel Grid.Row="3" Margin="0,0,0,16">
-                    <wpfui:Button
+                    <TextBlock x:Name="_packageStatus" TextWrapping="Wrap" Margin="0,0,0,12"
+                        Foreground="{DynamicResource ProjectLegionSecondaryTextBrush}" FontSize="12" LineHeight="18" />
+                    <Button Style="{StaticResource UpdatePrimaryStyle}"
                         x:Name="_downloadButton"
                         Width="180"
                         Height="36"
                         HorizontalAlignment="Center"
-                        Appearance="Primary"
                         Click="DownloadButton_Click"
-                        Content="{x:Static resources:Resource.Update}"
+                        Content="Download update ZIP"
                         FontSize="14"
                         FontWeight="SemiBold"
                         IsEnabled="False" />
 
-                    <wpfui:Button
+                    <Button Style="{StaticResource UpdateActionStyle}"
                         x:Name="_cancelDownloadButton"
                         Width="180"
                         Height="36"
@@ -183,6 +223,11 @@
                         Content="{x:Static resources:Resource.Cancel}"
                         IsEnabled="False"
                         Visibility="Collapsed" />
+                    <WrapPanel HorizontalAlignment="Center" Margin="0,10,0,0">
+                        <Button Style="{StaticResource UpdateActionStyle}" x:Name="_openFolderButton" Content="Open download folder"
+                            Click="OpenFolderButton_Click" Visibility="Collapsed" Margin="0,0,8,0" />
+                        <Button Style="{StaticResource UpdateActionStyle}" Content="Release page" Click="ReleasePageButton_Click" />
+                    </WrapPanel>
                 </StackPanel>
             </Grid>
         </Grid>

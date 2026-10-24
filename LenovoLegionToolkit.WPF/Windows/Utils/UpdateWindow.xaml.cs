@@ -1,6 +1,7 @@
 using System;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.IO;
 using System.Text;
 using System.Threading;
 using System.Windows;
@@ -22,6 +23,9 @@ public partial class UpdateWindow : IProgress<float>
     private readonly UpdateChecker _updateChecker = IoCContainer.Resolve<UpdateChecker>();
 
     private CancellationTokenSource? _downloadCancellationTokenSource;
+    private ProjectRelease? _availableUpdate;
+    private string? _downloadedPackagePath;
+    private bool _closed;
 
     public UpdateWindow()
     {
@@ -31,7 +35,8 @@ public partial class UpdateWindow : IProgress<float>
 
     private void Hyperlink_Executed(object sender, ExecutedRoutedEventArgs e)
     {
-        if (e.Parameter is string url && Uri.TryCreate(url, UriKind.Absolute, out var uri))
+        if (e.Parameter is string url && Uri.TryCreate(url, UriKind.Absolute, out var uri) &&
+            uri.Scheme == Uri.UriSchemeHttps && uri.UserInfo.Length == 0)
         {
             uri.Open();
             e.Handled = true;
@@ -44,6 +49,7 @@ public partial class UpdateWindow : IProgress<float>
 
         if (updates.Length > 0)
         {
+            _availableUpdate = updates[0];
             var stringBuilder = new StringBuilder();
             foreach (var update in updates)
             {
@@ -55,56 +61,64 @@ public partial class UpdateWindow : IProgress<float>
 
             _markdownViewer.Markdown = stringBuilder.ToString();
         }
-        else
-        {
-            if (_updateChecker.UpdateFromServer != null)
-            {
-                if (_updateChecker.UpdateFromServer?.Description.Length > 0)
-                {
-                    _markdownViewer.Markdown = _updateChecker.UpdateFromServer?.Description;
-                }
-            }
-        }
-
-        _downloadButton.IsEnabled = true;
+        _packageStatus.Text = Folders.IsReadOnlySession ? "Downloads are disabled in read-only mode." :
+            _availableUpdate is null ? "No newer version is available in the selected channel." :
+            _availableUpdate.Package is null ? "This release has no ZIP with verifiable SHA-256 metadata. Open the release page for details." :
+            $"Version {_availableUpdate.Version} · Windows x64 ZIP · {_availableUpdate.Package.Size / 1048576d:0.0} MiB. Downloading will not install or restart the app.";
+        SetDownloading(false);
     }
 
-    private void UpdateWindow_Closing(object? sender, CancelEventArgs e) => _downloadCancellationTokenSource?.Cancel();
+    private void UpdateWindow_Closing(object? sender, CancelEventArgs e)
+    {
+        _closed = true;
+        _downloadCancellationTokenSource?.Cancel();
+    }
 
     private async void DownloadButton_Click(object sender, RoutedEventArgs e)
     {
+        if (_downloadCancellationTokenSource is not null || _availableUpdate?.Package is null || Folders.IsReadOnlySession)
+            return;
+        using var lifetime = _downloadCancellationTokenSource = new CancellationTokenSource();
         try
         {
-            if (_downloadCancellationTokenSource is not null)
-                await _downloadCancellationTokenSource.CancelAsync();
-
-            _downloadCancellationTokenSource = new();
-
             SetDownloading(true);
-
-            var path = await _updateChecker.DownloadLatestUpdateAsync(this, _downloadCancellationTokenSource.Token);
-
-            _downloadCancellationTokenSource = null;
-
-            Process.Start(path, $"/SILENT /RESTARTAPPLICATIONS /LANG={Resource.Culture.Name.Replace("-", string.Empty)}");
-            await App.Current.ShutdownAsync();
+            _packageStatus.Text = "Downloading and checking the Windows x64 package…";
+            _downloadedPackagePath = await _updateChecker.DownloadPortableUpdateAsync(_availableUpdate, this, lifetime.Token);
+            if (_closed) return;
+            _packageStatus.Text = "SHA-256 verified against GitHub release metadata. Close Project Legion, extract the ZIP into a new folder, and launch Project Legion.exe there. Your existing settings stay in your local profile. This package is unsigned; the checksum does not verify a trusted publisher.";
+            _openFolderButton.Visibility = Visibility.Visible;
         }
         catch (OperationCanceledException)
         {
-            SetDownloading(false);
+            if (!_closed) _packageStatus.Text = "Download cancelled. Partial downloads were removed.";
         }
         catch (SecurityException ex)
         {
-            SetDownloading(false);
+            if (_closed) return;
+            _packageStatus.Text = "Package verification failed. Nothing was installed.";
             var innerMsg = ex.InnerException is not null ? "\n" + ex.InnerException.Message : string.Empty;
             await SnackbarHelper.ShowAsync(Resource.UpdateWindow_SecurityError_Title, ex.Message + innerMsg, SnackbarType.Error);
         }
         catch (Exception ex)
         {
-            SetDownloading(false);
-
+            if (_closed) return;
+            _packageStatus.Text = "The update could not be downloaded. You can retry or open the release page.";
             await SnackbarHelper.ShowAsync(Resource.UpdateWindow_DownloadError_Title, ex.Message, SnackbarType.Error);
         }
+        finally
+        {
+            _downloadCancellationTokenSource = null;
+            if (!_closed) SetDownloading(false);
+        }
+    }
+
+    private void ReleasePageButton_Click(object sender, RoutedEventArgs e) =>
+        new Uri(_availableUpdate?.ReleaseUrl ?? ProjectBranding.ReleasesUrl).Open();
+
+    private void OpenFolderButton_Click(object sender, RoutedEventArgs e)
+    {
+        if (_downloadedPackagePath is not null && File.Exists(_downloadedPackagePath))
+            Process.Start(new ProcessStartInfo(Path.GetDirectoryName(_downloadedPackagePath)!) { UseShellExecute = true });
     }
 
     private void CancelDownloadButton_Click(object sender, RoutedEventArgs e) => _downloadCancellationTokenSource?.Cancel();
@@ -127,8 +141,8 @@ public partial class UpdateWindow : IProgress<float>
             _downloadProgressBar.IsIndeterminate = true;
             _downloadProgressBar.Visibility = Visibility.Hidden;
 
-            _downloadButton.Visibility = Visibility.Visible;
-            _downloadButton.IsEnabled = true;
+            _downloadButton.Visibility = _downloadedPackagePath is null ? Visibility.Visible : Visibility.Collapsed;
+            _downloadButton.IsEnabled = _availableUpdate?.Package is not null && !Folders.IsReadOnlySession && _downloadedPackagePath is null;
 
             _cancelDownloadButton.Visibility = Visibility.Collapsed;
             _cancelDownloadButton.IsEnabled = false;
@@ -137,6 +151,7 @@ public partial class UpdateWindow : IProgress<float>
 
     public void Report(float value) => Dispatcher.Invoke(() =>
     {
+        if (_closed) return;
         _downloadProgressBar.IsIndeterminate = !(value > 0);
         _downloadProgressBar.Value = value;
     });
