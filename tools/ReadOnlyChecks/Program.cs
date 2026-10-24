@@ -15,6 +15,18 @@ using LenovoLegionToolkit.Lib.Overclocking.Amd;
 using LenovoLegionToolkit.Lib.Settings;
 using LenovoLegionToolkit.Lib.Utils;
 
+if (args.Length == 2 && args[0] == "--inspect-update-feed")
+{
+    UpdateProbeChecks.Inspect(args[1]);
+    return;
+}
+
+if (args.Length == 2 && args[0] == "--verify-update-download")
+{
+    await UpdateProbeChecks.VerifyDownloadAsync(args[1]);
+    return;
+}
+
 if (args.Length == 3 && args[0] == "--approved-deathadder-reversible-side4-forward")
 {
     await DeathAdderControlledButtonTest.RunAsync(args[1], args[2]);
