@@ -6,6 +6,12 @@
     xmlns:custom="clr-namespace:LenovoLegionToolkit.WPF.Controls.Custom"
     xmlns:resources="clr-namespace:LenovoLegionToolkit.WPF.Resources"
     xmlns:wpfui="http://schemas.lepo.co/wpfui/2022/xaml">
+    <UserControl.Resources>
+        <SolidColorBrush x:Key="{x:Static SystemColors.ControlBrushKey}" Color="{DynamicResource ProjectLegionSurfaceColor}" />
+        <SolidColorBrush x:Key="{x:Static SystemColors.GrayTextBrushKey}" Color="{DynamicResource ProjectLegionSecondaryTextColor}" />
+        <SolidColorBrush x:Key="ControlFillColorDisabledBrush" Color="{DynamicResource ProjectLegionSurfaceColor}" />
+        <SolidColorBrush x:Key="TextFillColorDisabledBrush" Color="{DynamicResource ProjectLegionSecondaryTextColor}" />
+    </UserControl.Resources>
     <ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
         <StackPanel Margin="0,0,16,12">
             <TextBlock Style="{StaticResource ProjectLegionSectionTitleStyle}" Text="Updates" />

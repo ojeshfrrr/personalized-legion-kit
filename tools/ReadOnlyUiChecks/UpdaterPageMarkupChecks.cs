@@ -22,7 +22,9 @@ internal static class UpdaterPageMarkupChecks
         foreach (var ns in preferences.Attributes().Where(a => a.IsNamespaceDeclaration && a.Name.LocalName != "xmlns"))
             if (rootMarkup.Attribute(ns.Name) is null) rootMarkup.SetAttributeValue(ns.Name, ns.Value);
         rootMarkup.Descendants().Single(e => e.Name.LocalName == "SettingsUpdateControl")
-            .ReplaceWith(new XElement(preferences.Elements().Single())); // Content only; no service constructor.
+            .ReplaceWith(new XElement(p + "Grid",
+                new XElement(p + "Grid.Resources", preferences.Elements().Single(e => e.Name.LocalName == "UserControl.Resources").Elements()),
+                new XElement(preferences.Elements().Single(e => e.Name.LocalName == "ScrollViewer")))); // No service constructor.
         foreach (var ns in rootMarkup.Attributes().Where(a => a.IsNamespaceDeclaration &&
             a.Value.StartsWith("clr-namespace:LenovoLegionToolkit.WPF", StringComparison.Ordinal) && !a.Value.Contains(";assembly=")))
             ns.Value += ";assembly=Project Legion";

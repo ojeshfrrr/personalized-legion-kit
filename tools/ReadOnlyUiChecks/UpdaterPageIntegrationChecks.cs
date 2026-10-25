@@ -102,6 +102,19 @@ internal static class UpdaterPageIntegrationChecks
                     throw new InvalidOperationException($"Settings Updates content collapsed: host {host.ActualWidth}x{host.ActualHeight}, opacity {host.Opacity}, notice {notice.ActualWidth}x{notice.ActualHeight}.");
                 var settingsImage = new RenderTargetBitmap(width, 560, 96, 96, PixelFormats.Pbgra32);
                 settingsImage.Render(settings);
+                foreach (var input in new FrameworkElement[] { checkButton, (ComboBox)preferences.FindName("_updateChannelComboBox") })
+                {
+                    var origin = input.TranslatePoint(new Point(), settings);
+                    var bounds = new Int32Rect((int)origin.X, (int)origin.Y, (int)input.ActualWidth, (int)input.ActualHeight);
+                    var stride = bounds.Width * 4;
+                    var pixels = new byte[stride * bounds.Height];
+                    settingsImage.CopyPixels(bounds, pixels, stride, 0);
+                    var bright = 0;
+                    for (var index = 0; index < pixels.Length; index += 4)
+                        if (pixels[index] > 230 && pixels[index + 1] > 230 && pixels[index + 2] > 230) bright++;
+                    if (bright > bounds.Width * bounds.Height / 4)
+                        throw new InvalidOperationException("Disabled updater input reverted to a bright system fill: " + input.Name);
+                }
                 var settingsEncoder = new PngBitmapEncoder(); settingsEncoder.Frames.Add(BitmapFrame.Create(settingsImage));
                 using (var stream = File.Create(Path.Combine(directory, $"settings-updates-production-{width}.png"))) settingsEncoder.Save(stream);
             }
