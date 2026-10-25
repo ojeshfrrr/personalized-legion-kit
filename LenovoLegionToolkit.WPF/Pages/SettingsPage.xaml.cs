@@ -75,21 +75,14 @@ public partial class SettingsPage
         if (!_isInitialized)
         {
             _isInitializing = true;
-
-            _appearanceControl = new SettingsAppearanceControl();
-            _appBehaviorControl = new SettingsAppBehaviorControl();
-            _softwareControlControl = new SettingsSoftwareControlControl();
-            _specialKeyControl = new SettingsSpecialKeyControl();
-            _displayControl = new SettingsDisplayControl();
-            _updateControl = new SettingsUpdateControl();
-            _powerControl = new SettingsPowerControl();
-            _integrationsControl = new SettingsIntegrationsControl();
-
-            _softwareControlControl.FnKeysStatusChanged += SoftwareControl_FnKeysStatusChanged;
-
-            InitializeNavigationItems();
-            _isInitialized = true;
-            _isInitializing = false;
+            try
+            {
+                // Navigation must remain available even when an unrelated pane
+                // cannot initialize. Construct only the selected section below.
+                InitializeNavigationItems();
+                _isInitialized = true;
+            }
+            finally { _isInitializing = false; }
         }
 
         await RefreshCurrentControlAsync();
@@ -139,38 +132,62 @@ public partial class SettingsPage
 
     private async void NavigationListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
     {
-        if (_navigationListBox.SelectedItem is not NavigationItem selectedItem)
+        if (_isInitializing || _navigationListBox.SelectedItem is not NavigationItem selectedItem)
             return;
 
-        UserControl? controlToShow = selectedItem.Key switch
+        await ShowControlAsync(selectedItem.Key);
+    }
+
+    private async Task ShowControlAsync(string key)
+    {
+        try
         {
-            "Appearance" => _appearanceControl,
-            "AppBehavior" => _appBehaviorControl,
-            "SoftwareControl" => _softwareControlControl,
-            "SmartKeys" => _specialKeyControl,
-            "Display" => _displayControl,
-            "Updates" => _updateControl,
-            "Power" => _powerControl,
-            "Integrations" => _integrationsControl,
-            _ => null
+            UserControl? control = key switch
+            {
+                "Appearance" => _appearanceControl ??= new SettingsAppearanceControl(),
+                "AppBehavior" => _appBehaviorControl ??= new SettingsAppBehaviorControl(),
+                "SoftwareControl" => GetSoftwareControl(),
+                "SmartKeys" => _specialKeyControl ??= new SettingsSpecialKeyControl(),
+                "Display" => _displayControl ??= new SettingsDisplayControl(),
+                "Updates" => _updateControl ??= new SettingsUpdateControl(),
+                "Power" => _powerControl ??= new SettingsPowerControl(),
+                "Integrations" => _integrationsControl ??= new SettingsIntegrationsControl(),
+                _ => null
+            };
+            if (control is null) return;
+            _contentControl.Content = control;
+            PlayTransitionAnimation();
+            await RefreshControlAsync(key);
+        }
+        catch (Exception ex) { ShowSectionFailure(key, ex); }
+    }
+
+    private SettingsSoftwareControlControl GetSoftwareControl()
+    {
+        if (_softwareControlControl is null)
+        {
+            _softwareControlControl = new SettingsSoftwareControlControl();
+            _softwareControlControl.FnKeysStatusChanged += SoftwareControl_FnKeysStatusChanged;
+        }
+        return _softwareControlControl;
+    }
+
+    private void ShowSectionFailure(string key, Exception exception)
+    {
+        Log.Instance.Trace($"Failed to load settings section '{key}'.", exception);
+        if (_navigationListBox.SelectedItem is not NavigationItem selected || selected.Key != key) return;
+        _contentControl.Content = new TextBlock
+        {
+            Text = "This settings section could not be loaded. Select another section and return to retry.",
+            TextWrapping = TextWrapping.Wrap,
+            Style = (Style)FindResource("ProjectLegionNoticeStyle")
         };
-
-        if (controlToShow is null)
-            return;
-
-        _contentControl.Content = controlToShow;
-        PlayTransitionAnimation();
-
-        if (_isInitializing)
-            return;
-
-        await RefreshControlAsync(selectedItem.Key);
     }
 
     private async Task RefreshCurrentControlAsync()
     {
         if (_navigationListBox.SelectedItem is NavigationItem selectedItem)
-            await RefreshControlAsync(selectedItem.Key);
+            await ShowControlAsync(selectedItem.Key);
     }
 
     private async Task RefreshControlAsync(string key)
@@ -207,7 +224,7 @@ public partial class SettingsPage
         }
         catch (Exception ex)
         {
-            Log.Instance.Trace($"Failed to refresh settings control '{key}'.", ex);
+            ShowSectionFailure(key, ex);
         }
     }
 

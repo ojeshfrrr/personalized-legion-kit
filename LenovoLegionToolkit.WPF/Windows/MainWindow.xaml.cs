@@ -130,6 +130,8 @@ public partial class MainWindow
                 return true;
             if (element is UpdaterPage updaterPage && updaterPage.IsUpdaterInputSource(source as DependencyObject))
                 return true;
+            if (element is Controls.Settings.SettingsUpdateControl updates && updates.IsUpdateInputSource(source as DependencyObject))
+                return true;
             if (element is System.Windows.Controls.Primitives.ButtonBase { Tag: "ReadOnlyRefresh" })
                 return true;
             if (element is System.Windows.Controls.Primitives.ScrollBar ||

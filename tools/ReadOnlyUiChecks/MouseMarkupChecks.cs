@@ -156,6 +156,7 @@ internal static class MouseMarkupChecks
         DemandSnapshotMarkupChecks.Run(directory);
         UpdateMarkupChecks.Run(directory);
         UpdaterPageMarkupChecks.Run(directory);
+        UpdaterPageIntegrationChecks.Run(directory);
         app.Shutdown();
     }
     private static void TextBlockForeground(this Grid root, Brush brush) => TextElement.SetForeground(root, brush);
