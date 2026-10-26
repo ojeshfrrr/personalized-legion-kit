@@ -57,7 +57,7 @@ public partial class SensorsControl
             if (active) { _prepared = false; _ = _reads.ActivateAsync(); }
             else _ = _reads.DeactivateAsync();
             return Task.CompletedTask;
-        });
+        }, suspendForGaming: false); // Visible foreground readings remain available while a game runs.
         ContextMenu = new ContextMenu();
         var refresh = new MenuItem { Header = "Refresh readings", Tag = "ReadOnlyRefresh" };
         refresh.Click += ReadRefresh_Click;

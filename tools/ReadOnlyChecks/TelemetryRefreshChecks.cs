@@ -97,6 +97,8 @@ internal static class TelemetryRefreshChecks
         var batterySource = Source("LenovoLegionToolkit.WPF/Pages/BatteryPage.xaml.cs");
         check(sensors.Contains("refreshInterval: TimeSpan.FromSeconds(1)") && advanced.Contains("refreshInterval: TimeSpan.FromSeconds(1)"),
             "Home/Thermals sensor owners use the explicit 1000 ms cadence");
+        check(new[] { sensors, advanced }.All(source => source.Contains("}, suspendForGaming: false)") && !source.Contains("requireForeground: false")),
+            "Home/Thermals permit gaming-time sensor reads without opting out of the foreground gate");
         check(batterySource.Contains("refreshInterval: TimeSpan.FromSeconds(5)"), "Battery uses the explicit 5000 ms cadence");
         check(sensors.Contains("if (!_prepared)") && sensors.Contains("_prepared = false"), "CPU sampling baseline is initialized once per activation, not every tick");
         foreach (var source in new[] { sensors, advanced, batterySource })
@@ -114,6 +116,9 @@ internal static class TelemetryRefreshChecks
             "Mouse entry reads bank assignments as well as DPI/polling, with no periodic cadence");
         check(mouse.Contains("requireForeground: false, suspendForGaming: false"), "one-shot Mouse operations are not cancelled by confirmation focus or game-presence changes");
         foreach (var file in new[] { "LenovoLegionToolkit.WPF/Controls/Dashboard/DiscreteGPUControl.xaml.cs", "LenovoLegionToolkit.WPF/Windows/Dashboard/DiscreteGPUManagementWindow.xaml.cs" })
+        {
             check(!Source(file).Contains("refreshInterval:"), "Graphics status/app enumeration has no periodic UI cadence");
+            check(!Source(file).Contains("suspendForGaming: false"), "expensive GPU status/process enumeration retains gaming suspension");
+        }
     }
 }

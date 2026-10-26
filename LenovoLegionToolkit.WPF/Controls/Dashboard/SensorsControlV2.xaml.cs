@@ -63,7 +63,7 @@ public partial class SensorsControlV2
         {
             SetActivity(active);
             return Task.CompletedTask;
-        });
+        }, suspendForGaming: false); // Keep the foreground gate; pause as soon as the user switches away.
         SizeChanged += (_, e) => { if (e.WidthChanged) AdjustCardWidths(); };
 
         _sensorsGroupControllers.SelectedGpuIsIgpu = _hardwareSensorSettings.Store.SelectedGpuIsIgpu;
