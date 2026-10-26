@@ -30,6 +30,12 @@ The LampArray MSIX project has a Project Legion package identity and signing is 
 - Edit the charcoal shell background in `LenovoLegionToolkit.WPF/Branding.xaml` and the default ice-blue accent in `LenovoLegionToolkit.WPF/Utils/ThemeManager.cs`.
 - Replace the generated image assets with your own when ready. The app's data is stored under `%LOCALAPPDATA%\ProjectLegion`; on first launch, top-level JSON settings are copied from the upstream folder without overwriting or deleting the original data.
 
+## Live telemetry while gaming
+
+Home and Thermals refresh visible sensor readings every **1 second** while Project Legion is the active foreground window, including when Valorant is running. Switching away, minimizing, hiding the page or closing the window stops these optional reads. Returning to the foreground requests a fresh reading; an already-running native query may finish, but its retired result is not displayed.
+
+This foreground exception applies to sensor readings. Optional GPU status/process enumeration retains its gaming pause, Mouse settings are never periodically polled, and explicitly enabled OSD, HWiNFO, hardware-control and automation features keep their existing policies. Refreshing readings does not write hardware settings. No FPS improvement or FPS-neutrality claim has been established by controlled measurements.
+
 ## License and attribution
 
 The checked-out upstream revision is licensed under GPL-3.0. This derivative is distributed under the same license; see [LICENSE](LICENSE) and [NOTICE](NOTICE). The original work is by Bartosz Cichecki, Kaguya, and Dr. Skinner. Third-party copyright and license notices are retained in the source.
