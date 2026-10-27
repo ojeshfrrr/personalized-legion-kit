@@ -57,13 +57,32 @@ def source_files():
 
 
 def main():
-    require(len(sys.argv) == 1, "No arguments accepted; each invocation creates a fresh candidate.")
+    global ROOT, BUILD
+    require(sys.argv[1:] in ([], ["--self-contained"]), "Use no arguments or --self-contained; each invocation creates a fresh candidate.")
+    self_contained = sys.argv[1:] == ["--self-contained"]
+    original_root = ROOT
     candidates = ROOT / "BuildProjectLegion/ReleaseCandidates"
-    candidate = candidates / ("presets-ui-" + uuid.uuid4().hex[:8])
+    candidate = candidates / (("self-contained-" if self_contained else "presets-ui-") + uuid.uuid4().hex[:8])
     candidate.mkdir(parents=True, exist_ok=False)
     app = candidate / "application"
     inputs = source_files()
     input_hashes = {str(p): sha(p) for p in inputs}
+    if self_contained:
+        # Separate source/output tree prevents runtime-flavor builds from replacing
+        # the validated framework-dependent binaries or the user's installation.
+        snapshot = candidate / "source-tree"
+        for source in inputs:
+            target = snapshot / source.relative_to(ROOT)
+            target.parent.mkdir(parents=True, exist_ok=True)
+            copy2(source, target)
+        ROOT = snapshot
+        BUILD = ROOT / "BuildProjectLegion/bin/x64/Release/net9.0-windows10.0.26100.0/win-x64"
+        cache = original_root / "BuildProjectLegion/packages"
+        restore = ["dotnet", "restore", "LenovoLegionToolkit.WPF/LenovoLegionToolkit.WPF.csproj", "-p:Platform=x64",
+                   "-p:SelfContained=true", "--packages", str(cache), "--source", str(cache), "--disable-parallel", "-m:1", "-nr:false"]
+        with (candidate / "restore.log").open("w", encoding="utf-8") as log:
+            subprocess.run(restore, cwd=ROOT, stdout=log, stderr=subprocess.STDOUT, check=True)
+        inputs = source_files()
     # Refuse an obviously stale no-build publish; never silently build a different application.
     for project in ROOT.glob("LenovoLegionToolkit.*/*.csproj"):
         assembly = BUILD / ("Project Legion.dll" if project.parent.name.endswith(".WPF") else project.stem + ".dll")
@@ -74,12 +93,23 @@ def main():
                 require(source.stat().st_mtime <= assembly.stat().st_mtime,
                         f"Source newer than built assembly; build the WPF Release project first: {source}")
     command = ["dotnet", "publish", "LenovoLegionToolkit.WPF/LenovoLegionToolkit.WPF.csproj",
-               "-c", "Release", "-p:Platform=x64", "--no-build", "--no-restore",
-               "--self-contained", "false", "-m:1", "-nr:false", "-o", str(app)]
+               "-c", "Release", "-p:Platform=x64", "--no-restore", "-p:UseSharedCompilation=false",
+               "--self-contained", str(self_contained).lower(), "-m:1", "-nr:false", "-o", str(app)]
+    if not self_contained:
+        command.append("--no-build")
     with (candidate / "publish.log").open("w", encoding="utf-8") as log:
         subprocess.run(command, cwd=ROOT, stdout=log, stderr=subprocess.STDOUT, check=True)
     payload = sorted(p for p in app.rglob("*") if p.is_file())
     require((app / "Project Legion.exe").exists(), "Executable missing")
+    for name in ("Project Legion UpdateHost.exe", "Project Legion UpdateHost.dll", "Project Legion UpdateHost.deps.json", "Project Legion UpdateHost.runtimeconfig.json"):
+        require((app / name).is_file(), "Update helper missing: " + name)
+    runtime_config = json.loads((app / "Project Legion.runtimeconfig.json").read_text(encoding="utf-8-sig"))["runtimeOptions"]
+    host_config = json.loads((app / "Project Legion UpdateHost.runtimeconfig.json").read_text(encoding="utf-8-sig"))["runtimeOptions"]
+    if self_contained:
+        require("frameworks" not in runtime_config and "framework" not in runtime_config and "frameworks" not in host_config and "framework" not in host_config,
+                "Self-contained app/helper still references an installed runtime")
+        for name in ("coreclr.dll", "hostfxr.dll", "hostpolicy.dll", "PresentationFramework.dll"):
+            require((app / name).is_file(), "Bundled Desktop Runtime missing: " + name)
     for file in payload:
         original = BUILD / file.relative_to(app)
         require(original.exists() and sha(original) == sha(file), f"Build/publish mismatch: {file}")
@@ -108,17 +138,29 @@ def main():
         require(not spec.get("runtimeTargets"), f"Unresolved runtime asset selection in {library}")
     for name in ("LICENSE", "NOTICE"):
         copy2(ROOT / name, app / name)
+    if self_contained:
+        for framework in runtime_config.get("includedFrameworks", []):
+            name, version = framework["name"], framework["version"]
+            package_root = cache / (name.lower() + ".runtime.win-x64") / version
+            notices = [p for p in package_root.iterdir() if p.is_file() and
+                       (p.name.upper().startswith("LICENSE") or "THIRD-PARTY-NOTICES" in p.name.upper())]
+            require(notices, "Runtime package license missing: " + name)
+            for notice in notices:
+                destination = app / "RuntimeNotices" / name / notice.name
+                destination.parent.mkdir(parents=True, exist_ok=True)
+                copy2(notice, destination)
     (app / "RELEASE-NOTES.md").write_text(
         "# Project Legion - Windows x64 preview\n\n"
-        "Extract the complete folder before opening Project Legion.exe. This is a framework-dependent package; "
-        "the .NET 9 Windows Desktop Runtime is required and is not bundled. The production manifest requests "
+        "Extract the complete folder before opening Project Legion.exe. "
+        + ("This self-contained package bundles its .NET Desktop Runtime. " if self_contained else "This framework-dependent package requires a compatible .NET 9 Windows Desktop Runtime. ") +
+        "The production manifest requests "
         "administrator approval for supported hardware integrations.\n\n"
         "The package contains the current Project Legion app, branding assets, LICENSE and NOTICE. "
         "The matching source archive is distributed beside the application archive. This build is unsigned; "
         "Windows may identify the publisher as unknown.\n\n"
         "Open Updater in the sidebar to check versions, choose a release channel and download a verified update ZIP. "
-        "After downloading, close the app, extract the complete ZIP into a new folder and launch that version. "
-        "Downloads do not silently install or restart the app.\n\n"
+        "Install and restart is available only after an explicit unsigned-package confirmation. It stages a separate installation and previous-version backup; the profile is not replaced. "
+        "Startup must be acknowledged before success is recorded. A pending startup is not force-closed. Manual extraction remains available.\n\n"
         "Project Legion is an unofficial independent derivative of Lenovo Legion Toolkit. It is not affiliated "
         "with or endorsed by Lenovo or the original maintainers. It is distributed under GPL-3.0; retain the "
         "corresponding source and license notices when redistributing.\n\n"
@@ -131,16 +173,16 @@ def main():
         "publishedBuildFiles": [describe(p, app) for p in payload], "declaredAssets": declared,
         "sourceFiles": [describe(p, ROOT) for p in inputs],
     }, indent=2), encoding="utf-8")
-    binary = candidate / "ProjectLegion-win-x64-framework-dependent.zip"
+    binary = candidate / ("ProjectLegion-win-x64-self-contained.zip" if self_contained else "ProjectLegion-win-x64-framework-dependent.zip")
     source = candidate / "ProjectLegion-corresponding-source.zip"
     zip_verified(binary, sorted(p for p in app.rglob("*") if p.is_file()), app)
     zip_verified(source, inputs, ROOT)
-    summary = {"status": "Unsigned framework-dependent preview candidate; use the published validation scope",
+    summary = {"status": "Unsigned " + ("self-contained" if self_contained else "framework-dependent") + " preview candidate; use the published validation scope",
                "executable": describe(app / "Project Legion.exe", candidate),
                "assemblies": [describe(app / name, candidate) for name in ("Project Legion.dll", "LenovoLegionToolkit.Lib.dll")],
                "binaryArchive": describe(binary, candidate), "sourceArchive": describe(source, candidate),
                "verifiedBuildFiles": len(payload), "verifiedDeclaredAssets": len(declared),
-               "runtimeBundled": False, "softwarePresetUiIntegrated": True,
+               "runtimeBundled": self_contained, "softwarePresetUiIntegrated": True,
                "hardwareOperations": 0, "runtimeLaunches": 0}
     (candidate / "release-summary.json").write_text(json.dumps(summary, indent=2), encoding="utf-8")
     print(candidate)
