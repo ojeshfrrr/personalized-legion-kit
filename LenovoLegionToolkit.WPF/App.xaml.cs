@@ -159,6 +159,7 @@ public partial class App
 
                 Log.Instance.Trace($"Startup completed. [elapsed={startupStopwatch.ElapsedMilliseconds}ms]");
                 ReadOnlyQaSession.Mark("StartupCompleted");
+                PortableUpdateInstaller.ConfirmStartup(e.Args);
             });
             if (AppFlags.Instance.QaExitAfterSeconds > 0)
                 _ = EndReadOnlyQaSessionAsync();

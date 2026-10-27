@@ -91,6 +91,8 @@ internal static class ReleaseReadinessChecks
                 _ => outcome == "PreviousVersionRestored" && attempts.SequenceEqual(new[] { "new", "old" }) && verifications.SequenceEqual(new[] { "new", "old" }) && committed == "old"
             }, "restart coordinator handles " + first + " without duplicate launches or premature shortcut changes");
         }
+        var host = File.ReadAllText("LenovoLegionToolkit.UpdateHost/Program.cs");
+        check(!host.Contains("IoC") || host.Contains("// No App, IoC"), "update host does not initialize the production service container");
         var installer = File.ReadAllText("LenovoLegionToolkit.Lib/Utils/PortableUpdateInstaller.cs");
         check(!installer.Contains(".Kill(") && !installer.Contains("ExecutionPolicy") && !installer.Contains("Verb = \"runas\""),
             "updater neither force-closes processes nor bypasses Windows elevation/script policies");

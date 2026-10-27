@@ -3,6 +3,7 @@
     "path": "LenovoLegionToolkit.sln",
     "projects": [
       "LenovoLegionToolkit.WPF\\LenovoLegionToolkit.WPF.csproj",
+      "LenovoLegionToolkit.UpdateHost\\LenovoLegionToolkit.UpdateHost.csproj",
       "LenovoLegionToolkit.Lib\\LenovoLegionToolkit.Lib.csproj",
       "LenovoLegionToolkit.Lib.Automation\\LenovoLegionToolkit.Lib.Automation.csproj",
       "LenovoLegionToolkit.Lib.Macro\\LenovoLegionToolkit.Lib.Macro.csproj",
