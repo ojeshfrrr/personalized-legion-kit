@@ -8,7 +8,7 @@ namespace LenovoLegionToolkit.Lib.Utils;
 /// Retired native reads drain before replacement; their results cannot be published.</summary>
 public sealed class DemandReadSession<T>(Func<CancellationToken, Task<T>> read,
     Action<T, DateTimeOffset> publish, Action<Exception> error, TimeSpan? refreshInterval = null,
-    Func<CancellationToken, Task>? waitForNextTick = null)
+    Func<CancellationToken, Task>? waitForNextTick = null, Action? readingStarted = null)
 {
     private readonly object _gate = new();
     private readonly TimeSpan? _refreshInterval = ValidateInterval(refreshInterval);
@@ -105,6 +105,8 @@ public sealed class DemandReadSession<T>(Func<CancellationToken, Task<T>> read,
         {
             await previous;
             lifetime.Token.ThrowIfCancellationRequested();
+            lock (_gate)
+                if (_active && ReferenceEquals(_inFlight, lifetime)) readingStarted?.Invoke();
             var value = await Task.Run(() => read(lifetime.Token), lifetime.Token);
             lock (_gate)
                 if (_active && ReferenceEquals(_inFlight, lifetime) && !lifetime.IsCancellationRequested)

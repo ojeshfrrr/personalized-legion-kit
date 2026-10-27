@@ -126,7 +126,7 @@ internal static class DemandReadChecks
         check(macro.Contains("StateChanged += Controller_StateChanged") && macro.Contains("StateChanged -= Controller_StateChanged") && macro.Contains("if (_subscribed)"),
             "Macro page attaches once, detaches, and rejects inactive queued callbacks");
         var activity = Source("LenovoLegionToolkit.WPF/Utils/OptionalUiActivity.cs");
-        check(activity.Contains("(!_requireForeground || _window.IsActive)") && activity.Contains("WindowState.Minimized") && activity.Contains("!_monitor.OptionalWorkPaused") && activity.Contains("_monitor.Changed -= OnPolicyChanged"),
+        check(activity.Contains("OptionalUiPolicy.Evaluate") && activity.Contains("WindowState.Minimized") && activity.Contains("_monitor.OptionalWorkPaused") && activity.Contains("_monitor.Changed -= OnPolicyChanged"),
             "UI activation depends on visibility/minimize policy and detaches its global policy handler");
         var advanced = Source(dashboard + "SensorsControlV2.xaml.cs");
         check(advanced.Contains("IsLibreHardwareMonitorInitialized()") && !advanced.Contains("_sensorsGroupControllers.InitializeAsync("),

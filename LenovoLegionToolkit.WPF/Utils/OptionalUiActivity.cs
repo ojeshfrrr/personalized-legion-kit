@@ -19,6 +19,8 @@ internal sealed class OptionalUiActivity
     private Window? _window;
     private readonly bool _requireForeground;
     private readonly bool _suspendForGaming;
+    private OptionalUiState? _state;
+    public event Action<OptionalUiState>? StateChanged;
     public bool IsActive { get; private set; }
     public OptionalUiActivity(FrameworkElement element, Func<bool, Task> transition, GamingActivityMonitor? monitor = null, bool requireForeground = true, bool suspendForGaming = true)
     {
@@ -70,8 +72,16 @@ internal sealed class OptionalUiActivity
         await _transitionGate.WaitAsync();
         try
         {
-            var active = _loaded && _element.IsVisible && _window is not null && (!_requireForeground || _window.IsActive) &&
-                _window.WindowState != WindowState.Minimized && (!_suspendForGaming || !_monitor.OptionalWorkPaused);
+            var state = OptionalUiPolicy.Evaluate(_loaded, _element.IsVisible, _window is not null,
+                _window?.IsActive == true, _window?.WindowState == WindowState.Minimized,
+                _requireForeground, _suspendForGaming, _monitor.OptionalWorkPaused, _monitor.GameRunning);
+            if (_state != state)
+            {
+                _state = state;
+                try { StateChanged?.Invoke(state); }
+                catch (Exception ex) { Log.Instance.Trace($"Monitoring status observer failed.", ex); }
+            }
+            var active = state == OptionalUiState.Active;
             if (active == IsActive) return;
             IsActive = active;
             await _transition(active);

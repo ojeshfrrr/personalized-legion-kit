@@ -48,9 +48,12 @@ public partial class SensorsControl
         }, ex =>
         {
             UpdateValues(SensorsData.Empty);
-            _readStatusText.Text = "Readings unavailable; monitoring resumes while this page is active.";
+            _readStatusText.Text = ex is NotSupportedException
+                ? "The Windows/Lenovo sensor interface is unavailable on this device."
+                : "Sensor read failed. Monitoring retries while this page is active; diagnostics may contain details.";
             Log.Instance.Trace($"Sensor snapshot unavailable.", ex);
-        }, refreshInterval: TimeSpan.FromSeconds(1));
+        }, refreshInterval: TimeSpan.FromSeconds(1), readingStarted: () =>
+            _readStatusText.Text = _prepared ? "Reading sensors…" : "Initializing Windows/Lenovo sensors…");
         _activity = new OptionalUiActivity(this, active =>
         {
             // The session owns/drains the task; do not block visibility cancellation.
@@ -58,6 +61,7 @@ public partial class SensorsControl
             else _ = _reads.DeactivateAsync();
             return Task.CompletedTask;
         }, suspendForGaming: false); // Visible foreground readings remain available while a game runs.
+        _activity.StateChanged += state => _readStatusText.Text = OptionalUiPolicy.Describe(state);
         ContextMenu = new ContextMenu();
         var refresh = new MenuItem { Header = "Refresh readings", Tag = "ReadOnlyRefresh" };
         refresh.Click += ReadRefresh_Click;

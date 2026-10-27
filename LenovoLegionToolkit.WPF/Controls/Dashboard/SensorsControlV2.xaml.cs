@@ -56,7 +56,7 @@ public partial class SensorsControlV2
             ClearAllSensorValues();
             _snapshotReadStatus.Text = "Advanced provider unavailable. Use safe device readings or enable the provider explicitly in Settings.";
             Log.Instance.Trace($"Advanced sensor snapshot unavailable.", ex);
-        }, refreshInterval: TimeSpan.FromSeconds(1));
+        }, refreshInterval: TimeSpan.FromSeconds(1), readingStarted: () => _snapshotReadStatus.Text = "Reading the enabled advanced sensor provider…");
         Loaded += (_, _) => SubscribeMessages();
         Unloaded += (_, _) => MessagingCenter.Unsubscribe(this);
         _activity = new OptionalUiActivity(this, active =>
@@ -64,6 +64,7 @@ public partial class SensorsControlV2
             SetActivity(active);
             return Task.CompletedTask;
         }, suspendForGaming: false); // Keep the foreground gate; pause as soon as the user switches away.
+        _activity.StateChanged += state => _snapshotReadStatus.Text = OptionalUiPolicy.Describe(state);
         SizeChanged += (_, e) => { if (e.WidthChanged) AdjustCardWidths(); };
 
         _sensorsGroupControllers.SelectedGpuIsIgpu = _hardwareSensorSettings.Store.SelectedGpuIsIgpu;

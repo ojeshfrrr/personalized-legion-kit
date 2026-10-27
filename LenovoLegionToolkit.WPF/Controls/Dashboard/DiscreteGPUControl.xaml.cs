@@ -41,6 +41,7 @@ public partial class DiscreteGPUControl
             else _ = _reads.DeactivateAsync();
             return Task.CompletedTask;
         });
+        _activity.StateChanged += state => _gpuReadStatus.Text = OptionalUiPolicy.Describe(state);
     }
 
     protected override void OnFinishedLoading() { }

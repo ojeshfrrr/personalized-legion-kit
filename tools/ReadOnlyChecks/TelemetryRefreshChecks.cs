@@ -109,7 +109,7 @@ internal static class TelemetryRefreshChecks
         }
         var activity = Source("LenovoLegionToolkit.WPF/Utils/OptionalUiActivity.cs");
         check(activity.Contains("_window.Activated +=") && activity.Contains("_window.Deactivated +=") &&
-            activity.Contains("_window.Activated -=") && activity.Contains("_window.Deactivated -=") && activity.Contains("_window.IsActive"),
+            activity.Contains("_window.Activated -=") && activity.Contains("_window.Deactivated -=") && activity.Contains("_window?.IsActive"),
             "foreground listeners attach/detach and gate optional telemetry by actual window activation");
         var mouse = Source("LenovoLegionToolkit.WPF/Pages/MousePage.xaml.cs");
         check(mouse.Contains("await _buttons.ReadProfilesAsync()") && mouse.Contains("await _buttons.ReadAssignmentsAsync()") && !mouse.Contains("refreshInterval:"),
