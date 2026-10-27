@@ -5,7 +5,7 @@ using System.Text.Json;
 
 namespace LenovoLegionToolkit.Lib.Utils;
 
-public sealed record PortableUpdatePackage(string Url, long Size, string Sha256);
+public sealed record PortableUpdatePackage(string Url, long Size, string Sha256, bool SelfContained = false);
 
 public sealed record ProjectRelease(Version Version, string Title, string Description,
     DateTimeOffset Date, string ReleaseUrl, PortableUpdatePackage? Package, string? InstallerUrl);
@@ -14,10 +14,11 @@ public sealed record ProjectRelease(Version Version, string Title, string Descri
 public static class ProjectReleaseFeed
 {
     public const string PackageName = "ProjectLegion-win-x64-framework-dependent.zip";
+    public const string SelfContainedPackageName = "ProjectLegion-win-x64-self-contained.zip";
     public const long MaximumPackageSize = 512L * 1024 * 1024;
     public static string ApiUrl => $"https://api.github.com/repos/{ProjectBranding.UpdateGitHubOwner}/{ProjectBranding.UpdateGitHubRepository}/releases?per_page=30";
 
-    public static ProjectRelease[] Parse(string json, Version currentVersion, UpdateChannel channel)
+    public static ProjectRelease[] Parse(string json, Version currentVersion, UpdateChannel channel, bool preferSelfContained = false)
     {
         using var document = JsonDocument.Parse(json);
         if (document.RootElement.ValueKind != JsonValueKind.Array)
@@ -31,7 +32,8 @@ public static class ProjectReleaseFeed
             var tag = Text(release, "tag_name");
             if (!TryParseVersion(tag, out var version) || version <= Normalize(currentVersion)) continue;
             var assets = release.GetProperty("assets").EnumerateArray().ToArray();
-            var matching = assets.Where(a => Text(a, "name") == PackageName && Text(a, "state") == "uploaded").ToArray();
+            var packageName = preferSelfContained ? SelfContainedPackageName : PackageName;
+            var matching = assets.Where(a => Text(a, "name") == packageName && Text(a, "state") == "uploaded").ToArray();
             PortableUpdatePackage? package = null;
             if (matching.Length == 1)
             {
@@ -39,9 +41,9 @@ public static class ProjectReleaseFeed
                 var url = Text(asset, "browser_download_url");
                 var digest = Text(asset, "digest");
                 if (asset.TryGetProperty("size", out var sizeValue) && sizeValue.TryGetInt64(out var size) &&
-                    size is > 0 and <= MaximumPackageSize && IsAssetUrl(url, tag, PackageName) &&
+                    size is > 0 and <= MaximumPackageSize && IsAssetUrl(url, tag, packageName) &&
                     digest.StartsWith("sha256:", StringComparison.OrdinalIgnoreCase) && IsSha256(digest[7..]))
-                    package = new(url, size, digest[7..].ToUpperInvariant());
+                    package = new(url, size, digest[7..].ToUpperInvariant(), preferSelfContained);
             }
             var installer = assets.FirstOrDefault(a => Text(a, "name").StartsWith("ProjectLegionSetup", StringComparison.Ordinal) &&
                 Text(a, "name").EndsWith(".exe", StringComparison.OrdinalIgnoreCase) &&
@@ -71,7 +73,7 @@ public static class ProjectReleaseFeed
 
     public static bool IsPackageUrl(string url) => Uri.TryCreate(url, UriKind.Absolute, out var uri) &&
         uri.Segments.Length == 7 && TryParseVersion(uri.Segments[^2].TrimEnd('/'), out _) &&
-        IsAssetUrl(url, uri.Segments[^2].TrimEnd('/'), PackageName);
+        (IsAssetUrl(url, uri.Segments[^2].TrimEnd('/'), PackageName) || IsAssetUrl(url, uri.Segments[^2].TrimEnd('/'), SelfContainedPackageName));
 
     public static bool IsSha256(string value) => value.Length == 64 && value.All(char.IsAsciiHexDigit);
     private static Version Normalize(Version version) => new(version.Major, version.Minor, Math.Max(0, version.Build), Math.Max(0, version.Revision));

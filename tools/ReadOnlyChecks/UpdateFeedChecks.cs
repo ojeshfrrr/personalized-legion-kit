@@ -33,6 +33,14 @@ internal static class UpdateFeedChecks
         var feed = new JsonArray(Release("v0.2.0.0"), Release("v0.3.0.0", true), Release("v0.1.0.0"), Release("v9.0.0.0", draft: true));
         var preview = ProjectReleaseFeed.Parse(feed.ToJsonString(), current, UpdateChannel.Beta);
         var stable = ProjectReleaseFeed.Parse(feed.ToJsonString(), current, UpdateChannel.Stable);
+        var standalone = Release("v0.2.0.0");
+        var standaloneAsset = standalone["assets"]![0]!;
+        standaloneAsset["name"] = ProjectReleaseFeed.SelfContainedPackageName;
+        standaloneAsset["browser_download_url"] = AssetUrl("v0.2.0.0").Replace(ProjectReleaseFeed.PackageName, ProjectReleaseFeed.SelfContainedPackageName);
+        check(ProjectReleaseFeed.Parse(new JsonArray(standalone).ToJsonString(), current, UpdateChannel.Beta, true).Single().Package?.SelfContained == true,
+            "self-contained installations select the exact verified self-contained release asset");
+        check(ProjectReleaseFeed.Parse(feed.ToJsonString(), current, UpdateChannel.Beta, true).All(release => release.Package is null),
+            "self-contained installations never silently downgrade to a framework-dependent package");
         check(preview.Select(r => r.Version).SequenceEqual(new[] { new Version(0, 3, 0, 0), new Version(0, 2, 0, 0) }) &&
             stable.Length == 1 && stable[0].Version == new Version(0, 2, 0, 0),
             "updater compares versions independently of release age/commit SHA; Preview includes stable and draft/current releases are excluded");

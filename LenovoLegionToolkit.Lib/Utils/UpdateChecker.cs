@@ -88,7 +88,8 @@ public class UpdateChecker
                 }
                 var json = Encoding.UTF8.GetString(metadata.GetBuffer(), 0, (int)metadata.Length);
                 var currentVersion = Assembly.GetEntryAssembly()?.GetName().Version ?? new Version(0, 0, 0, 0);
-                _updates = ProjectReleaseFeed.Parse(json, currentVersion, _updateSettings.Store.UpdateChannel);
+                _updates = ProjectReleaseFeed.Parse(json, currentVersion, _updateSettings.Store.UpdateChannel,
+                    preferSelfContained: File.Exists(Path.Combine(AppContext.BaseDirectory, "coreclr.dll")));
 
                 Status = UpdateCheckStatus.Success;
                 return _updates.Length != 0 ? _updates[0].Version : null;
