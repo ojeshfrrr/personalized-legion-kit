@@ -5,7 +5,12 @@ Add-Type -AssemblyName PresentationCore,PresentationFramework,WindowsBase
 $root = Split-Path $PSScriptRoot -Parent
 $directory = [IO.Path]::GetFullPath($OutputDirectory)
 [IO.Directory]::CreateDirectory($directory) | Out-Null
-$reader = [Xml.XmlReader]::Create((Join-Path $root 'LenovoLegionToolkit.WPF/Assets/Branding/Identity.xaml'))
+# Detached verifier resolves the same PNGs locally; compiled pack-URI loading
+# is checked separately by ReadOnlyUiChecks against the production assembly.
+$markup = [IO.File]::ReadAllText((Join-Path $root 'LenovoLegionToolkit.WPF/Assets/Branding/Identity.xaml'))
+$prefix = ([Uri]((Join-Path $root 'assets/branding/') )).AbsoluteUri
+$markup = $markup.Replace('pack://application:,,,/Project%20Legion;component/Assets/Branding/', $prefix)
+$reader = [Xml.XmlReader]::Create((New-Object IO.StringReader($markup)))
 try { $resources = [Windows.Markup.XamlReader]::Load($reader) } finally { $reader.Close() }
 $results = @()
 foreach ($key in $resources.Keys) {
@@ -28,4 +33,4 @@ foreach ($key in $resources.Keys) {
     }
 }
 $results | ConvertTo-Json | Set-Content (Join-Path $directory 'vector-checks.json') -Encoding UTF8
-Write-Output "$($results.Count) detached vector renders passed. No application launched."
+Write-Output "$($results.Count) detached PNG logo renders passed. No application launched."

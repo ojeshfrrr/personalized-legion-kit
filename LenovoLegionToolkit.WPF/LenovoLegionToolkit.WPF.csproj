@@ -109,6 +109,11 @@
 		<EmbeddedResource Update="Resources\Resource.*.resx" />
 	</ItemGroup>
 
+    <!-- Embed PNG logo variants so branding does not depend on loose files. -->
+    <ItemGroup>
+        <Resource Include="..\assets\branding\project-legion.png;..\assets\branding\sidebar-64.png;..\assets\branding\titlebar-32.png;..\assets\branding\monochrome.png;..\assets\branding\sidebar-wordmark.png;..\assets\branding\wordmark.png"
+                  Link="Assets\Branding\%(Filename)%(Extension)" />
+    </ItemGroup>
     <!-- Ship editable/portable branding alongside the compiled native WPF/EXE resources. -->
     <ItemGroup>
         <Content Include="..\assets\branding\**\*.svg;..\assets\branding\**\*.png;..\assets\branding\*.ico;..\assets\branding\README.md"

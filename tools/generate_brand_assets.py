@@ -53,13 +53,21 @@ def raster(path, width, height, shapes, canvas=(64, 64)):
                  "canvasWidth": canvas[0], "canvasHeight": canvas[1], "shapes": shapes})
 
 
-def drawing(key, width, height, shapes):
-    lines = [f'    <DrawingImage x:Key="{key}" po:Freeze="True"><DrawingImage.Drawing><DrawingGroup>',
-             f'        <GeometryDrawing Brush="Transparent" Geometry="M0 0 H{width} V{height} H0 Z"/>']
-    for shape in shapes:
-        t = shape.get("transform", [1, 1, 0, 0])
-        lines.append(f'        <DrawingGroup Transform="{t[0]},0,0,{t[1]},{t[2]},{t[3]}"><GeometryDrawing Brush="{shape["fill"]}" Geometry="F0 {shape["path"]}"/></DrawingGroup>')
-    return "\n".join(lines + ["    </DrawingGroup></DrawingImage.Drawing></DrawingImage>"])
+def png_resources():
+    images = {
+        "ProjectLegionEmblem": "project-legion.png",
+        "ProjectLegionSidebarEmblem": "sidebar-64.png",
+        "ProjectLegionTitlebarEmblem": "titlebar-32.png",
+        "ProjectLegionMonochromeEmblem": "monochrome.png",
+        "ProjectLegionSidebarWordmark": "sidebar-wordmark.png",
+        "ProjectLegionWordmark": "wordmark.png",
+    }
+    lines = ['<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"',
+             ' xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:po="http://schemas.microsoft.com/winfx/2006/xaml/presentation/options">',
+             '<!-- PNG renditions of the original geometry.json artwork; embedded, cached and frozen. -->']
+    for key, filename in images.items():
+        lines.append(f'    <BitmapImage x:Key="{key}" po:Freeze="True" CacheOption="OnLoad" UriSource="pack://application:,,,/Project%20Legion;component/Assets/Branding/{filename}"/>')
+    return "\n".join(lines + ["</ResourceDictionary>"]) + "\n"
 
 
 def main():
@@ -107,16 +115,7 @@ def main():
         else:
             size = 300 if name.startswith("Square150") else 88 if name.startswith("Square44") else 50 if name == "StoreLogo.png" else 96
             raster(path, size, size, emblem(micro=size <= 32))
-    resources = ['<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"',
-                 ' xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:po="http://schemas.microsoft.com/winfx/2006/xaml/presentation/options">',
-                 '<!-- Generated from assets/branding/geometry.json; original outlined artwork; no runtime renderer. -->',
-                 drawing("ProjectLegionEmblem", 64, 64, emblem()),
-                 drawing("ProjectLegionSidebarEmblem", 64, 64, emblem(micro=True)),
-                 drawing("ProjectLegionTitlebarEmblem", 64, 64, emblem(micro=True)),
-                 drawing("ProjectLegionMonochromeEmblem", 64, 64, emblem(micro=True, mono=PALETTE["white"])),
-                 drawing("ProjectLegionSidebarWordmark", sw, sh, small_words),
-                 drawing("ProjectLegionWordmark", w, h, words), "</ResourceDictionary>"]
-    (brand_wpf / "Identity.xaml").write_text("\n".join(resources) + "\n", encoding="utf-8")
+    (brand_wpf / "Identity.xaml").write_text(png_resources(), encoding="utf-8")
     evidence = ROOT / "BuildProjectLegion/Branding"
     evidence.mkdir(parents=True, exist_ok=True)
     manifest = evidence / "render-jobs.json"
@@ -126,7 +125,7 @@ def main():
     renderer = renderer.split("\n", 1)[1]
     command = "$Manifest = '" + str(manifest).replace("'", "''") + "'\n" + renderer
     subprocess.run(["powershell.exe", "-NoProfile", "-Sta", "-Command", command], cwd=ROOT, check=True)
-    print(f"Generated original SVGs, transparent PNGs, native WPF drawings and {len(sizes)}-size Windows ICO.")
+    print(f"Generated original SVGs, transparent PNGs, embedded PNG resources and {len(sizes)}-size Windows ICO.")
 
 
 if __name__ == "__main__":

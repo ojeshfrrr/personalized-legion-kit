@@ -25,3 +25,5 @@ The WPF executable and tray resource use `Assets/ProjectLegion.ico`. BaseWindow 
 About uses the full frozen vector wordmark. Notification content keeps its meaningful event symbols; the native application identity comes from the executable icon. Third-party credits remain textual attribution, not replacement brand marks.
 
 The installer small-header artwork is a square compact emblem, avoiding distortion of the wide wordmark in Inno Setup’s small-image slot. Run `python tools/verify_branding.py <build-or-publish-directory>` to verify all ten native executable icon payloads and copied kit files. `tools/verify_branding_vectors.ps1` renders frozen vectors independently of application startup.
+
+The WPF sidebar, title-bar emblem, About wordmark and monochrome fallback use embedded transparent PNG renditions. The original SVGs remain editable source artwork; Windows executable/taskbar/tray icons retain the multi-size ICO. PNGs are loaded once and frozen, with no runtime vector renderer.

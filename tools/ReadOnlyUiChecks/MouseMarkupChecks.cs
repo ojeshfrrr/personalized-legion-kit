@@ -43,6 +43,17 @@ internal static class MouseMarkupChecks
         merged.Remove();
         app.Resources.MergedDictionaries.Add((ResourceDictionary)System.Windows.Markup.XamlReader.Parse(dictionary.ToString()));
 
+        // Resolve the actual compiled PNG resources, not loose-file substitutes.
+        foreach (var key in new[] { "ProjectLegionEmblem", "ProjectLegionSidebarEmblem",
+            "ProjectLegionTitlebarEmblem", "ProjectLegionMonochromeEmblem",
+            "ProjectLegionSidebarWordmark", "ProjectLegionWordmark" })
+        {
+            if (app.Resources[key] is not BitmapImage image || !image.IsFrozen ||
+                image.PixelWidth < 32 || image.PixelHeight < 32 || image.Format.BitsPerPixel != 32)
+                throw new InvalidOperationException("Missing or invalid transparent PNG branding: " + key);
+        }
+        Console.WriteLine("6 embedded, frozen PNG logo resources decoded successfully.");
+
         var markup = XDocument.Load("LenovoLegionToolkit.WPF/Pages/MousePage.xaml").Root!;
         var resources = markup.Elements().Single(e => e.Name.LocalName == "UiPage.Resources");
         var content = markup.Elements().Single(e => e.Name.LocalName == "StackPanel");
