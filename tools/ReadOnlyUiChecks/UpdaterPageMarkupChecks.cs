@@ -61,8 +61,9 @@ internal static class UpdaterPageMarkupChecks
             var route = typeof(LenovoLegionToolkit.WPF.Pages.UpdaterPage).GetMethod("IsUpdaterInputSourceCore", BindingFlags.Static | BindingFlags.NonPublic)!;
             bool Allowed(DependencyObject source, bool readOnly) => (bool)route.Invoke(null, [source, root, readOnly])!;
             var release = (Button)root.FindName("_releasePageButton");
+            var rollback = (Button)root.FindName("_rollbackUpdateButton");
             if (!Allowed(check, false) || !Allowed(available, false) || Allowed(check, true) || Allowed(available, true) ||
-                !Allowed(release, true) || Allowed(new Button { Name = "_checkUpdatesButton" }, false))
+                !Allowed(release, true) || !Allowed(rollback, false) || Allowed(rollback, true) || Allowed(new Button { Name = "_checkUpdatesButton" }, false))
                 throw new InvalidOperationException("Updater input exception escaped its page or read-only restriction.");
             var image = new RenderTargetBitmap(width, (int)Math.Ceiling(root.ActualHeight), 96, 96, PixelFormats.Pbgra32); image.Render(root);
             var encoder = new PngBitmapEncoder(); encoder.Frames.Add(BitmapFrame.Create(image));

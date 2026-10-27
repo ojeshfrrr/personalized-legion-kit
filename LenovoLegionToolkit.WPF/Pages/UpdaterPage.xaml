@@ -53,8 +53,11 @@
                         Click="AvailableUpdate_Click" IsEnabled="False" Margin="0,0,8,8" />
                     <Button x:Name="_releasePageButton" Content="Release history" Style="{StaticResource UpdaterPageAction}"
                         Click="ReleasePage_Click" Margin="0,0,0,8" />
+                    <Button x:Name="_rollbackUpdateButton" Content="Roll back to previous version" Style="{StaticResource UpdaterPageAction}"
+                        Click="RollbackUpdate_Click" Visibility="Collapsed" Margin="8,0,0,8" />
                 </WrapPanel>
-                <TextBlock Text="Download opens the release notes and a verified ZIP download. After downloading, close Project Legion and extract the ZIP into a new folder. Your settings remain in your local profile."
+                <TextBlock x:Name="_rollbackStatus" Style="{StaticResource ProjectLegionNoticeStyle}" />
+                <TextBlock Text="Download opens release notes and a verified ZIP. Install and restart keeps a previous-version backup; manual extraction is also available. Your settings remain in your local profile."
                     Style="{StaticResource ProjectLegionNoticeStyle}" />
             </StackPanel>
         </Border>

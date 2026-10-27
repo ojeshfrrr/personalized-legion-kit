@@ -16,6 +16,8 @@ public partial class UpdaterPage
     private readonly UpdateSettings _settings = IoCContainer.Resolve<UpdateSettings>();
     private bool _loaded;
     private bool _checkedHere;
+    private PreparedUpdate? _rollback;
+    private bool _restarting;
 
     public UpdaterPage() => InitializeComponent();
 
@@ -24,6 +26,15 @@ public partial class UpdaterPage
         _loaded = true;
         await _preferences.RefreshAsync();
         await RefreshStatusAsync(); // Cache only: navigation never downloads or checks the network.
+        var rollback = await Task.Run(PortableUpdateInstaller.GetRollbackCandidate).ConfigureAwait(false);
+        if (Dispatcher.HasShutdownStarted) return;
+        _ = Dispatcher.BeginInvoke(new Action(() =>
+        {
+            if (!_loaded) return;
+            _rollback = rollback;
+            _rollbackUpdateButton.Visibility = _rollback is null ? Visibility.Collapsed : Visibility.Visible;
+            _rollbackStatus.Text = _rollback is null ? "A verified previous-version backup becomes available after an in-app installation." : $"Previous version {_rollback.Version} is available for rollback.";
+        }));
     }
     private void UpdaterPage_Unloaded(object sender, RoutedEventArgs e) => _loaded = false;
 
@@ -56,6 +67,17 @@ public partial class UpdaterPage
     }
     private void ReleasePage_Click(object sender, RoutedEventArgs e) => new Uri(ProjectBranding.ReleasesUrl).Open();
 
+    private async void RollbackUpdate_Click(object sender, RoutedEventArgs e)
+    {
+        if (_rollback is null || _restarting || Folders.IsReadOnlySession) return;
+        if (System.Windows.MessageBox.Show($"Restart into verified previous version {_rollback.Version}? Your profile will be retained. Older versions may not understand settings introduced by newer versions.",
+            "Roll back Project Legion", MessageBoxButton.YesNo, MessageBoxImage.Warning, MessageBoxResult.No) != MessageBoxResult.Yes) return;
+        _restarting = true; _rollbackUpdateButton.IsEnabled = false;
+        try { await PortableUpdateInstaller.StartRestartAsync(_rollback, rollback: true); await App.Current.ShutdownAsync(); }
+        catch (Exception ex) { _rollbackStatus.Text = "Rollback did not start: " + ex.Message; }
+        finally { _restarting = false; _rollbackUpdateButton.IsEnabled = !Folders.IsReadOnlySession; }
+    }
+
     // Updating software does not require unlocking laptop controls. The exception
     // is scoped to this page and these exact controls, never to hardware pages.
     public bool IsUpdaterInputSource(DependencyObject? source) =>
@@ -70,7 +92,7 @@ public partial class UpdaterPage
             {
                 if (element.Name == "_releasePageButton") allowed = true;
                 if (!readOnly && (element.Name is "_checkUpdatesButton" or
-                    "_updateChannelComboBox" or "_updateCheckFrequencyComboBox" or "_availableUpdateButton")) allowed = true;
+                    "_updateChannelComboBox" or "_updateCheckFrequencyComboBox" or "_availableUpdateButton" or "_rollbackUpdateButton")) allowed = true;
             }
             source = source is Visual ? VisualTreeHelper.GetParent(source) : LogicalTreeHelper.GetParent(source);
         }
