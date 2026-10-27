@@ -37,13 +37,16 @@ internal static class UpdateMarkupChecks
             ((Markdig.Wpf.MarkdownViewer)root.FindName("_markdownViewer")).Markdown = "**Offline update fixture**\n\nNo package is downloaded, installed or executed.";
             var open = (FrameworkElement)root.FindName("_openFolderButton");
             open.Visibility = verified ? Visibility.Visible : Visibility.Collapsed;
+            var install = (FrameworkElement)root.FindName("_installButton");
+            install.Visibility = verified ? Visibility.Visible : Visibility.Collapsed;
+            install.IsEnabled = verified;
             var cancel = (FrameworkElement)root.FindName("_cancelDownloadButton");
             cancel.Visibility = Visibility.Collapsed;
             var download = (FrameworkElement)root.FindName("_downloadButton");
             download.Visibility = verified ? Visibility.Collapsed : Visibility.Visible;
             download.IsEnabled = true;
             root.Measure(new Size(width, 600)); root.Arrange(new Rect(0, 0, width, 600)); root.UpdateLayout();
-            foreach (var element in new[] { (FrameworkElement)status, verified ? open : download })
+            foreach (var element in verified ? new[] { (FrameworkElement)status, open, install } : new[] { (FrameworkElement)status, download })
             {
                 var origin = element.TranslatePoint(new Point(), root);
                 if (element.ActualWidth < 100 || element.ActualHeight < 15 || origin.X < 0 || origin.Y < 0 ||

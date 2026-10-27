@@ -26,6 +26,7 @@ public partial class UpdateWindow : IProgress<float>
     private ProjectRelease? _availableUpdate;
     private string? _downloadedPackagePath;
     private bool _closed;
+    private bool _installing;
 
     public UpdateWindow()
     {
@@ -85,8 +86,9 @@ public partial class UpdateWindow : IProgress<float>
             _packageStatus.Text = "Downloading and checking the Windows x64 package…";
             _downloadedPackagePath = await _updateChecker.DownloadPortableUpdateAsync(_availableUpdate, this, lifetime.Token);
             if (_closed) return;
-            _packageStatus.Text = "SHA-256 verified against GitHub release metadata. Close Project Legion, extract the ZIP into a new folder, and launch Project Legion.exe there. Your existing settings stay in your local profile. This package is unsigned; the checksum does not verify a trusted publisher.";
+            _packageStatus.Text = "SHA-256 verified against GitHub release metadata. Install and restart keeps a separate verified backup and preserves your profile. This package is unsigned; the checksum does not verify a trusted publisher. Manual extraction remains available.";
             _openFolderButton.Visibility = Visibility.Visible;
+            _installButton.Visibility = Visibility.Visible;
         }
         catch (OperationCanceledException)
         {
@@ -123,8 +125,38 @@ public partial class UpdateWindow : IProgress<float>
 
     private void CancelDownloadButton_Click(object sender, RoutedEventArgs e) => _downloadCancellationTokenSource?.Cancel();
 
+    private async void InstallButton_Click(object sender, RoutedEventArgs e)
+    {
+        if (_installing || _downloadCancellationTokenSource is not null || Folders.IsReadOnlySession || _updateChecker.Disable ||
+            _downloadedPackagePath is null || _availableUpdate?.Package is null) return;
+        if (System.Windows.MessageBox.Show(this,
+            $"Install version {_availableUpdate.Version} and restart Project Legion?\n\nThis unsigned package will run with the application's normal privileges. It is installed side by side in Program Files with a verified previous-version backup. Your user profile is not replaced. Normal startup/shutdown behavior and configured features still apply.\n\nWindows security prompts will not be bypassed.",
+            "Install verified update", MessageBoxButton.YesNo, MessageBoxImage.Warning, MessageBoxResult.No) != MessageBoxResult.Yes) return;
+        _installing = true;
+        using var cancellation = _downloadCancellationTokenSource = new CancellationTokenSource();
+        _installButton.IsEnabled = false; _openFolderButton.IsEnabled = false;
+        try
+        {
+            _packageStatus.Text = "Verifying, installing side by side and backing up the previous version…";
+            var prepared = await PortableUpdateInstaller.PrepareAsync(_downloadedPackagePath, _availableUpdate.Package, _availableUpdate.Version, cancellation.Token);
+            cancellation.Token.ThrowIfCancellationRequested();
+            _packageStatus.Text = "Preparing the restart handoff…";
+            await PortableUpdateInstaller.StartRestartAsync(prepared);
+            cancellation.Token.ThrowIfCancellationRequested();
+            await App.Current.ShutdownAsync();
+        }
+        catch (OperationCanceledException) { if (!_closed) _packageStatus.Text = "Installation cancelled. The current version remains available."; }
+        catch (Exception ex) { if (!_closed) _packageStatus.Text = "Installation did not complete: " + ex.Message + " The current version has not been replaced."; }
+        finally
+        {
+            _installing = false; _downloadCancellationTokenSource = null;
+            if (!_closed) { _installButton.IsEnabled = !Folders.IsReadOnlySession && !_updateChecker.Disable; _openFolderButton.IsEnabled = true; }
+        }
+    }
+
     private void SetDownloading(bool isDownloading)
     {
+        _installButton.IsEnabled = !isDownloading && !_installing && !Folders.IsReadOnlySession && !_updateChecker.Disable;
         if (isDownloading)
         {
             _downloadProgressBar.Visibility = Visibility.Visible;
