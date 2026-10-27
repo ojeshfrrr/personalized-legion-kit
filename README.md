@@ -26,7 +26,7 @@ The LampArray MSIX project has a Project Legion package identity and signing is 
 ## Project-specific settings
 
 - The update feed is configured in `LenovoLegionToolkit.Lib/ProjectBranding.cs` for this repository. Open **Updater** in the sidebar to check versions, choose **Preview + stable** or **Stable**, view the last result, and download an available update. New profiles default to Preview; existing preferences are preserved. Updating software does not require enabling laptop hardware controls.
-- Checking for updates shows newer versions and release notes. **Download update ZIP** verifies the exact Windows x64 asset's size and SHA-256 against GitHub release metadata, then offers **Open download folder**. Close the app, extract the ZIP into a new folder, and launch the new executable. Settings remain under `%LOCALAPPDATA%\ProjectLegion`. ZIPs are unsigned; a matching checksum does not establish a trusted publisher. There is no silent installation, file replacement or restart. Installer execution still requires a separately configured trusted signer. Read-only and preview sessions cannot download updates or change update preferences.
+- Checking for updates shows newer versions and release notes. **Download update ZIP** verifies the Windows x64 asset's size and SHA-256 against GitHub metadata. **Install and restart** requires explicit confirmation, stages a separate protected installation, retains a verified previous-version backup and preserves `%LOCALAPPDATA%\ProjectLegion`. Updater offers rollback when that backup is available. Uncertain startup remains pending rather than being force-closed. Manual ZIP extraction remains available. ZIPs are unsigned; a checksum does not establish a trusted publisher. Read-only/preview sessions cannot install, restart, download or mutate preferences. Self-contained installations select self-contained updates instead of silently introducing a Desktop Runtime prerequisite.
 - Edit the charcoal shell background in `LenovoLegionToolkit.WPF/Branding.xaml` and the default ice-blue accent in `LenovoLegionToolkit.WPF/Utils/ThemeManager.cs`.
 - Replace the generated image assets with your own when ready. The app's data is stored under `%LOCALAPPDATA%\ProjectLegion`; on first launch, top-level JSON settings are copied from the upstream folder without overwriting or deleting the original data.
 
@@ -37,6 +37,8 @@ Home and Thermals refresh visible sensor readings every **1 second** while Proje
 This foreground exception applies to sensor readings. Optional GPU status/process enumeration retains its gaming pause, Mouse settings are never periodically polled, and explicitly enabled OSD, HWiNFO, hardware-control and automation features keep their existing policies. Refreshing readings does not write hardware settings. No FPS improvement or FPS-neutrality claim has been established by controlled measurements.
 
 ## License and attribution
+
+Release-candidate procedures, signing prerequisites, matched gaming captures and pending Windows checks are documented in [RELEASE-READINESS.md](RELEASE-READINESS.md). These procedures are not evidence that a live update, clean-account test or FPS benchmark has passed.
 
 The checked-out upstream revision is licensed under GPL-3.0. This derivative is distributed under the same license; see [LICENSE](LICENSE) and [NOTICE](NOTICE). The original work is by Bartosz Cichecki, Kaguya, and Dr. Skinner. Third-party copyright and license notices are retained in the source.
 
