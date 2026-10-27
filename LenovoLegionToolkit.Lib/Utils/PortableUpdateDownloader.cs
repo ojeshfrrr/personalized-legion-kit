@@ -71,7 +71,7 @@ public static class PortableUpdateDownloader
         }
     }
 
-    private static void VerifyArchive(string path)
+    internal static void VerifyArchive(string path)
     {
         using var archive = ZipFile.OpenRead(path);
         if (archive.Entries.Count > 10000) throw new InvalidDataException("The archive contains too many entries.");
